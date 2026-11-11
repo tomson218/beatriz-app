@@ -1,9 +1,9 @@
 import crypto from 'crypto';
-import User from './../models/userModel.js';
+import User from '../models/userModel.ts';
 import jwt from 'jsonwebtoken';
-import AppError from './../utils/appError.js';
+import AppError from '../utils/appError.ts';
 import { promisify } from 'util';
-import { sendEmail } from '../utils/email.js';
+import { sendEmail } from '../utils/email.ts';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 

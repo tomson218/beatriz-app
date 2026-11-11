@@ -1,7 +1,8 @@
-import DiscountCode from '../models/discountCodeModel.js';
-import User from '../models/userModel.js';
+import DiscountCode from '../models/discountCodeModel.ts';
+import User from '../models/userModel.ts';
+import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 
-export const getAllDiscountCodes = async (req, res, next) => {
+export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const discountCodes = await DiscountCode.find().select('-__v');
 
@@ -15,7 +16,7 @@ export const getAllDiscountCodes = async (req, res, next) => {
 	}
 };
 
-export const applyDiscountCode = async (req, res) => {
+export const applyDiscountCode = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const currentDate = Date.now();
 		const { enteredCode, totalAmount } = req.body;
@@ -52,7 +53,7 @@ export const applyDiscountCode = async (req, res) => {
 		}
 
 		const alreadyApplied = user.appliedDiscountCodes.some(
-			item => item.code === enteredCode && item.isUsed === true
+			item => item.code === enteredCode && item.isUsed === true,
 		);
 
 		if (alreadyApplied) {
@@ -80,7 +81,7 @@ export const applyDiscountCode = async (req, res) => {
 	}
 };
 
-export const addDiscountCode = async (req, res, next) => {
+export const addDiscountCode = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		console.log(req.body);
 

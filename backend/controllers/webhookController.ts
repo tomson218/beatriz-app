@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
-import Order from '../models/orderModel.js';
-import Ticket from '../models/ticketModel.js';
-import { sendEmail } from '../utils/email.js';
-import User from '../models/userModel.js';
-import { generatePDF } from '../utils/pdfGenerator.js';
+import Order from '../models/orderModel.ts';
+import Ticket from '../models/ticketModel.ts';
+import { sendEmail } from '../utils/email.ts';
+import User from '../models/userModel.ts';
+import { generatePDF } from '../utils/pdfGenerator.ts';
 
 dotenv.config({ path: './config.env' });
 

@@ -1,4 +1,4 @@
-import Forum from '../models/forumModel.js';
+import Forum from '../models/forumModel.ts';
 
 export const getAllForumPosts = async (req, res, next) => {
 	try {

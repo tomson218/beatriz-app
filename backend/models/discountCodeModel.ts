@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 import validator from 'validator';
 
-const discountCodeSchema = new mongoose.Schema({
+const discountCodeSchema = new Schema({
 	code: {
 		type: String,
 		required: [true, 'Please enter a discount code'],
@@ -31,6 +31,6 @@ const discountCodeSchema = new mongoose.Schema({
 	},
 });
 
-const DiscountCode = mongoose.model('DiscountCode', discountCodeSchema, 'discountCodes');
+const DiscountCode = model('DiscountCode', discountCodeSchema, 'discountCodes');
 
 export default DiscountCode;

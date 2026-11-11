@@ -11,7 +11,7 @@ import {
 	addCart,
 	updateUser,
 	deleteUser,
-} from './../controllers/userController.js';
+} from '../controllers/userController.ts';
 import {
 	signup,
 	login,
@@ -21,7 +21,7 @@ import {
 	protect,
 	googleLogin,
 	facebookLogin,
-} from './../controllers/authController.js';
+} from '../controllers/authController.ts';
 
 const router = express.Router();
 
@@ -33,13 +33,13 @@ router.post('/googleLogin', googleLogin);
 
 router.post('/facebookLogin', facebookLogin);
 
-router.post('/forgetPassword', forgetPassword);
+router.post('/forgetPassword', protect, forgetPassword);
 
-router.patch('/resetPassword/:token', resetPassword);
+router.patch('/resetPassword/:token', protect, resetPassword);
 
 router.patch('/updateMyPassword', protect, updatePassword);
 
-router.patch('/editUser/:id', updateUser);
+router.patch('/editUser/:id', protect, updateUser);
 
 router.patch('/updateMe', protect, updateMe);
 
@@ -63,8 +63,8 @@ router
 router
 	.route('/:id')
 
-	.get(getUser)
+	.get(protect, getUser)
 
-	.delete(deleteUser);
+	.delete(protect, deleteUser);
 
 export default router;

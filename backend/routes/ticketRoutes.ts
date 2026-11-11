@@ -1,19 +1,19 @@
 import express from 'express';
-import { protect } from './../controllers/authController.js';
+import { protect } from '../controllers/authController.ts';
 
 import {
 	getAllTickets,
 	getUserTickets,
 	groupAvailableSectors,
 	getOccupiedSeats,
-} from '../controllers/ticketController.js';
+} from '../controllers/ticketController.ts';
 
 const router = express.Router();
 
 router
 	.route('/')
 
-	.get(getAllTickets);
+	.get(protect, getAllTickets);
 
 router
 	.route('/:id')
