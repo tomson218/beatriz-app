@@ -1,0 +1,30 @@
+.errorMessage {
+	color: var(--error-color);
+	font-size: 0.875rem;
+	margin-top: 0.25rem;
+}
+
+.label {
+	flex: 0 0 100px;
+	text-align: right;
+	font-size: 1rem;
+}
+
+.inputWrapper {
+	flex: 1;
+}
+
+.input {
+	width: 100%;
+	max-width: 400px;
+	padding: 10px;
+	border-radius: 10px;
+	outline: none;
+	border: none;
+	border: 2px solid #000 !important;
+	transition: border-color 0.3s ease;
+}
+
+.input:hover {
+	border-color: greenyellow;
+}

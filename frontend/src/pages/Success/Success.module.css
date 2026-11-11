@@ -1,0 +1,9 @@
+.container {
+	background-color: var(--primary-background);
+	min-height: 94.4dvh;
+}
+
+.btn {
+	margin: 0 auto;
+	display: block;
+}

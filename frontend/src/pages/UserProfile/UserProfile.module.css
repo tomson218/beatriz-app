@@ -1,0 +1,66 @@
+.list {
+	border: 2px solid #ffa500;
+	padding: 1.5rem;
+	background-color: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	display: inline-block;
+	margin: 2rem auto;
+	max-width: 400px;
+	text-align: left;
+}
+
+.list-item {
+	padding: 0.75rem 1.25rem;
+	margin: 0.5rem 0;
+	border-bottom: 1px solid #ddd;
+	font-size: 1rem;
+	font-weight: 500;
+	color: #333;
+	transition: color 0.3s;
+}
+
+.list-item:last-child {
+	border-bottom: none;
+}
+
+.list-item:hover {
+	color: #ffa500;
+}
+
+.user-photo {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	display: block;
+	margin: 1rem auto;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+	border: 3px solid #ffa500;
+}
+
+.buttons {
+	display: inline-block;
+	border: none;
+	padding: 0.6rem 1.2rem;
+	margin: 0.8rem 0.4rem;
+	background-color: #007bff;
+	color: #ffffff;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s, transform 0.2s;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buttons:hover {
+	background-color: #0056b3;
+	transform: translateY(-2px);
+}
+
+.buttons:active {
+	transform: translateY(0);
+	background-color: #004494;
+}

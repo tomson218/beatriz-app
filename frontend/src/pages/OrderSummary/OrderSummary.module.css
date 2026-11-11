@@ -1,0 +1,63 @@
+body {
+	background-color: white;
+	font-size: 'Roboto';
+}
+
+.title {
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 2rem;
+	padding: 1rem 0 0;
+}
+
+.totalAmount {
+	background-color: #fff;
+	padding: 1rem 2rem;
+	margin: 1rem;
+	border-radius: 1rem;
+	text-align: right;
+	font-weight: 600;
+}
+
+.buttons {
+	display: flex;
+	margin: 1rem;
+	gap: 1rem;
+	padding: 0 0 1rem;
+}
+
+.button {
+	color: red;
+}
+
+.grid-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1rem;
+	padding: 0 1rem;
+}
+
+@media (max-width: 1400px) {
+	.grid-container {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 800px) {
+	.grid-container {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (min-width: 1400px) and (max-width: 1920px) {
+	.grid-container {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (min-width: 1920px) {
+	.grid-container {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}

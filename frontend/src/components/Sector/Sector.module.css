@@ -1,0 +1,111 @@
+.sector {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: linear-gradient(145deg, #4caf50, #3e8e41);
+	color: white;
+	font-size: 1em;
+	cursor: pointer;
+	border-radius: 15px;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	padding: 10px;
+}
+
+.sector:hover {
+	transform: scale(1.1);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.selected {
+	background: #ff6347;
+}
+
+.disabled {
+	background: #808080;
+	cursor: not-allowed;
+}
+
+.sector-1 {
+	grid-column: 2;
+	grid-row: 1;
+}
+.sector-2 {
+	grid-column: 3;
+	grid-row: 1;
+}
+.sector-3 {
+	grid-column: 4;
+	grid-row: 1;
+}
+.sector-4 {
+	grid-column: 5;
+	grid-row: 1;
+}
+.sector-5 {
+	grid-column: 6;
+	grid-row: 1;
+}
+
+.sector-6 {
+	grid-column: 7;
+	grid-row: 2;
+}
+.sector-7 {
+	grid-column: 7;
+	grid-row: 3;
+}
+.sector-8 {
+	grid-column: 7;
+	grid-row: 4;
+}
+.sector-9 {
+	grid-column: 7;
+	grid-row: 5;
+}
+.sector-10 {
+	grid-column: 7;
+	grid-row: 6;
+}
+
+.sector-11 {
+	grid-column: 6;
+	grid-row: 7;
+}
+.sector-12 {
+	grid-column: 5;
+	grid-row: 7;
+}
+.sector-13 {
+	grid-column: 4;
+	grid-row: 7;
+}
+.sector-14 {
+	grid-column: 3;
+	grid-row: 7;
+}
+.sector-15 {
+	grid-column: 2;
+	grid-row: 7;
+}
+
+.sector-16 {
+	grid-column: 1;
+	grid-row: 6;
+}
+.sector-17 {
+	grid-column: 1;
+	grid-row: 5;
+}
+.sector-18 {
+	grid-column: 1;
+	grid-row: 4;
+}
+.sector-19 {
+	grid-column: 1;
+	grid-row: 3;
+}
+.sector-20 {
+	grid-column: 1;
+	grid-row: 2;
+}

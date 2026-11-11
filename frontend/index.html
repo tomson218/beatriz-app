@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beatriz App</title>
+
+  <style>
+    df-messenger {
+      --df-messenger-bot-message: #878fac;
+      --df-messenger-button-titlebar-color: #df9b56;
+      --df-messenger-chat-background-color: #fafafa;
+      --df-messenger-font-color: white;
+      --df-messenger-send-icon: #878fac;
+      --df-messenger-user-message: #479b3d;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="root"></div>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <script type="module" src="/src/main.tsx"></script>
+
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+  <df-messenger chat-title="BEATRIZ-APP" agent-id="70085f38-d38f-4f2c-9503-cd9907c80ca1"
+    language-code="pl"></df-messenger>
+
+
+</body>
+
+</html>

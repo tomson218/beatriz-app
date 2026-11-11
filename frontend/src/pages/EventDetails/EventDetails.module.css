@@ -1,0 +1,137 @@
+.heading {
+	font-size: 3rem;
+	color: #000;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	text-align: center;
+	padding-top: 2.5rem;
+}
+
+.card {
+	display: grid;
+	grid-template-columns: 2fr 3fr;
+	gap: 2rem;
+	border: none;
+	padding: 4.5rem 2rem;
+	background-color: #f0f0f0;
+}
+
+.image-container {
+	background-color: black;
+	border-radius: 16px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+	height: 100%;
+	padding: 1rem 2rem;
+	border: none;
+	gap: 1rem;
+	background-color: #fff;
+	border-radius: 16px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-title {
+	margin: 0;
+	font-size: 2.5rem;
+	font-weight: bold;
+	color: #222;
+}
+
+.event-date {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	font-size: 1.5rem;
+}
+
+.event-description {
+	margin: 0;
+	color: #555;
+}
+
+.event-ticket {
+	margin: 0;
+	color: #888;
+	font-size: 20px;
+}
+
+.normai-price {
+	text-decoration: line-through;
+}
+
+.discount-price {
+	font-weight: bold;
+}
+
+.action-buttons {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
+	width: 100%;
+	padding: 1rem;
+}
+
+.btn {
+	background-color: purple;
+}
+
+@media (max-width: 1024px) {
+	.card {
+		display: flex;
+		flex-direction: column;
+		padding: 2rem;
+	}
+
+	.image-container {
+		width: 100%;
+	}
+
+	.event-title {
+		font-size: 2rem;
+	}
+
+	.content {
+		gap: 1.5rem;
+		width: 100%;
+	}
+
+	.heading {
+		font-size: 2rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.card {
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+	}
+
+	.image-container {
+		width: 100%;
+	}
+
+	.event-title {
+		font-size: 1.5rem;
+	}
+
+	.content {
+		gap: 2rem;
+		width: 100%;
+	}
+}

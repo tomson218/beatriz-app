@@ -1,0 +1,29 @@
+.container {
+	min-height: 94.4dvh;
+	background-color: #f5f5dc;
+}
+
+.heading {
+	text-align: center;
+	padding: 1rem;
+	font-size: 2rem;
+	font-weight: 600;
+}
+
+.blocks {
+	display: grid;
+	gap: 1rem;
+	padding: 1rem;
+	grid-template-columns: 1fr;
+}
+
+.link {
+	padding: 1rem;
+	margin: 1rem;
+}
+
+@media (min-width: 40rem) {
+	.blocks {
+		grid-template-columns: 1fr 1fr;
+	}
+}

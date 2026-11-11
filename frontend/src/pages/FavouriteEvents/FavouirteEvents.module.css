@@ -1,0 +1,21 @@
+body {
+	background-color: white;
+}
+
+.container {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 1rem;
+	justify-content: center;
+	gap: 2rem;
+	background-color: #ddd;
+	max-width: 1920px;
+}
+
+.icon {
+	cursor: pointer;
+}
+
+.icon:hover {
+	fill: red;
+}

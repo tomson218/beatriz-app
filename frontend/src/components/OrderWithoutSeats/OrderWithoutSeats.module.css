@@ -1,0 +1,61 @@
+:root {
+	--container-margin: 1rem;
+}
+
+body {
+	font-family: 'Roboto';
+}
+
+.container {
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	background-color: #d4e157;
+
+	width: calc(100% - 2 * var(--container-margin));
+	margin: var(--container-margin) auto;
+	justify-content: center;
+	padding: 20px;
+	border-radius: 1rem;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.numbers-tickets {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	background-color: white;
+	justify-content: space-between;
+	padding: 10px 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin-bottom: 20px;
+}
+
+.buttons-group {
+	display: flex;
+	gap: 1rem;
+}
+
+.tickets-type {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	background-color: #282c34;
+	padding: 10px 2rem;
+	border-radius: 1rem;
+	margin: 1rem 0;
+	color: white;
+}
+
+@container (min-width: 1025px) {
+	.numbers-tickets {
+		flex-direction: row;
+	}
+
+	.tickets-type {
+		flex-direction: row;
+	}
+}

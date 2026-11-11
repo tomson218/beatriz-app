@@ -1,0 +1,71 @@
+body {
+	background-color: #fff;
+}
+
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 1rem;
+	background-color: #f5f5f5;
+	border-radius: 1rem;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.textarea-box {
+	border-radius: 0.5rem;
+	padding: 1rem;
+	border: 1px solid #ccc;
+	margin-bottom: 1rem;
+}
+
+.buttons {
+	display: flex;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.cancel-btn {
+	background-color: #dc3545;
+	color: #fff;
+	border-radius: 0.5rem;
+	flex: 1;
+	padding: 1rem;
+	font-size: 1rem;
+	border: none;
+	cursor: pointer;
+}
+
+.add-btn {
+	background-color: #28a745;
+	color: #fff;
+	border-radius: 0.5rem;
+	flex: 1;
+	padding: 1rem;
+	font-size: 1rem;
+	border: none;
+	cursor: pointer;
+}
+
+.error-info {
+	color: #f00;
+	font-weight: 600;
+	padding-top: 1rem;
+}
+
+.toggle {
+	display: flex;
+	justify-content: center;
+	margin-right: 2rem;
+	align-items: center;
+	gap: 1rem;
+	margin-top: 5rem;
+}
+
+.toggle-btn {
+	padding: 1.5rem 3rem;
+	border-radius: 1rem;
+}

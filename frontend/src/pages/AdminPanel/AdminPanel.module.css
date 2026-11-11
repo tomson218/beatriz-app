@@ -1,0 +1,11 @@
+.container {
+	min-height: 94.4dvh;
+	background-color: var(--primary-background);
+}
+
+.btn-group {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	padding-top: 1rem;
+}
