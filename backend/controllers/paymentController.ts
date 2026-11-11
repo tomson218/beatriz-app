@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
-import { formattedDate, formattedTime } from '../utils/formattingDate.js';
-import User from '../models/userModel.js';
+import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
+import User from '../models/userModel.ts';
 
 dotenv.config({ path: './config.env' });
 

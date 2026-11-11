@@ -1,20 +1,19 @@
 import express from 'express';
 import morgan from 'morgan';
-import AppError from './utils/appError.js';
-import userRouter from './routes/userRoutes.js';
-import globalErrorHandler from './controllers/errorController.js';
+import AppError from './utils/appError.ts';
+import userRouter from './routes/userRoutes.ts';
+import globalErrorHandler from './controllers/errorController.ts';
 import cors from 'cors';
-import eventRouter from './routes/eventRoutes.js';
-import paymentRoutes from './routes/paymentRoutes.js';
+import eventRouter from './routes/eventRoutes.ts';
+import paymentRoutes from './routes/paymentRoutes.ts';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import ticketRoutes from './routes/ticketRoutes.js';
-import discountCodeRoutes from './routes/discountCodeRoutes.js';
-import forumRoutes from './routes/forumRoutes.js';
-
-import webhookRoutes from './routes/webhookRoutes.js';
-import orderRoutes from './routes/orderRoutes.js';
+import ticketRoutes from './routes/ticketRoutes.ts';
+import discountCodeRoutes from './routes/discountCodeRoutes.ts';
+import forumRoutes from './routes/forumRoutes.ts';
+import webhookRoutes from './routes/webhookRoutes.ts';
+import orderRoutes from './routes/orderRoutes.ts';
 import session from 'express-session';
 
 const app = express();
@@ -28,7 +27,7 @@ app.use(
 	cors({
 		origin: 'http://localhost:5173',
 		credentials: true,
-	})
+	}),
 );
 
 app.use(
@@ -37,7 +36,7 @@ app.use(
 		resave: false,
 		saveUninitialized: true,
 		cookie: { secure: false },
-	})
+	}),
 );
 
 if (process.env.NODE_ENV === 'development') {

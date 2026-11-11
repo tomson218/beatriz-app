@@ -1,5 +1,5 @@
-import Event from '../models/eventModel.js';
-import { formattedDate, formattedTime } from './formattingDate.js';
+import Event from '../models/eventModel.ts';
+import { formattedDate, formattedTime } from './formattingDate.ts';
 
 export const ticketsTemplate = async (tickets, order) => {
 	const ticketRows = await Promise.all(
@@ -14,7 +14,7 @@ export const ticketsTemplate = async (tickets, order) => {
                     <td>${ticket.price} ${order.currency}</td>
                 </tr>
             `;
-		})
+		}),
 	);
 
 	return `

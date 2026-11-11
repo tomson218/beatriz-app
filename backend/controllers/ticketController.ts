@@ -1,6 +1,6 @@
-import Ticket from '../models/ticketModel.js';
-import Event from '../models/eventModel.js';
-import { COUNT_BLOCKS, COUNT_SEAT } from '../capacityHall.js';
+import Ticket from '../models/ticketModel.ts';
+import Event from '../models/eventModel.ts';
+import { COUNT_BLOCKS, COUNT_SEAT } from '../capacityHall.ts';
 
 export const getAllTickets = async (req, res) => {
 	try {

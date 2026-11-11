@@ -1,5 +1,5 @@
-import Event from './../models/eventModel.js';
-import AppError from './../utils/appError.js';
+import Event from '../models/eventModel.ts';
+import AppError from '../utils/appError.ts';
 import multer from 'multer';
 
 const multerFilter = (req, file, cb) => {

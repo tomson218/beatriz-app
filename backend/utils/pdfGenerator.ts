@@ -1,6 +1,6 @@
 import PDFDocument from 'pdfkit';
-import { formattedDate, formattedTime } from './formattingDate.js';
-import { getNameBlock, getNameTypeTicket } from './formattings.js';
+import { formattedDate, formattedTime } from './formattingDate.ts';
+import { getNameBlock, getNameTypeTicket } from './formattings.ts';
 
 export const generatePDF = async ticketList => {
 	const doc = new PDFDocument({ margin: 50 });
@@ -43,7 +43,7 @@ export const generatePDF = async ticketList => {
 			doc.text(
 				`Data: ${formattedDate(new Date(ticket.date))} ${formattedTime(new Date(ticket.date))}`,
 				300,
-				startY + 70
+				startY + 70,
 			);
 
 			doc.moveDown(5);

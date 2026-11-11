@@ -1,5 +1,5 @@
-import User from './../models/userModel.js';
-import AppError from '../utils/appError.js';
+import User from '../models/userModel.ts';
+import AppError from '../utils/appError.ts';
 import mongoose from 'mongoose';
 const { ObjectId } = mongoose.Types;
 
