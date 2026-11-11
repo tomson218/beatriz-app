@@ -2,6 +2,8 @@ import { Schema, model, type InferSchemaType } from 'mongoose';
 
 export type Ticket = InferSchemaType<typeof ticketSchema>;
 
+const seatingSchema = ""; // TO__DO
+
 const ticketSchema = new Schema({
 	event: {
 		type: Schema.Types.ObjectId,
@@ -11,6 +13,8 @@ const ticketSchema = new Schema({
 	seating: {
 		type: Object,
 		required: [true, 'Please tell us your seating'],
+
+		// sector, block, seat
 	},
 	user: {
 		type: Schema.Types.ObjectId,
@@ -27,6 +31,7 @@ const ticketSchema = new Schema({
 		type: Number,
 		required: [true, 'Please tell us your price'],
 		min: 0,
+		// positive number, max 2 decimal places
 	},
 	type: {
 		type: String,

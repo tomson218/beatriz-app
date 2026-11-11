@@ -7,7 +7,7 @@ import UserModel from '../models/userModel.ts';
 import { generatePDF } from '../utils/pdfGenerator.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './.env.local' });
 
 const stripe = new Stripe(process.env.STRIPE_SK);
 

@@ -2,6 +2,12 @@ import { Schema, model, type InferSchemaType } from 'mongoose';
 
 export type Event = InferSchemaType<typeof eventSchema>;
 
+const starSchema = ''; // TO__DO
+
+const sectorSchema = ''; // TO__DO
+
+const pricesSchema = ''; // TO__DO
+
 const eventSchema = new Schema(
 	{
 		name: {
@@ -15,6 +21,8 @@ const eventSchema = new Schema(
 		star: {
 			type: Array,
 			required: [true, 'Please tell us your stars of event'],
+
+			// jak wyglada ta tablica
 		},
 		description: {
 			type: String,
@@ -26,6 +34,7 @@ const eventSchema = new Schema(
 		},
 		sectors: {
 			type: Array,
+			// ["A", "B", "C", "D", "E", "F", "G", "H"]
 			required: [true, 'Please tell us your sectors of event'],
 		},
 		image: {
@@ -35,11 +44,15 @@ const eventSchema = new Schema(
 		prices: {
 			type: Object,
 			required: [true, 'Please tell us your price of event'],
+
+			// jak wyglada ten obiekt
 		},
 		type: {
 			type: String,
 			required: [true, 'Please tell us your type of event'],
 			default: 'concert',
+
+			// dodac enuma
 		},
 	},
 	{

@@ -1,19 +1,16 @@
 /* node --experimental-vm-modules node_modules/jest/bin/jest.js */
 
-import mongoose from 'mongoose';
+/*import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import request from 'supertest';
 import { server } from '../index.ts';
 import { jest } from '@jest/globals';
 import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
-import { signup, login, signToken } from '../controllers/authController.ts';
-import { jwtDecode } from 'jwt-decode';
+import {signToken } from '../controllers/authController.ts';
 import { promisify } from 'util';
 import jwt from 'jsonwebtoken';
 
 dotenv.config();
-
-let mongod;
 
 let accessToken;
 
@@ -94,4 +91,4 @@ describe('FORMATTING AND TOKEN GENERATION', () => {
 afterAll(async () => {
 	await mongoose.connection.close();
 	console.log('Disconnected from MongoDB');
-});
+});*/

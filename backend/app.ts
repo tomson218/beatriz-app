@@ -1,3 +1,9 @@
+/* 
+
+ADDING RELATIVE PATHS IN IMPORTS IN TYPESCRIPT 6.0.3 WITH NODENEXT MODULE SYSTEM
+
+*/
+
 import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 import morgan from 'morgan';
 import AppError from './utils/appError.ts';
@@ -14,7 +20,7 @@ import discountCodeRoutes from './routes/discountCodeRoutes.ts';
 import forumRoutes from './routes/forumRoutes.ts';
 import webhookRoutes from './routes/webhookRoutes.ts';
 import orderRoutes from './routes/orderRoutes.ts';
-import session from 'express-session';
+import authRouter from './routes/authRoutes.ts';
 
 const app: Express = express();
 
@@ -25,17 +31,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
 	cors({
-		origin: 'http://localhost:5173',
+		origin: 'http://localhost:5173', // chyba do .env
 		credentials: true,
-	}),
-);
-
-app.use(
-	session({
-		secret: 'session-payment',
-		resave: false,
-		saveUninitialized: true,
-		cookie: { secure: false },
 	}),
 );
 
@@ -56,14 +53,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 	next();
 });
 
-app.use('/api/users', userRouter);
-app.use('/api/events', eventRouter);
-app.use('/api/create-checkout-session', paymentRoutes);
-app.use('/api/webhook', webhookRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/discount-codes', discountCodeRoutes);
-app.use('/api/forum', forumRoutes);
+app.use('/api/v2/auth', authRouter);
+app.use('/api/v2/users', userRouter);
+app.use('/api/v2/events', eventRouter);
+app.use('/api/v2/create-checkout-session', paymentRoutes);
+app.use('/api/v2/webhook', webhookRoutes);
+app.use('/api/v2/orders', orderRoutes);
+app.use('/api/v2/tickets', ticketRoutes);
+app.use('/api/v2/discount-codes', discountCodeRoutes);
+app.use('/api/v2/forum', forumRoutes);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
 	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
@@ -72,3 +70,14 @@ app.all('*', (req: Request, res: Response, next: NextFunction) => {
 app.use(globalErrorHandler);
 
 export default app;
+
+
+/* 
+
+1) pomocncize schematy dla mongoose
+
+2) endpointy w backendzie, robiąc sukcesywnie dokumnetację w Postmanie
+
+3) w tym czasie ogarnąć typy, żeby wywalić te wszelkie any (req.body, req.params, req.query, res.locals, itp.)
+
+*/
