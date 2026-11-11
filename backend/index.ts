@@ -1,5 +1,4 @@
 ﻿import app from './app.ts';
-import database from './database.ts';
 
 process.on('uncaughtException', err => {
 	console.log('An exception was not taken. Application terminated.');

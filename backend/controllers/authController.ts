@@ -1,19 +1,21 @@
 import crypto from 'crypto';
-import User from '../models/userModel.ts';
+//import UserModel from '../models/userModel.ts';
+import UserModel from '../models/userModel.ts';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError.ts';
 import { promisify } from 'util';
 import { sendEmail } from '../utils/email.ts';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { type Request, type Response, type NextFunction } from 'express';
 
-export const signToken = userId => {
+export const signToken = (userId: any) => {
 	return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_IN,
 	});
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user: any, statusCode: number, res: Response) => {
 	const token = signToken(user._id);
 
 	res.status(statusCode).json({
@@ -23,8 +25,8 @@ const createSendToken = (user, statusCode, res) => {
 	});
 };
 
-export const restrictTo = (...roles) => {
-	return (req, res, next) => {
+export const restrictTo = (...roles: string[]) => {
+	return (req: Request, res: Response, next: NextFunction) => {
 		if (!roles.includes(req.user.role)) {
 			return next(new AppError('You do not have permission to perform this action', 403));
 		}
@@ -33,7 +35,7 @@ export const restrictTo = (...roles) => {
 	};
 };
 
-export const protect = async (req, res, next) => {
+export const protect = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		let accessToken;
 
@@ -46,7 +48,7 @@ export const protect = async (req, res, next) => {
 		}
 		const decodedToken = await promisify(jwt.verify)(accessToken, process.env.JWT_SECRET);
 
-		const user = await User.findById(decodedToken.id);
+		const user = await UserModel.findById(decodedToken.id);
 
 		if (!user) {
 			return res
@@ -61,11 +63,11 @@ export const protect = async (req, res, next) => {
 	}
 };
 
-export const signup = async (req, res, next) => {
+export const signup = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { username, firstName, lastName, email, password, passwordConfirm, passwordChangedAt, role } = req.body;
 
-		const newUser = await User.create({
+		const newUser = await UserModel.create({
 			username,
 			firstName,
 			lastName,
@@ -78,7 +80,7 @@ export const signup = async (req, res, next) => {
 
 		createSendToken(newUser, 201, res);
 
-		const message = `Cześć ${newUser.firstName}!\n\nTwoje konto na Beatriz App jest już gotowe, a teraz przed Tobą otwierają się drzwi do koncertów, festiwali, spektakli i wielu innych wyjątkowych wydarzeń. Sprawdź, co już teraz jest w ofercie – może znajdziesz coś, co Cię zainspiruje!\n\nDo zobaczenia na widowni!\n\nZespół Beatriz App`;
+		const message: string = `Cześć ${newUser.firstName}!\n\nTwoje konto na Beatriz App jest już gotowe, a teraz przed Tobą otwierają się drzwi do koncertów, festiwali, spektakli i wielu innych wyjątkowych wydarzeń. Sprawdź, co już teraz jest w ofercie – może znajdziesz coś, co Cię zainspiruje!\n\nDo zobaczenia na widowni!\n\nZespół Beatriz App`;
 
 		try {
 			await sendEmail({
@@ -94,7 +96,7 @@ export const signup = async (req, res, next) => {
 	}
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { email, password } = req.body;
 
@@ -102,7 +104,7 @@ export const login = async (req, res, next) => {
 			return next(new AppError('Please provide email and password!', 400));
 		}
 
-		const user = await User.findOne({ email }).select('+password');
+		const user = await UserModel.findOne({ email }).select('+password');
 
 		if (!user || !(await user.correctPassword(password, user.password))) {
 			return next(new AppError('Incorrect email or password', 401));
@@ -114,11 +116,11 @@ export const login = async (req, res, next) => {
 	}
 };
 
-export const forgetPassword = async (req, res, next) => {
+export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { email } = req.body;
 
-		const user = await User.findOne({ email });
+		const user = await UserModel.findOne({ email });
 
 		if (!user) {
 			return next(new AppError('There is no user with that email address.', 404));
@@ -130,7 +132,7 @@ export const forgetPassword = async (req, res, next) => {
 
 		const resetURLFRONT = `http://localhost:5173/reset-password/${resetToken}`;
 
-		const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURLFRONT}.\nIf you didn't forget your password, please ignore this email!`;
+		const message: string = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURLFRONT}.\nIf you didn't forget your password, please ignore this email!`;
 
 		await sendEmail({
 			email: user.email,
@@ -152,11 +154,14 @@ export const forgetPassword = async (req, res, next) => {
 	}
 };
 
-export const resetPassword = async (req, res, next) => {
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
-		const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: Date.now() } });
+		const user = await UserModel.findOne({
+			passwordResetToken: hashedToken,
+			passwordResetExpires: { $gt: Date.now() },
+		});
 
 		if (!user) {
 			return next(new AppError('Token is invalid or has expired', 400));
@@ -175,9 +180,9 @@ export const resetPassword = async (req, res, next) => {
 	}
 };
 
-export const updatePassword = async (req, res, next) => {
+export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const user = await User.findById(req.user.id).select('+password');
+		const user = await UserModel.findById(req.user.id).select('+password');
 
 		if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
 			return next(new AppError('Your current password is wrong', 401));
@@ -194,16 +199,16 @@ export const updatePassword = async (req, res, next) => {
 	}
 };
 
-export const googleLogin = async (req, res, next) => {
+export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { authCode, clientId, selectBy } = req.body;
 
 		const decodedGoogleToken = jwtDecode(authCode);
 
-		let user = await User.findOne({ email: decodedGoogleToken.email });
+		let user = await UserModel.findOne({ email: decodedGoogleToken.email });
 
 		if (!user) {
-			user = await User.create({ email: decodedGoogleToken.email, googleId: decodedGoogleToken.sub });
+			user = await UserModel.create({ email: decodedGoogleToken.email, googleId: decodedGoogleToken.sub });
 			const token = signToken(user._id);
 			return res.status(201).json({ status: 'success', token, user });
 		}
@@ -220,7 +225,7 @@ export const googleLogin = async (req, res, next) => {
 	}
 };
 
-const verifyFacebookToken = async auth => {
+const verifyFacebookToken = async (auth: any) => {
 	try {
 		const FACEBOOK_URI = `https://graph.facebook.com/me?access_token=${auth.accessToken}`;
 
@@ -238,11 +243,11 @@ const verifyFacebookToken = async auth => {
 	}
 };
 
-export const facebookLogin = async (req, res, next) => {
+export const facebookLogin = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { tokens, userProfile } = req.body;
 
-		let user = await User.findOne({ email: userProfile.email });
+		let user = await UserModel.findOne({ email: userProfile.email });
 
 		const verifyToken = await verifyFacebookToken(tokens);
 
@@ -250,7 +255,14 @@ export const facebookLogin = async (req, res, next) => {
 			return res.status(500).json({ status: 'error', message: 'Token is not valid' });
 		}
 
-		const facebookObj = {
+		type FacebookObj = {
+			id: string;
+			picture: string;
+			firstName: string;
+			lastName: string;
+		};
+
+		const facebookObj: FacebookObj = {
 			id: userProfile.id,
 			picture: userProfile.picture.data.url,
 			firstName: userProfile.name.split(' ')[0],
@@ -258,7 +270,7 @@ export const facebookLogin = async (req, res, next) => {
 		};
 
 		if (!user) {
-			user = await User.create({
+			user = await UserModel.create({
 				email: userProfile.email,
 				facebookData: facebookObj,
 			});

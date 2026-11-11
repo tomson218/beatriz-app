@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 import morgan from 'morgan';
 import AppError from './utils/appError.ts';
 import userRouter from './routes/userRoutes.ts';
@@ -16,7 +16,7 @@ import webhookRoutes from './routes/webhookRoutes.ts';
 import orderRoutes from './routes/orderRoutes.ts';
 import session from 'express-session';
 
-const app = express();
+const app: Express = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
 	if (req.originalUrl.includes('/api/webhook')) {
 		next();
 	} else {
@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 	}
 });
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
 	req.requestTime = new Date().toISOString();
 	next();
 });
@@ -65,7 +65,7 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/discount-codes', discountCodeRoutes);
 app.use('/api/forum', forumRoutes);
 
-app.all('*', (req, res, next) => {
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
 	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 

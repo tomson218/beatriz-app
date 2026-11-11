@@ -3,10 +3,10 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import request from 'supertest';
-import { server } from '../index.js';
+import { server } from '../index.ts';
 import { jest } from '@jest/globals';
-import { formattedDate, formattedTime } from '../utils/formattingDate.js';
-import { signup, login, signToken } from '../controllers/authController.js';
+import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
+import { signup, login, signToken } from '../controllers/authController.ts';
 import { jwtDecode } from 'jwt-decode';
 import { promisify } from 'util';
 import jwt from 'jsonwebtoken';

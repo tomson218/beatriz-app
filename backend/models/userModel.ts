@@ -1,10 +1,12 @@
-import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-const { Schema } = mongoose;
+import { Schema, model, type InferSchemaType } from 'mongoose';
+import type { NextFunction } from 'express';
 
-const userSchema = new mongoose.Schema({
+export type User = InferSchemaType<typeof userSchema>;
+
+const userSchema = new Schema({
 	username: {
 		type: String,
 	},
@@ -91,7 +93,7 @@ const userSchema = new mongoose.Schema({
 	],
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next: NextFunction) {
 	if (!this.isModified('password')) return next();
 	{
 		this.password = await bcrypt.hash(this.password, 12);
@@ -102,23 +104,23 @@ userSchema.pre('save', async function (next) {
 	}
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function (next: NextFunction) {
 	if (!this.isModified('password') || this.insNew) return next();
 
 	this.passwordChangedAt = Date.now() - 1000;
 	next();
 });
 
-userSchema.pre(/^find/, function (next) {
+userSchema.pre(/^find/, function (next: NextFunction) {
 	this.find({ active: { $ne: false } });
 	next();
 });
 
-userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+userSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
 	return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
 	if (this.passwordChangedAt) {
 		const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 
@@ -137,6 +139,6 @@ userSchema.methods.createPasswordResetToken = function () {
 	return resetToken;
 };
 
-const User = mongoose.model('User', userSchema);
+const UserModel = model('User', userSchema);
 
-export default User;
+export default UserModel;

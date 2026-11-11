@@ -3,7 +3,7 @@ import { protect, restrictTo } from '../controllers/authController.ts';
 import { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent } from '../controllers/eventController.ts';
 import { uploadEventImage } from '../controllers/eventController.ts';
 
-const router = express.Router();
+const router = express.Router({ caseSensitive: true, strict: true });
 
 router
 	.route('/')

@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
-const { Schema } = mongoose;
+import { Schema, model, type InferSchemaType } from 'mongoose';
 
-const orderSchema = new mongoose.Schema({
+export type Order = InferSchemaType<typeof orderSchema>;
+
+const orderSchema = new Schema({
 	totalAmount: {
 		type: Number,
 		required: [true, 'Please tell us your name of event'],
@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema({
 	},
 	tickets: [
 		{
-			eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+			eventId: { type: Schema.Types.ObjectId, ref: 'Event' },
 			seating: [String],
 			price: Number,
 			type: {
@@ -43,6 +43,6 @@ const orderSchema = new mongoose.Schema({
 	},
 });
 
-const Order = mongoose.model('Order', orderSchema);
+const OrderModel = model('Order', orderSchema);
 
-export default Order;
+export default OrderModel;

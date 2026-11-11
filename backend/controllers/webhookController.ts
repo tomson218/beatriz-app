@@ -1,10 +1,11 @@
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
-import Order from '../models/orderModel.ts';
-import Ticket from '../models/ticketModel.ts';
+import OrderModel from '../models/orderModel.ts';
+import TicketModel from '../models/ticketModel.ts';
 import { sendEmail } from '../utils/email.ts';
-import User from '../models/userModel.ts';
+import UserModel from '../models/userModel.ts';
 import { generatePDF } from '../utils/pdfGenerator.ts';
+import { type Request, type Response, type NextFunction } from 'express';
 
 dotenv.config({ path: './config.env' });
 
@@ -12,7 +13,7 @@ const stripe = new Stripe(process.env.STRIPE_SK);
 
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 
-export const listenWebhook = async (request, response, next) => {
+export const listenWebhook = async (request: Request, response: Response, next: NextFunction) => {
 	const sig = request.headers['stripe-signature'];
 
 	let event;
@@ -29,7 +30,7 @@ export const listenWebhook = async (request, response, next) => {
 			try {
 				const checkoutSessionCompleted = event.data.object;
 
-				const user = await User.findById(JSON.parse(checkoutSessionCompleted.metadata.userId));
+				const user = await UserModel.findById(JSON.parse(checkoutSessionCompleted.metadata.userId));
 
 				const discountCode = JSON.parse(checkoutSessionCompleted.metadata.discountCode);
 
@@ -44,7 +45,7 @@ export const listenWebhook = async (request, response, next) => {
 
 				const orderPrice = userCart.reduce((a, b) => a + Number(b.price), 0);
 
-				const order = await Order.create({
+				const order = await OrderModel.create({
 					totalAmount: orderPrice,
 					date: new Date(),
 					user: user._id,
@@ -67,11 +68,11 @@ export const listenWebhook = async (request, response, next) => {
 					date: new Date(),
 				}));
 
-				await Promise.all(tickets.map(ticket => Ticket.create(ticket)));
+				await Promise.all(tickets.map(ticket => TicketModel.create(ticket)));
 
 				const message = `<p>Dziękujęmy za złożenie zamówienia na kwotę ${order.totalAmount} ${order.currency}. W załączniku znajduje się plik bilety.pdf, który zawiera listę zakupionych biletów oraz szczegóły dotyczące wydarzenia.</p> <p>Pozdrawiamy</p> <p>Zespół aplikacji Beatriz App</p>`;
 
-				const { email } = await User.findById(user._id).select('email');
+				const { email } = await UserModel.findById(user._id).select('email');
 
 				const pdfContent = await generatePDF(userCart);
 
@@ -92,7 +93,7 @@ export const listenWebhook = async (request, response, next) => {
 					return next(new AppError('Problem with sending an email.', 500));
 				}
 
-				await User.findByIdAndUpdate(user._id, { cart: [] });
+				await UserModel.findByIdAndUpdate(user._id, { cart: [] });
 			} catch (error) {
 				console.error('Error handling checkout.session.completed:', error);
 			}

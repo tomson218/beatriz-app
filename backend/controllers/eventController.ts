@@ -1,8 +1,9 @@
-import Event from '../models/eventModel.ts';
+import EventModel from '../models/eventModel.ts';
 import AppError from '../utils/appError.ts';
 import multer from 'multer';
+import { type Request, type Response, type NextFunction } from 'express';
 
-const multerFilter = (req, file, cb) => {
+const multerFilter = (req: Request, file: any, cb: any) => {
 	if (file.mimetype.startsWith('image')) {
 		cb(null, true);
 	} else {
@@ -11,10 +12,10 @@ const multerFilter = (req, file, cb) => {
 };
 
 const multerStorage = multer.diskStorage({
-	destination: (req, file, cb) => {
+	destination: (req: Request, file: any, cb: any) => {
 		cb(null, 'public/images/events');
 	},
-	filename: (req, file, cb) => {
+	filename: (req: Request, file: any, cb: any) => {
 		const extension = file.mimetype.split('/')[1];
 
 		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -30,7 +31,7 @@ const upload = multer({
 
 export const uploadEventImage = upload.single('image');
 
-const calcDiscountPrice = eventDate => {
+const calcDiscountPrice = (eventDate: Date) => {
 	const daysUntilEvent = Math.floor((new Date(eventDate) - Date.now()) / (1000 * 60 * 60 * 24));
 
 	if (daysUntilEvent >= 90) {
@@ -50,7 +51,7 @@ const calcDiscountPrice = eventDate => {
 	return 0;
 };
 
-const calcPricesAfterDiscount = (discount, prices) => {
+const calcPricesAfterDiscount = (discount: number, prices: any) => {
 	const discountedEntries = Object.entries(prices).map(([key, value]) => {
 		if (discount >= 1) {
 			return [key, Math.ceil(value * discount)];
@@ -62,9 +63,9 @@ const calcPricesAfterDiscount = (discount, prices) => {
 	return Object.fromEntries(discountedEntries);
 };
 
-export const getAllEvents = async (req, res) => {
+export const getAllEvents = async (req: Request, res: Response) => {
 	try {
-		const events = await Event.find({ date: { $gte: new Date() } })
+		const events = await EventModel.find({ date: { $gte: new Date() } })
 			.sort({ date: 1 })
 			.lean();
 
@@ -85,11 +86,11 @@ export const getAllEvents = async (req, res) => {
 	}
 };
 
-export const getEvent = async (req, res, next) => {
+export const getEvent = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
 
-		const event = await Event.findById(id).select('-__v').lean();
+		const event = await EventModel.findById(id).select('-__v').lean();
 
 		event.discount = calcDiscountPrice(event.date);
 
@@ -106,7 +107,7 @@ export const getEvent = async (req, res, next) => {
 	}
 };
 
-export const createEvent = async (req, res, next) => {
+export const createEvent = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		console.log(req.body);
 
@@ -116,7 +117,7 @@ export const createEvent = async (req, res, next) => {
 
 		const sectorsArray = sectors.split(',').map(sector => sector.trim());
 
-		const newEvent = await Event.create({
+		const newEvent = await EventModel.create({
 			date,
 			description,
 			prices: {
@@ -144,10 +145,10 @@ export const createEvent = async (req, res, next) => {
 	}
 };
 
-export const deleteEvent = async (req, res, next) => {
+export const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params;
 
-	const event = await Event.findByIdAndDelete(id);
+	const event = await EventModel.findByIdAndDelete(id);
 
 	if (!event) {
 		return next(new AppError('No event found with that ID', 404));
@@ -159,12 +160,12 @@ export const deleteEvent = async (req, res, next) => {
 	});
 };
 
-export const updateEvent = async (req, res, next) => {
+export const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
 		const { description } = req.body;
 
-		const updatedEvent = await Event.findByIdAndUpdate(id, { description });
+		const updatedEvent = await EventModel.findByIdAndUpdate(id, { description });
 
 		if (!updatedEvent) {
 			return next(new AppError('No event found with that ID', 404));

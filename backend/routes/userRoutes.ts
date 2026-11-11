@@ -23,7 +23,7 @@ import {
 	facebookLogin,
 } from '../controllers/authController.ts';
 
-const router = express.Router();
+const router = express.Router({ caseSensitive: true, strict: true });
 
 router.post('/signup', signup);
 

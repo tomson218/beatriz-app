@@ -1,10 +1,10 @@
-import DiscountCode from '../models/discountCodeModel.ts';
-import User from '../models/userModel.ts';
-import express, { type Express, type Request, type Response, type NextFunction } from 'express';
+import DiscountCodeModel from '../models/discountCodeModel.ts';
+import UserModel from '../models/userModel.ts';
+import { type Request, type Response, type NextFunction } from 'express';
 
 export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const discountCodes = await DiscountCode.find().select('-__v');
+		const discountCodes = await DiscountCodeModel.find().select('-__v');
 
 		res.status(200).json({
 			status: 'success',
@@ -20,7 +20,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 	try {
 		const currentDate = Date.now();
 		const { enteredCode, totalAmount } = req.body;
-		const user = await User.findById(req.user.id);
+		const user = await UserModel.findById(req.user.id);
 
 		if (!user) {
 			return res.status(404).json({
@@ -29,7 +29,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 			});
 		}
 
-		const discountCode = await DiscountCode.findOne({ code: enteredCode });
+		const discountCode = await DiscountCodeModel.findOne({ code: enteredCode });
 
 		if (!discountCode) {
 			return res.status(404).json({
@@ -87,7 +87,7 @@ export const addDiscountCode = async (req: Request, res: Response, next: NextFun
 
 		const { code, value, expirationDate, usageLimit, minAmountOrder } = req.body;
 
-		const newDiscountCode = await DiscountCode.create({
+		const newDiscountCode = await DiscountCodeModel.create({
 			code,
 			value,
 			expiration: expirationDate,

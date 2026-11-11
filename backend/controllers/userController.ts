@@ -1,9 +1,11 @@
-import User from '../models/userModel.ts';
+import UserModel from '../models/userModel.ts';
 import AppError from '../utils/appError.ts';
 import mongoose from 'mongoose';
+import { type Request, type Response, type NextFunction } from 'express';
+
 const { ObjectId } = mongoose.Types;
 
-const filterObj = (obj, ...allowedFields) => {
+const filterObj = (obj: any, ...allowedFields: any) => {
 	const newObj = {};
 	Object.keys(obj).forEach(item => {
 		if (allowedFields.includes(item)) {
@@ -13,9 +15,9 @@ const filterObj = (obj, ...allowedFields) => {
 	return newObj;
 };
 
-export const getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const users = await User.find().select('-__v');
+		const users = await UserModel.find().select('-__v');
 
 		res.status(200).json({
 			status: 'success',
@@ -27,7 +29,7 @@ export const getAllUsers = async (req, res, next) => {
 	}
 };
 
-export const getUser = async (req, res) => {
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
 
@@ -46,7 +48,7 @@ export const getUser = async (req, res) => {
 	}
 };
 
-export const updateMe = async (req, res, next) => {
+export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		if (req.body.password || req.body.passowrdConfirm) {
 			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword"), 400);
@@ -54,7 +56,7 @@ export const updateMe = async (req, res, next) => {
 
 		const filteredBody = filterObj(req.body, 'username', 'email', 'lastName', 'firstName');
 
-		const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+		const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, filteredBody, {
 			new: true,
 			runValidators: true,
 		});
@@ -68,9 +70,9 @@ export const updateMe = async (req, res, next) => {
 	}
 };
 
-export const deleteMe = async (req, res, next) => {
+export const deleteMe = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		await User.findByIdAndUpdate(req.user.id, { active: false });
+		await UserModel.findByIdAndUpdate(req.user.id, { active: false });
 
 		res.status(204).json({
 			status: 'success',
@@ -81,9 +83,9 @@ export const deleteMe = async (req, res, next) => {
 	}
 };
 
-export const getUserFavoriteEvents = async (req, res, next) => {
+export const getUserFavoriteEvents = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const user = await User.findById(req.user.id).populate('favouriteEvents').exec();
+		const user = await UserModel.findById(req.user.id).populate('favouriteEvents').exec();
 
 		if (!user) {
 			return next(new AppError('This event is not on your list of favourites.', 404));
@@ -100,11 +102,11 @@ export const getUserFavoriteEvents = async (req, res, next) => {
 	}
 };
 
-export const addEventToFavourite = async (req, res, next) => {
+export const addEventToFavourite = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { eventId } = req.body;
 
-		const user = await User.findById(req.user.id);
+		const user = await UserModel.findById(req.user.id);
 
 		const isExistEvent = e => e.toString() === eventId;
 
@@ -124,11 +126,11 @@ export const addEventToFavourite = async (req, res, next) => {
 	}
 };
 
-export const removeEventFromFavourite = async (req, res, next) => {
+export const removeEventFromFavourite = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { eventId } = req.body;
 
-		const user = await User.findById(req.user.id);
+		const user = await UserModel.findById(req.user.id);
 
 		const isExistEvent = e => e.toString() === eventId.toString();
 
@@ -148,12 +150,12 @@ export const removeEventFromFavourite = async (req, res, next) => {
 	}
 };
 
-export const addCart = async (req, res, next) => {
+export const addCart = async (req: Request, res: Response, next: NextFunction) => {
 	const userId = req.user.id;
 
 	const { cart } = req.body;
 
-	const user = await User.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
+	const user = await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
 
 	res.status(200).json({
 		cart,
@@ -163,21 +165,21 @@ export const addCart = async (req, res, next) => {
 	});
 };
 
-export const createUser = (req, res) => {
+export const createUser = (req: Request, res: Response) => {
 	res.status(500).json({
 		status: 'error',
 		message: 'This route is not yet defined!',
 	});
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
 
 		console.log('ID:', id);
 		console.log('Request body:', req.body);
 
-		const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+		const updatedUser = await UserModel.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
 
 		res.status(200).json({
 			status: 'success',
@@ -192,15 +194,15 @@ export const updateUser = async (req, res) => {
 	}
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
 
-		const user = await User.findById(id);
+		const user = await UserModel.findById(id);
 
 		console.log(user);
 
-		await User.findByIdAndDelete(id);
+		await UserModel.findByIdAndDelete(id);
 
 		res.status(204).json({
 			status: 'success',

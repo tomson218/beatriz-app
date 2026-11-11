@@ -8,7 +8,7 @@ import {
 	getOccupiedSeats,
 } from '../controllers/ticketController.ts';
 
-const router = express.Router();
+const router = express.Router({ caseSensitive: true, strict: true });
 
 router
 	.route('/')
