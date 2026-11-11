@@ -1,18 +1,19 @@
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
 import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
-import User from '../models/userModel.ts';
+import UserModel from '../models/userModel.ts';
+import { type Request, type Response, type NextFunction } from 'express';
 
 dotenv.config({ path: './config.env' });
 
 const stripe = new Stripe(process.env.STRIPE_SK);
 const CLIENT_URL = 'http://localhost:5173';
 
-export const createCheckoutSession = async (req, res, next) => {
+export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { products, discountCode } = req.body;
+		const { products } = req.body;
 
-		const user = await User.findById(req.user.id);
+		const user = await UserModel.findById(req.user.id);
 
 		if (user.cart.length > 0) {
 			user.cart = [];

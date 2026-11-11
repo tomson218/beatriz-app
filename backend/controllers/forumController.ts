@@ -1,8 +1,9 @@
-import Forum from '../models/forumModel.ts';
+import ForumModel from '../models/forumModel.ts';
+import { type Request, type Response, type NextFunction } from 'express';
 
-export const getAllForumPosts = async (req, res, next) => {
+export const getAllForumPosts = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const forumPosts = await Forum.find().select('-__v');
+		const forumPosts = await ForumModel.find().select('-__v');
 
 		res.status(200).json({
 			status: 'success',
@@ -14,11 +15,11 @@ export const getAllForumPosts = async (req, res, next) => {
 	}
 };
 
-export const getPostsByEventId = async (req, res, next) => {
+export const getPostsByEventId = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { eventId } = req.params;
 
-		const forumPosts = await Forum.find({ event: eventId }).populate('user').select('-__v').sort({ date: 1 });
+		const forumPosts = await ForumModel.find({ event: eventId }).populate('user').select('-__v').sort({ date: 1 });
 
 		res.status(200).json({
 			status: 'success',
@@ -30,13 +31,13 @@ export const getPostsByEventId = async (req, res, next) => {
 	}
 };
 
-export const addNewPostToForum = async (req, res, next) => {
+export const addNewPostToForum = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const userId = req.user.id;
 
 		const { message, eventId } = req.body;
 
-		const newPost = await Forum.create({
+		const newPost = await ForumModel.create({
 			user: userId,
 			message: message,
 			event: eventId,

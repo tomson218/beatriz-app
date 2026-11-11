@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
-const { Schema } = mongoose;
+import { Schema, model, type InferSchemaType } from 'mongoose';
 
-const ticketSchema = new mongoose.Schema({
+export type Ticket = InferSchemaType<typeof ticketSchema>;
+
+const ticketSchema = new Schema({
 	event: {
 		type: Schema.Types.ObjectId,
 		ref: 'Event',
@@ -40,6 +40,6 @@ const ticketSchema = new mongoose.Schema({
 	},
 });
 
-const Ticket = mongoose.model('Ticket', ticketSchema);
+const TicketModel = model('Ticket', ticketSchema);
 
-export default Ticket;
+export default TicketModel;

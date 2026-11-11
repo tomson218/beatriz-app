@@ -2,7 +2,7 @@ import express from 'express';
 import { protect } from '../controllers/authController.ts';
 import { getAllOrders, getUserOrders } from '../controllers/orderController.ts';
 
-const router = express.Router();
+const router = express.Router({ caseSensitive: true, strict: true });
 
 router
 	.route('/')

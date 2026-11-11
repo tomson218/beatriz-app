@@ -1,8 +1,9 @@
-import Order from '../models/orderModel.ts';
+import OrderModel from '../models/orderModel.ts';
+import { type Request, type Response, type NextFunction } from 'express';
 
-export const getAllOrders = async (req, res, next) => {
+export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const orders = await Order.find().select('-__v');
+		const orders = await OrderModel.find().select('-__v');
 
 		res.status(200).json({
 			status: 'success',
@@ -14,11 +15,11 @@ export const getAllOrders = async (req, res, next) => {
 	}
 };
 
-export const getUserOrders = async (req, res, next) => {
+export const getUserOrders = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.params;
 
-		const orders = await Order.find({ user: id })
+		const orders = await OrderModel.find({ user: id })
 			.select('-__v')
 			.populate('tickets.eventId')
 			.sort({ date: -1 })

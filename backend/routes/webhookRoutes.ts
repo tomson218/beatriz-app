@@ -1,7 +1,7 @@
 import express from 'express';
 import { listenWebhook } from '../controllers/webhookController.ts';
 
-const router = express.Router();
+const router = express.Router({ caseSensitive: true, strict: true });
 
 router
 	.route('/')

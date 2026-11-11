@@ -1,8 +1,8 @@
-import express, { type Express } from 'express';
+import express from 'express';
 import { getAllForumPosts, getPostsByEventId, addNewPostToForum } from '../controllers/forumController.ts';
 import { protect } from '../controllers/authController.ts';
 
-const router: Express = express.Router();
+const router = express.Router({ caseSensitive: true, strict: true });
 
 router
 	.route('/')

@@ -1,17 +1,19 @@
-import mongoose from 'mongoose';
+import { Schema, model, type InferSchemaType } from 'mongoose';
 
-const forumSchema = new mongoose.Schema({
+export type Forum = InferSchemaType<typeof forumSchema>;
+
+const forumSchema = new Schema({
 	date: {
 		type: Date,
 		required: [true, 'Please enter the date of the forum post'],
 	},
 	user: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: [true, 'Please enter the user who created the forum post'],
 	},
 	event: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: Schema.Types.ObjectId,
 		ref: 'Event',
 		required: [true, 'Please enter the event related to the forum post'],
 	},
@@ -23,6 +25,6 @@ const forumSchema = new mongoose.Schema({
 	},
 });
 
-const Forum = mongoose.model('forum', forumSchema);
+const ForumModel = model('Forum', forumSchema);
 
-export default Forum;
+export default ForumModel;

@@ -1,6 +1,8 @@
-import mongoose from 'mongoose';
+import { Schema, model, type InferSchemaType } from 'mongoose';
 
-const eventSchema = new mongoose.Schema(
+export type Event = InferSchemaType<typeof eventSchema>;
+
+const eventSchema = new Schema(
 	{
 		name: {
 			type: String,
@@ -42,9 +44,9 @@ const eventSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
-	}
+	},
 );
 
-const Event = mongoose.model('Event', eventSchema);
+const EventModel = model('Event', eventSchema);
 
-export default Event;
+export default EventModel;

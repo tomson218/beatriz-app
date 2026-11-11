@@ -7,6 +7,10 @@
 		"verbatimModuleSyntax": true,
 		"noEmit": true,
 		"strict": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["src/*"] // Mapowanie: @/coś zamienia na src/coś
+		} // Baza projektowa (zazwyczaj katalog główny)
 	}
 }
