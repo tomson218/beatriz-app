@@ -6,6 +6,26 @@ import type { NextFunction } from 'express';
 
 export type User = InferSchemaType<typeof userSchema>;
 
+const facebookDataSchema = ''; // TO__DO
+
+/* 
+
+
+id
+"1556226018361397"
+picture
+"https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1556226…"
+firstName
+"Tomasz"
+lastName
+"Pstrowski"
+
+*/
+
+const cartScheama = ''; // TO__DO
+
+const appliedDiscountCodesSchema = ''; // TO__DO
+
 const userSchema = new Schema({
 	username: {
 		type: String,
@@ -33,6 +53,8 @@ const userSchema = new Schema({
 
 	facebookData: {
 		type: Object,
+
+		// jak dokladnie ten obiket wyglada??
 	},
 	photo: {
 		type: String,
@@ -57,7 +79,7 @@ const userSchema = new Schema({
 		type: String,
 
 		validate: {
-			validator: function (item) {
+			validator: function (item: string) {
 				return item === this.password;
 			},
 			message: 'Passwords are not the same1',
@@ -75,11 +97,15 @@ const userSchema = new Schema({
 	cart: {
 		type: Array,
 		default: [],
+
+		// jak dokladnie ta tablica wyglada
 	},
 	myCart: {
 		type: Array,
 		default: [],
 		select: false,
+
+		// jak dokladnie ta tablica wyglada
 	},
 	appliedDiscountCodes: [
 		{

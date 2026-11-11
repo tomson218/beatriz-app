@@ -113,9 +113,9 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
 		const { date, description, child, normal, seatRequired, sectors, star, vip, name, type } = req.body;
 
-		const formattedStar = star.split(',').map(item => item.trim());
+		const formattedStar = star.split(',').map((item: any) => item.trim());
 
-		const sectorsArray = sectors.split(',').map(sector => sector.trim());
+		const sectorsArray = sectors.split(',').map((sector: any) => sector.trim());
 
 		const newEvent = await EventModel.create({
 			date,

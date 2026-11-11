@@ -1,3 +1,9 @@
+/* 
+
+ADDING RELATIVE PATHS IN IMPORTS IN TYPESCRIPT 6.0.3 WITH NODENEXT MODULE SYSTEM
+
+*/
+
 import express from 'express';
 import { getAllDiscountCodes, addDiscountCode, applyDiscountCode } from '../controllers/discountCodeController.ts';
 import { protect } from '../controllers/authController.ts';

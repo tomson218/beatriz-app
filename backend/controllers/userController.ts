@@ -33,7 +33,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 	try {
 		const { id } = req.params;
 
-		const user = await User.findById(id).select('-__v');
+		const user = await UserModel.findById(id).select('-__v');
 
 		res.status(200).json({
 			status: 'success',
@@ -50,8 +50,8 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 
 export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		if (req.body.password || req.body.passowrdConfirm) {
-			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword"), 400);
+		if (req.body.password || req.body.passwordConfirm) {
+			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword", 400));
 		}
 
 		const filteredBody = filterObj(req.body, 'username', 'email', 'lastName', 'firstName');

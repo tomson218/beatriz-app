@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-//import UserModel from '../models/userModel.ts';
 import UserModel from '../models/userModel.ts';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError.ts';
@@ -25,6 +24,7 @@ const createSendToken = (user: any, statusCode: number, res: Response) => {
 	});
 };
 
+// zamiast string[] to Role[]
 export const restrictTo = (...roles: string[]) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		if (!roles.includes(req.user.role)) {
@@ -63,9 +63,24 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 	}
 };
 
+/* 
+
+{
+  "username": "jan_kowalski",
+  "firstName": "Jan",
+  "lastName": "Kowalski",
+  "email": "jan.kowalski@example.com",
+  "password": "StrongPassword123!",
+  "passwordConfirm": "StrongPassword123!",
+  "passwordChangedAt": null,
+  "role": "user"
+}
+
+*/
+
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { username, firstName, lastName, email, password, passwordConfirm, passwordChangedAt, role } = req.body;
+		const { username, firstName, lastName, email, password, passwordConfirm, passwordChangedAt, role } = req.body; // roli nie powinienem dodawac!!!
 
 		const newUser = await UserModel.create({
 			username,

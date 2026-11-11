@@ -4,7 +4,7 @@ import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
 import UserModel from '../models/userModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './.env.local' });
 
 const stripe = new Stripe(process.env.STRIPE_SK);
 const CLIENT_URL = 'http://localhost:5173';
@@ -24,7 +24,7 @@ export const createCheckoutSession = async (req: Request, res: Response, next: N
 
 		await user.save();
 
-		const productsList = products.map(({ id, name, images, price, seating, sector, date, block }) => {
+		const productsList = products.map(({ id, name, images, price, seating, sector, date, block }: any) => {
 			const eventDate = new Date(date);
 
 			return {

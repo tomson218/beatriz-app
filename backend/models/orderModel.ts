@@ -2,10 +2,14 @@ import { Schema, model, type InferSchemaType } from 'mongoose';
 
 export type Order = InferSchemaType<typeof orderSchema>;
 
+const seatingSchema = ''; // TO__DO
+
 const orderSchema = new Schema({
 	totalAmount: {
 		type: Number,
 		required: [true, 'Please tell us your name of event'],
+
+		// set a min value
 	},
 	date: {
 		type: Date,
@@ -19,6 +23,7 @@ const orderSchema = new Schema({
 	currency: {
 		type: String,
 		required: [true, 'Please tell us your currency of event'],
+		enum: ['USD', 'EUR', 'PLN'],
 	},
 	tickets: [
 		{
@@ -30,6 +35,8 @@ const orderSchema = new Schema({
 				enum: ['normal', 'VIP', 'child'],
 			},
 		},
+
+		// pomyslec nad poprawa tego
 	],
 	event: {
 		type: Schema.Types.ObjectId,
