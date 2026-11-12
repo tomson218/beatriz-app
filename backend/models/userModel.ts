@@ -4,27 +4,9 @@ import crypto from 'crypto';
 import { Schema, model, type InferSchemaType } from 'mongoose';
 import type { NextFunction } from 'express';
 
-export type User = InferSchemaType<typeof userSchema>;
-
-const facebookDataSchema = ''; // TO__DO
-
-/* 
-
-
-id
-"1556226018361397"
-picture
-"https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1556226…"
-firstName
-"Tomasz"
-lastName
-"Pstrowski"
-
-*/
-
-const cartScheama = ''; // TO__DO
-
-const appliedDiscountCodesSchema = ''; // TO__DO
+export type User = InferSchemaType<typeof userSchema> & {
+	_id: string;
+};
 
 const userSchema = new Schema({
 	username: {

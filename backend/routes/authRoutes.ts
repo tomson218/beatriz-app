@@ -19,7 +19,7 @@ import {
 
 const router = express.Router({ caseSensitive: true, strict: true });
 
-router.post('/signup', signup);
+router.post('/signup', signup); /* DZIAŁA */
 
 router.post('/login', login);
 

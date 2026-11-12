@@ -20,12 +20,12 @@ const useEditUserMutation = () => {
 	return useMutation({
 		mutationFn: editUser,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Successfully updated user details');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Failed to update user details');
 		},

@@ -33,7 +33,7 @@ export const getPostsByEventId = async (req: Request, res: Response, next: NextF
 
 export const addNewPostToForum = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const userId = req.user.id;
+		const userId: string = req.user.id;
 
 		const { message, eventId } = req.body;
 

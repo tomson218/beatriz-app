@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import instance from '../apiConfig';
 
 const useAddUserCartMutation = () => {
-	const addUserCart = async cart => {
+	const addUserCart = async (cart: any) => {
 		const uri = `/users/addCart`;
 		const response = await instance.post(uri, { cart });
 		return response.data;
@@ -11,12 +11,12 @@ const useAddUserCartMutation = () => {
 
 	return useMutation({
 		mutationFn: addUserCart,
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Pomyślnie dodano do koszyka');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się dodać do koszyka');
 		},

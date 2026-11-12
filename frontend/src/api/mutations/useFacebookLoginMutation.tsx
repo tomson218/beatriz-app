@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 const useFacebookLoginMutation = () => {
 	const navigate = useNavigate();
 
-	const facebookLogin = async facebookDataDetails => {
+	const facebookLogin = async (facebookDataDetails: any) => {
 		const uri = `${API_URL}/users/facebookLogin`;
 		const response = await axios.post(uri, facebookDataDetails);
 		return response.data;
@@ -16,7 +16,7 @@ const useFacebookLoginMutation = () => {
 	return useMutation({
 		mutationFn: facebookLogin,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 
 			localStorage.setItem('user-id', data.user._id);
@@ -28,7 +28,7 @@ const useFacebookLoginMutation = () => {
 			}, 2000);
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się zalogować');
 		},

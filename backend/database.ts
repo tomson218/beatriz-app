@@ -1,10 +1,20 @@
 import mongoose from 'mongoose';
-import express from 'express';
 
-const database = express();
+const connectDB = async (): Promise<void> => {
+	try {
+		const dbUri = process.env.DATABASE;
+		if (!dbUri) {
+			throw new Error('DATABASE environment variable is not defined.');
+		}
 
-const DATABASE = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+		const DATABASE = dbUri.replace('<PASSWORD>', process.env.DATABASE_PASSWORD || '');
 
-mongoose.connect(DATABASE, {}).then(() => console.log('DB connection successful!'));
+		await mongoose.connect(DATABASE);
+		console.log('DB connection successful!');
+	} catch (err) {
+		console.error('DB connection failed:', err);
+		process.exit(1);
+	}
+};
 
-export default database;
+export default connectDB;

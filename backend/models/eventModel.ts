@@ -1,12 +1,9 @@
 import { Schema, model, type InferSchemaType } from 'mongoose';
+import { sectorSchema, pricesSchema } from './utils.ts';
 
-export type Event = InferSchemaType<typeof eventSchema>;
-
-const starSchema = ''; // TO__DO
-
-const sectorSchema = ''; // TO__DO
-
-const pricesSchema = ''; // TO__DO
+export type Event = InferSchemaType<typeof eventSchema> & {
+	_id: string;
+};
 
 const eventSchema = new Schema(
 	{
@@ -19,10 +16,8 @@ const eventSchema = new Schema(
 			required: [true, 'Please tell us your date of event'],
 		},
 		star: {
-			type: Array,
+			type: [String],
 			required: [true, 'Please tell us your stars of event'],
-
-			// jak wyglada ta tablica
 		},
 		description: {
 			type: String,
@@ -33,26 +28,20 @@ const eventSchema = new Schema(
 			required: [true, 'Please tell us your seatRequired of event'],
 		},
 		sectors: {
-			type: Array,
-			// ["A", "B", "C", "D", "E", "F", "G", "H"]
+			type: [sectorSchema],
 			required: [true, 'Please tell us your sectors of event'],
 		},
+
 		image: {
 			type: String,
 			default: 'default.jpg',
 		},
-		prices: {
-			type: Object,
-			required: [true, 'Please tell us your price of event'],
-
-			// jak wyglada ten obiekt
-		},
+		prices: pricesSchema,
 		type: {
 			type: String,
 			required: [true, 'Please tell us your type of event'],
 			default: 'concert',
-
-			// dodac enuma
+			enum: ['concert', 'theater', 'opera', 'musical', 'festival', 'other'],
 		},
 	},
 	{

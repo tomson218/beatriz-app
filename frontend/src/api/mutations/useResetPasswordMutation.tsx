@@ -15,14 +15,14 @@ const useResetPasswordMutation = (resetToken: string) => {
 
 	return useMutation({
 		mutationFn: resetPassword,
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Successfully reset password');
 			setTimeout(() => {
 				navigate('/home');
 			}, 2000);
 		},
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`rolling back optimistic update with id ${error}`);
 			toast.error('Failed');
 		},

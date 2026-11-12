@@ -18,7 +18,7 @@ const useSignUpUserMutation = () => {
 	return useMutation({
 		mutationFn: signUser,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Konto zostało pomyślnie stworzone');
 			setItemLocalStorage('user-id', data.user._id);
@@ -29,7 +29,7 @@ const useSignUpUserMutation = () => {
 			}, 2000);
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`Bład:  ${error}`);
 			toast.error('Próba stworzenia konta nie powiodła się');
 		},

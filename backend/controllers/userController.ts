@@ -5,6 +5,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 
 const { ObjectId } = mongoose.Types;
 
+/* to do innego pliku */
 const filterObj = (obj: any, ...allowedFields: any) => {
 	const newObj = {};
 	Object.keys(obj).forEach(item => {

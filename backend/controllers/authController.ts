@@ -7,14 +7,17 @@ import { sendEmail } from '../utils/email.ts';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { type Request, type Response, type NextFunction } from 'express';
+import { type User } from '../models/userModel.ts';
 
-export const signToken = (userId: any) => {
+/* te funkcje niebedace kntrolerem wywlic dokads */
+
+export const signToken = (userId: string) => {
 	return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_IN,
 	});
 };
 
-const createSendToken = (user: any, statusCode: number, res: Response) => {
+const createSendToken = (user: User, statusCode: number, res: Response) => {
 	const token = signToken(user._id);
 
 	res.status(statusCode).json({
@@ -145,7 +148,7 @@ export const forgetPassword = async (req: Request, res: Response, next: NextFunc
 
 		await user.save({ validateBeforeSave: false });
 
-		const resetURLFRONT = `http://localhost:5173/reset-password/${resetToken}`;
+		const resetURLFRONT = `${process.env.CLIENT_URL}/reset-password/${resetToken}`; // to API_URL_FRONTEND
 
 		const message: string = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURLFRONT}.\nIf you didn't forget your password, please ignore this email!`;
 
@@ -218,9 +221,9 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 	try {
 		const { authCode, clientId, selectBy } = req.body;
 
-		const decodedGoogleToken = jwtDecode(authCode);
+		const decodedGoogleToken: any = jwtDecode(authCode);
 
-		let user = await UserModel.findOne({ email: decodedGoogleToken.email });
+		let user: any = await UserModel.findOne({ email: decodedGoogleToken.email });
 
 		if (!user) {
 			user = await UserModel.create({ email: decodedGoogleToken.email, googleId: decodedGoogleToken.sub });
@@ -233,7 +236,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 			await user.save();
 		}
 
-		const token = signToken(user._id);
+		const token: any = signToken(user._id);
 		res.status(200).json({ status: 'success', token, user });
 	} catch (err) {
 		next(err);
@@ -242,12 +245,12 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 
 const verifyFacebookToken = async (auth: any) => {
 	try {
-		const FACEBOOK_URI = `https://graph.facebook.com/me?access_token=${auth.accessToken}`;
+		const FACEBOOK_URI: string = `https://graph.facebook.com/me?access_token=${auth.accessToken}`;
 
 		const response = await axios.get(FACEBOOK_URI);
-		const data = response.data;
+		const data: any = response.data;
 
-		const expireToken = auth.data_access_expiration_time;
+		const expireToken: any = auth.data_access_expiration_time;
 
 		const currentTime = Math.floor(Date.now() / 1000);
 
@@ -262,9 +265,9 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 	try {
 		const { tokens, userProfile } = req.body;
 
-		let user = await UserModel.findOne({ email: userProfile.email });
+		let user: any = await UserModel.findOne({ email: userProfile.email });
 
-		const verifyToken = await verifyFacebookToken(tokens);
+		const verifyToken: any = await verifyFacebookToken(tokens);
 
 		if (!verifyToken) {
 			return res.status(500).json({ status: 'error', message: 'Token is not valid' });
@@ -298,7 +301,7 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 			await user.save();
 		}
 
-		const token = signToken(user._id);
+		const token: any = signToken(user._id);
 
 		res.status(200).json({
 			status: 'success',

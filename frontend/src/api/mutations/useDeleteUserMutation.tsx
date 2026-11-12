@@ -12,12 +12,12 @@ const useDeleteUserMutation = () => {
 	return useMutation({
 		mutationFn: deleteUser,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Pomyślnie usunięto użytkownika');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się usunąć użytkownika');
 		},

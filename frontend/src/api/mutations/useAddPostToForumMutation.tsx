@@ -11,12 +11,12 @@ const useAddPostToForumMutation = refetch => {
 
 	return useMutation({
 		mutationFn: addPostToForum,
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			refetch();
 			toast.success('Pomyślnie dodano post na forum');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się dodać posta na forum');
 		},

@@ -20,6 +20,7 @@ import classes from './Users.module.css';
 import EditIcon from '../../assets/icons/EditIcon';
 import useEditUserMutation from '@/api/mutations/useEditUserMutation';
 import useDeleteUserMutation from '@/api/mutations/useDeleteUserMutation';
+import { User } from '@/interfaces/User';
 
 const Users = () => {
 	const { data: users, isLoading: isUsersLoading } = useGetAllUsersQuery();
@@ -37,7 +38,7 @@ const Users = () => {
 		return <div>Loading</div>;
 	}
 
-	const VIewUser = ({ user }) => {
+	const VIewUser = ({ user }: { user: User }) => {
 		return (
 			<Dialog>
 				<DialogTrigger asChild>

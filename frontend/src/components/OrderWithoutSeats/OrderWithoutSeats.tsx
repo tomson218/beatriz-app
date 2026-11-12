@@ -83,7 +83,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 	useEffect(() => {
 		const newTotalPrice = Object.entries(countTickets).reduce(
 			(total, [key, count]) => total + count * (eventDetails?.prices[key] || 0),
-			0
+			0,
 		);
 		setTotalPrice(newTotalPrice);
 		localStorage.setItem('totalPrice', JSON.stringify(newTotalPrice));

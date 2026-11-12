@@ -7,7 +7,6 @@ import { type Request, type Response, type NextFunction } from 'express';
 dotenv.config({ path: './.env.local' });
 
 const stripe = new Stripe(process.env.STRIPE_SK);
-const CLIENT_URL = 'http://localhost:5173';
 
 export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -44,8 +43,8 @@ export const createCheckoutSession = async (req: Request, res: Response, next: N
 		const session = await stripe.checkout.sessions.create({
 			line_items: productsList,
 			mode: 'payment',
-			success_url: `${CLIENT_URL}/success`,
-			cancel_url: `${CLIENT_URL}/cancel`,
+			success_url: `${process.env.CLIENT_URL}/success`,
+			cancel_url: `${process.env.CLIENT_URL}/cancel`,
 			metadata: {
 				userId: JSON.stringify(req.user.id),
 				discountCode: JSON.stringify(req.body.discountCode),

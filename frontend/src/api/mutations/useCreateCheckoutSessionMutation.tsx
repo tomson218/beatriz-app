@@ -15,7 +15,7 @@ const useCreateCheckoutSessionMutation = () => {
 	return useMutation({
 		mutationFn: createCheckoutSession,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Pomyślnie utworzono sesję realizacji zakupu');
 			setTimeout(() => {
@@ -23,7 +23,7 @@ const useCreateCheckoutSessionMutation = () => {
 			}, 1000);
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nieudane utworzenie sesji realizacji zakupu');
 		},

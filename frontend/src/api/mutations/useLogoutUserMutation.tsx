@@ -16,7 +16,7 @@ const useLogoutUserMutation = () => {
 	return useMutation({
 		mutationFn: logoutUser,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 
 			localStorage.clear();
@@ -26,7 +26,7 @@ const useLogoutUserMutation = () => {
 			}, 1000);
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Wylogowanie nie powiodło się');
 		},

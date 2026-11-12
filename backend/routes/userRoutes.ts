@@ -40,14 +40,14 @@ router.delete('/removeFavourite', protect, removeEventFromFavourite);
 router
 	.route('/')
 
-	.get(protect, getAllUsers)
+	.get(protect, getAllUsers) /* DZIAŁA */
 
 	.post(createUser);
 
 router
 	.route('/:id')
 
-	.get(protect, getUser)
+	.get(protect, getUser) /* DZIAŁA */
 
 	.delete(protect, deleteUser);
 

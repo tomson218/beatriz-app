@@ -13,7 +13,7 @@ const router = express.Router({ caseSensitive: true, strict: true });
 router
 	.route('/')
 
-	.get(protect, getAllForumPosts)
+	.get(protect, getAllForumPosts) // DZIALA
 
 	.post(protect, addNewPostToForum);
 

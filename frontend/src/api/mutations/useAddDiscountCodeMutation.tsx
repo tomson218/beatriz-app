@@ -13,12 +13,12 @@ const useAddDiscountCodeMutation = () => {
 	return useMutation({
 		mutationFn: addDiscountCode,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Pomyślnie dodano nowy kod');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się dodać nowego kodu');
 		},

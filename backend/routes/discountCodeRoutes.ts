@@ -13,7 +13,7 @@ const router = express.Router({ caseSensitive: true, strict: true });
 router
 	.route('/')
 
-	.get(protect, getAllDiscountCodes)
+	.get(protect, getAllDiscountCodes) /* DZIAŁA */
 
 	.post(protect, addDiscountCode);
 

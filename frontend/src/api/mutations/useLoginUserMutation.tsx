@@ -18,7 +18,7 @@ const useLoginUserMutation = () => {
 	return useMutation({
 		mutationFn: loginUser,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			setItemLocalStorage('token', data.token);
 			document.cookie = 'token=' + data.token;
@@ -29,7 +29,7 @@ const useLoginUserMutation = () => {
 			}, 2000);
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Logowanie nie powiodło się');
 		},

@@ -1,8 +1,9 @@
 import { Schema, model, type InferSchemaType } from 'mongoose';
+import { ticketSchema } from './utils.ts';
 
-export type Order = InferSchemaType<typeof orderSchema>;
-
-const seatingSchema = ''; // TO__DO
+export type Order = InferSchemaType<typeof orderSchema> & {
+	_id: string;
+};
 
 const orderSchema = new Schema({
 	totalAmount: {
@@ -25,19 +26,7 @@ const orderSchema = new Schema({
 		required: [true, 'Please tell us your currency of event'],
 		enum: ['USD', 'EUR', 'PLN'],
 	},
-	tickets: [
-		{
-			eventId: { type: Schema.Types.ObjectId, ref: 'Event' },
-			seating: [String],
-			price: Number,
-			type: {
-				type: String,
-				enum: ['normal', 'VIP', 'child'],
-			},
-		},
-
-		// pomyslec nad poprawa tego
-	],
+	tickets: [ticketSchema],
 	event: {
 		type: Schema.Types.ObjectId,
 		ref: 'Event',
