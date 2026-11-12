@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit';
 import { formattedDate, formattedTime } from './formattingDate.ts';
 import { getNameBlock, getNameTypeTicket } from './formattings.ts';
 
-export const generatePDF = async (ticketList: any[]) => {
+export const generatePDF = async (ticketList: any[]): Promise<unknown> => {
 	const doc = new PDFDocument({ margin: 50 });
 	let buffers = [];
 

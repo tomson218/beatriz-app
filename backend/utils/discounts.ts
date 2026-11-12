@@ -1,4 +1,4 @@
-export const calcDiscountPrice = (eventDate: Date) => {
+export const calcDiscountPrice = (eventDate: Date): number => {
 	const daysUntilEvent = Math.floor((new Date(eventDate) - Date.now()) / (1000 * 60 * 60 * 24));
 
 	if (daysUntilEvent >= 90) {

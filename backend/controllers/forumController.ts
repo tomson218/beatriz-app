@@ -3,7 +3,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 import type { ForumPostDto } from '../types/forums.ts';
 import { toForumDto } from '../mappers/forumMapper.ts';
 
-export const getAllForumPosts = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllForumPosts = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
 	try {
 		const forumPosts: Forum[] = await ForumModel.find().select('-__v');
 
@@ -19,7 +19,7 @@ export const getAllForumPosts = async (req: Request, res: Response, next: NextFu
 	}
 };
 
-export const getPostsByEventId = async (req: Request, res: Response, next: NextFunction) => {
+export const getPostsByEventId = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
 	try {
 		const { eventId } = req.params;
 

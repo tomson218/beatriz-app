@@ -5,7 +5,7 @@ import { calcDiscountPrice, calcPricesAfterDiscount } from '../utils/discounts.t
 import { toEventDto } from '../mappers/eventMapper.ts';
 import type { EventDto } from '../types/events.ts';
 
-export const getAllEvents = async (req: Request, res: Response) => {
+export const getAllEvents = async (req: Request, res: Response): Promise<void> => {
 	try {
 		const events: Event[] = await EventModel.find({ date: { $gte: new Date() } })
 			.sort({ date: 1 })
@@ -30,7 +30,7 @@ export const getAllEvents = async (req: Request, res: Response) => {
 	}
 };
 
-export const getEvent = async (req: Request, res: Response, next: NextFunction) => {
+export const getEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -57,7 +57,7 @@ export const getEvent = async (req: Request, res: Response, next: NextFunction) 
 	}
 };
 
-export const createEvent = async (req: Request, res: Response, next: NextFunction) => {
+export const createEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		console.log(req.body);
 
@@ -97,7 +97,7 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 	}
 };
 
-export const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	const { id } = req.params;
 
 	const event: Event | null = await EventModel.findByIdAndDelete(id);
@@ -112,7 +112,7 @@ export const deleteEvent = async (req: Request, res: Response, next: NextFunctio
 	});
 };
 
-export const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
+export const updateEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 		const { description } = req.body;

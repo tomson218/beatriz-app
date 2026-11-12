@@ -1,7 +1,7 @@
 import Event from '../models/eventModel.ts';
 import { formattedDate, formattedTime } from './formattingDate.ts';
 
-export const ticketsTemplate = async (tickets: any[], order: any) => {
+export const ticketsTemplate = async (tickets: any[], order: any): Promise<string> => {
 	const ticketRows = await Promise.all(
 		tickets.map(async ticket => {
 			const { name, date, seatRequired } = await Event.findById(ticket.eventId).select('name date seatRequired');

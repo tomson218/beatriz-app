@@ -126,7 +126,7 @@ export type UserDto = Pick<
 	| 'favouriteEvents'
 	| 'cart'
 	| 'appliedDiscountCodes'
-> & {role: string};
+> & { role: string };
 
 export type GetAllUsersResponse =
 	| {

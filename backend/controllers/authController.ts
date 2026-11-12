@@ -14,13 +14,13 @@ import { Types } from 'mongoose';
 
 /* te funkcje niebedace kntrolerem wywlic dokads */
 
-export const signToken = (userId: Types.ObjectId) => {
+export const signToken = (userId: Types.ObjectId): string => {
 	return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_IN,
 	});
 };
 
-const createSendToken = (user: UserDto, statusCode: number, res: Response) => {
+const createSendToken = (user: UserDto, statusCode: number, res: Response): void => {
 	const token = signToken(user._id);
 
 	res.status(statusCode).json({
@@ -41,7 +41,7 @@ export const restrictTo = (...roles: string[]) => {
 	};
 };
 
-export const protect = async (req: Request, res: Response, next: NextFunction) => {
+export const protect = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		let accessToken;
 
@@ -84,7 +84,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
 */
 
-export const signup = async (req: Request, res: Response, next: NextFunction) => {
+export const signup = async (req: Request, res: Response, next: NextFunction): Promise<void | string> => {
 	try {
 		// OTYPOWAĆ TO
 
@@ -122,7 +122,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 	}
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		// OTYPOWAĆ TO
 		const { email, password } = req.body;
@@ -146,7 +146,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 	}
 };
 
-export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {
+export const forgetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		// OTYPOWAĆ TO
 		const { email } = req.body;
@@ -187,7 +187,7 @@ export const forgetPassword = async (req: Request, res: Response, next: NextFunc
 	}
 };
 
-export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+export const resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const hashedToken: string = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
@@ -215,7 +215,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+export const updatePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const user: User | null = await UserModel.findById(req.user.id).select('+password');
 
@@ -266,7 +266,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 	}
 };
 
-const verifyFacebookToken = async (auth: any) => {
+const verifyFacebookToken = async (auth: any): Promise<boolean> => {
 	try {
 		const FACEBOOK_URI: string = `https://graph.facebook.com/me?access_token=${auth.accessToken}`;
 

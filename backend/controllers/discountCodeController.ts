@@ -4,7 +4,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 import type { DiscountCodeDto } from '../types/discountCodes.ts';
 import { toDiscountCodeDto } from '../mappers/discountCodeMapper.ts';
 
-export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const discountCodes: DiscountCode[] = await DiscountCodeModel.find().select('-__v');
 
@@ -41,11 +41,13 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 				message: 'Discount code not found.',
 			});
 		} else if (currentDate > discountCode.expiration) {
+			// jakas tam funkcja
 			return res.status(400).json({
 				status: 'fail',
 				message: 'Discount code has expired.',
 			});
 		} else if (totalAmount < discountCode.usageConditions) {
+			// jakas tam funkcja z tego warnuku
 			return res.status(400).json({
 				status: 'fail',
 				message: 'Total amount does not meet the usage conditions.',
@@ -85,7 +87,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 	}
 };
 
-export const addDiscountCode = async (req: Request, res: Response, next: NextFunction) => {
+export const addDiscountCode = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		console.log(req.body);
 
