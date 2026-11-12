@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction): void => {
 	if (req.originalUrl.includes('/api/webhook')) {
 		next();
 	} else {
@@ -48,7 +48,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 	}
 });
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction): void => {
 	req.requestTime = new Date().toISOString();
 	next();
 });
@@ -63,7 +63,7 @@ app.use('/api/v2/tickets', ticketRoutes);
 app.use('/api/v2/discount-codes', discountCodeRoutes);
 app.use('/api/v2/forum', forumRoutes);
 
-app.all('*', (req: Request, res: Response, next: NextFunction) => {
+app.all('*', (req: Request, res: Response, next: NextFunction): void => {
 	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 

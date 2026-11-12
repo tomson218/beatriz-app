@@ -10,7 +10,7 @@ import { toEventDto } from '../mappers/eventMapper.ts';
 const { ObjectId } = mongoose.Types;
 
 /* to do innego pliku */
-const filterObj = (obj: any, ...allowedFields: any) => {
+const filterObj = (obj: any, ...allowedFields: any): any => {
 	const newObj = {};
 	Object.keys(obj).forEach(item => {
 		if (allowedFields.includes(item)) {
@@ -20,7 +20,7 @@ const filterObj = (obj: any, ...allowedFields: any) => {
 	return newObj;
 };
 
-export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const users: User[] = await UserModel.find().select('-__v');
 
@@ -36,7 +36,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 	}
 };
 
-export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -57,7 +57,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 	}
 };
 
-export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		if (req.body.password || req.body.passwordConfirm) {
 			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword", 400));
@@ -82,7 +82,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
 	}
 };
 
-export const deleteMe = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		await UserModel.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -95,7 +95,7 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction) 
 	}
 };
 
-export const getUserFavoriteEvents = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserFavoriteEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const user = await UserModel.findById(req.user.id).populate('favouriteEvents').exec(); // do poprawy
 
@@ -114,7 +114,7 @@ export const getUserFavoriteEvents = async (req: Request, res: Response, next: N
 	}
 };
 
-export const addEventToFavourite = async (req: Request, res: Response, next: NextFunction) => {
+export const addEventToFavourite = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { eventId } = req.body;
 
@@ -138,7 +138,7 @@ export const addEventToFavourite = async (req: Request, res: Response, next: Nex
 	}
 };
 
-export const removeEventFromFavourite = async (req: Request, res: Response, next: NextFunction) => {
+export const removeEventFromFavourite = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { eventId } = req.body;
 
@@ -162,7 +162,7 @@ export const removeEventFromFavourite = async (req: Request, res: Response, next
 	}
 };
 
-export const addCart = async (req: Request, res: Response, next: NextFunction) => {
+export const addCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	const userId: User['_id'] = req.user.id; // do poprawy
 
 	const { cart } = req.body;
@@ -184,7 +184,7 @@ export const createUser = (req: Request, res: Response) => {
 	});
 };
 
-export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -208,7 +208,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 	}
 };
 
-export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 

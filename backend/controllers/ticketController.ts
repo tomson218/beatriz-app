@@ -6,7 +6,7 @@ import type { TicketDto } from '../types/tickets.ts';
 import { toTicketDto } from '../mappers/ticketMapper.ts';
 import type { Ticket } from '../models/ticketModel.ts';
 
-export const getAllTickets = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllTickets = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const tickets: Ticket[] = await TicketModel.find();
 
@@ -24,7 +24,7 @@ export const getAllTickets = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const getUserTickets = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserTickets = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -45,7 +45,7 @@ export const getUserTickets = async (req: Request, res: Response, next: NextFunc
 	}
 };
 
-export const groupAvailableSectors = async (req: Request, res: Response, next: NextFunction) => {
+export const groupAvailableSectors = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { eventId } = req.params;
 		const tickets: Ticket[] = await TicketModel.find({ event: eventId }).select('-__v').exec();
@@ -76,7 +76,7 @@ export const groupAvailableSectors = async (req: Request, res: Response, next: N
 	}
 };
 
-export const getOccupiedSeats = async (req: Request, res: Response, next: NextFunction) => {
+export const getOccupiedSeats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { eventId, sector, block } = req.params;
 

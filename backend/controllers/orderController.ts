@@ -4,7 +4,7 @@ import type { OrderDto } from '../types/orders.ts';
 import { toOrderDto } from '../mappers/orderMapper.ts';
 import type { Order } from '../models/orderModel.ts';
 
-export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllOrders = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
 	try {
 		const orders = await OrderModel.find().select('-__v');
 
@@ -20,7 +20,7 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
 	}
 };
 
-export const getUserOrders = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserOrders = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
 	try {
 		const { id } = req.params;
 

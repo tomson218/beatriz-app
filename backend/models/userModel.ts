@@ -101,7 +101,7 @@ const userSchema = new Schema({
 	],
 });
 
-userSchema.pre('save', async function (next: NextFunction) {
+userSchema.pre('save', async function (next: NextFunction): Promise<void> {
 	if (!this.isModified('password')) return next();
 	{
 		this.password = await bcrypt.hash(this.password, 12);
@@ -112,23 +112,26 @@ userSchema.pre('save', async function (next: NextFunction) {
 	}
 });
 
-userSchema.pre('save', function (next: NextFunction) {
+userSchema.pre('save', function (next: NextFunction): void {
 	if (!this.isModified('password') || this.insNew) return next();
 
 	this.passwordChangedAt = Date.now() - 1000;
 	next();
 });
 
-userSchema.pre(/^find/, function (next: NextFunction) {
+userSchema.pre(/^find/, function (next: NextFunction): void {
 	this.find({ active: { $ne: false } });
 	next();
 });
 
-userSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
+userSchema.methods.correctPassword = async function (
+	candidatePassword: string,
+	userPassword: string,
+): Promise<boolean> {
 	return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boolean {
 	if (this.passwordChangedAt) {
 		const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 
@@ -138,7 +141,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
 	return false;
 };
 
-userSchema.methods.createPasswordResetToken = function () {
+userSchema.methods.createPasswordResetToken = function (): string {
 	const resetToken = crypto.randomBytes(32).toString('hex');
 
 	this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');

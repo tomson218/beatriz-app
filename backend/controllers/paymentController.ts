@@ -9,7 +9,7 @@ dotenv.config({ path: './.env.local' });
 
 const stripe = new Stripe(process.env.STRIPE_SK);
 
-export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction) => {
+export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
 	try {
 		const { products } = req.body;
 

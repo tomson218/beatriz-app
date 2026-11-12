@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { type Request } from 'express';
 
-const multerFilter = (req: Request, file: any, cb: any) => {
+const multerFilter = (req: Request, file: any, cb: any): void => {
 	if (file.mimetype.startsWith('image')) {
 		cb(null, true);
 	} else {
@@ -10,10 +10,10 @@ const multerFilter = (req: Request, file: any, cb: any) => {
 };
 
 const multerStorage = multer.diskStorage({
-	destination: (req: Request, file: any, cb: any) => {
+	destination: (req: Request, file: any, cb: any): void => {
 		cb(null, 'public/images/events');
 	},
-	filename: (req: Request, file: any, cb: any) => {
+	filename: (req: Request, file: any, cb: any): void => {
 		const extension = file.mimetype.split('/')[1];
 
 		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
