@@ -1,6 +1,6 @@
 import type { Event } from '../models/eventModel.ts';
 
-type EventDto = Pick<
+export type EventDto = Pick<
 	Event,
 	'_id' | 'name' | 'description' | 'star' | 'date' | 'image' | 'seatRequired' | 'sectors' | 'prices' | 'type'
 > & { discount: number };

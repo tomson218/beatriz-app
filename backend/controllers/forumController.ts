@@ -1,14 +1,18 @@
-import ForumModel from '../models/forumModel.ts';
+import ForumModel, { type Forum } from '../models/forumModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
+import type { ForumPostDto } from '../types/forums.ts';
+import { toForumDto } from '../mappers/forumMapper.ts';
 
 export const getAllForumPosts = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const forumPosts = await ForumModel.find().select('-__v');
+		const forumPosts: Forum[] = await ForumModel.find().select('-__v');
+
+		const forumPostsDto: ForumPostDto[] = forumPosts.map((f: Forum) => toForumDto(f));
 
 		res.status(200).json({
 			status: 'success',
-			results: forumPosts.length,
-			forumPosts,
+			results: forumPostsDto.length,
+			forumPosts: forumPostsDto,
 		});
 	} catch (err) {
 		next(err);
@@ -19,12 +23,17 @@ export const getPostsByEventId = async (req: Request, res: Response, next: NextF
 	try {
 		const { eventId } = req.params;
 
-		const forumPosts = await ForumModel.find({ event: eventId }).populate('user').select('-__v').sort({ date: 1 });
+		const forumPosts: Forum[] = await ForumModel.find({ event: eventId })
+			.populate('user')
+			.select('-__v')
+			.sort({ date: 1 });
+
+		const forumPostsDto: ForumPostDto[] = forumPosts.map((f: Forum) => toForumDto(f));
 
 		res.status(200).json({
 			status: 'success',
-			results: forumPosts.length,
-			forumPosts,
+			results: forumPostsDto.length,
+			forumPosts: forumPostsDto,
 		});
 	} catch (err) {
 		next(err);
@@ -37,16 +46,18 @@ export const addNewPostToForum = async (req: Request, res: Response, next: NextF
 
 		const { message, eventId } = req.body;
 
-		const newPost = await ForumModel.create({
+		const newPost: Forum = await ForumModel.create({
 			user: userId,
 			message: message,
 			event: eventId,
 			date: Date.now(),
 		});
 
+		const newPostDto: ForumPostDto = toForumDto(newPost);
+
 		res.status(200).json({
 			status: 'success',
-			newPost,
+			newPost: newPostDto,
 		});
 	} catch (err) {
 		next(err);

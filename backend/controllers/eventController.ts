@@ -1,21 +1,25 @@
-import EventModel from '../models/eventModel.ts';
+import EventModel, { type Event } from '../models/eventModel.ts';
 import AppError from '../utils/appError.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 import { calcDiscountPrice, calcPricesAfterDiscount } from '../utils/discounts.ts';
+import { toEventDto } from '../mappers/eventMapper.ts';
+import type { EventDto } from '../types/events.ts';
 
 export const getAllEvents = async (req: Request, res: Response) => {
 	try {
-		const events = await EventModel.find({ date: { $gte: new Date() } })
+		const events: Event[] = await EventModel.find({ date: { $gte: new Date() } })
 			.sort({ date: 1 })
 			.lean();
 
-		const updatedEvents = events.map(event => {
+		const updatedEvents: EventDto[] = events.map(event => {
 			const discount = calcDiscountPrice(event.date);
 			const newPrices = calcPricesAfterDiscount(discount, event.prices);
 			return { ...event, discount, prices: newPrices };
 		});
 
 		res.status(200).json({
+			status: 'success',
+			results: updatedEvents.length,
 			events: updatedEvents,
 		});
 	} catch (error) {
@@ -30,17 +34,23 @@ export const getEvent = async (req: Request, res: Response, next: NextFunction) 
 	try {
 		const { id } = req.params;
 
-		const event = await EventModel.findById(id).select('-__v').lean();
+		const event: Event | null = await EventModel.findById(id).select('-__v').lean();
 
-		event.discount = calcDiscountPrice(event.date);
+		if (!event) {
+			return next(new AppError('No event found with that ID', 404));
+		}
 
-		const newPrice = calcPricesAfterDiscount(event.discount, event.prices);
+		const changedEvent = {
+			...event,
+			discount: calcDiscountPrice(event.date),
+			prices: calcPricesAfterDiscount(calcDiscountPrice(event.date), event.prices),
+		};
 
-		event.prices = newPrice;
+		const eventDto = toEventDto(changedEvent);
 
 		res.status(200).json({
 			status: 'success',
-			event,
+			event: eventDto,
 		});
 	} catch (err) {
 		next(err);
@@ -57,15 +67,15 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
 		const sectorsArray = sectors.split(',').map((sector: any) => sector.trim());
 
-		const newEvent = await EventModel.create({
+		const newEvent: Event = await EventModel.create({
 			date,
 			description,
 			prices: {
-				child: +child,
-				normal: +normal,
-				VIP: +vip,
+				child: Number(child),
+				normal: Number(normal),
+				VIP: Number(vip),
 			},
-			image: req.file.filename,
+			image: req?.file?.filename,
 			name,
 			type,
 			seatRequired,
@@ -75,9 +85,11 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
 		const file = req.file;
 
+		const newEventDto: EventDto = toEventDto(newEvent);
+
 		res.status(201).json({
 			status: 'success',
-			newEvent,
+			newEvent: newEventDto,
 			file,
 		});
 	} catch (err) {
@@ -88,7 +100,7 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 export const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params;
 
-	const event = await EventModel.findByIdAndDelete(id);
+	const event: Event | null = await EventModel.findByIdAndDelete(id);
 
 	if (!event) {
 		return next(new AppError('No event found with that ID', 404));
@@ -105,15 +117,17 @@ export const updateEvent = async (req: Request, res: Response, next: NextFunctio
 		const { id } = req.params;
 		const { description } = req.body;
 
-		const updatedEvent = await EventModel.findByIdAndUpdate(id, { description });
+		const updatedEvent: Event | null = await EventModel.findByIdAndUpdate(id, { description });
 
 		if (!updatedEvent) {
 			return next(new AppError('No event found with that ID', 404));
 		}
 
+		const updatedEventDto: EventDto = toEventDto(updatedEvent);
+
 		res.status(200).json({
 			status: 'success',
-			updatedEvent,
+			updatedEvent: updatedEventDto,
 		});
 	} catch (err) {
 		next(err);

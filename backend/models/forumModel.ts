@@ -1,7 +1,7 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 
 export type Forum = InferSchemaType<typeof forumSchema> & {
-	_id: string;
+	_id: Types.ObjectId;
 };
 
 const forumSchema = new Schema({

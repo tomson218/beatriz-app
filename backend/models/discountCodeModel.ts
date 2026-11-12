@@ -1,7 +1,7 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, Types, model, type InferSchemaType } from 'mongoose';
 import validator from 'validator';
 
-export type DiscountCode = InferSchemaType<typeof discountCodeSchema> & { _id: string };
+export type DiscountCode = InferSchemaType<typeof discountCodeSchema> & { _id: Types.ObjectId };
 
 const discountCodeSchema = new Schema({
 	code: {

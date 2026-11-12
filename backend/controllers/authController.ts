@@ -8,16 +8,19 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { type Request, type Response, type NextFunction } from 'express';
 import { type User } from '../models/userModel.ts';
+import type { UserDto } from '../types/users.ts';
+import { toUserDto } from '../mappers/userMapper.ts';
+import { Types } from 'mongoose';
 
 /* te funkcje niebedace kntrolerem wywlic dokads */
 
-export const signToken = (userId: string) => {
+export const signToken = (userId: Types.ObjectId) => {
 	return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_IN,
 	});
 };
 
-const createSendToken = (user: User, statusCode: number, res: Response) => {
+const createSendToken = (user: UserDto, statusCode: number, res: Response) => {
 	const token = signToken(user._id);
 
 	res.status(statusCode).json({
@@ -51,7 +54,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 		}
 		const decodedToken = await promisify(jwt.verify)(accessToken, process.env.JWT_SECRET);
 
-		const user = await UserModel.findById(decodedToken.id);
+		const user: User | null = await UserModel.findById(decodedToken.id);
 
 		if (!user) {
 			return res
@@ -83,9 +86,11 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		// OTYPOWAĆ TO
+
 		const { username, firstName, lastName, email, password, passwordConfirm, passwordChangedAt, role } = req.body; // roli nie powinienem dodawac!!!
 
-		const newUser = await UserModel.create({
+		const newUser: User = await UserModel.create({
 			username,
 			firstName,
 			lastName,
@@ -96,11 +101,14 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 			role,
 		});
 
-		createSendToken(newUser, 201, res);
+		const newUserDto: UserDto = toUserDto(newUser);
+
+		createSendToken(newUserDto, 201, res);
 
 		const message: string = `Cześć ${newUser.firstName}!\n\nTwoje konto na Beatriz App jest już gotowe, a teraz przed Tobą otwierają się drzwi do koncertów, festiwali, spektakli i wielu innych wyjątkowych wydarzeń. Sprawdź, co już teraz jest w ofercie – może znajdziesz coś, co Cię zainspiruje!\n\nDo zobaczenia na widowni!\n\nZespół Beatriz App`;
 
 		try {
+			// OTYPOWAĆ TO
 			await sendEmail({
 				email: newUser.email,
 				subject: 'Witamy w Beatriz App',
@@ -116,19 +124,23 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		// OTYPOWAĆ TO
 		const { email, password } = req.body;
 
 		if (!email || !password) {
 			return next(new AppError('Please provide email and password!', 400));
 		}
 
-		const user = await UserModel.findOne({ email }).select('+password');
+		const user: User | null = await UserModel.findOne({ email }).select('+password');
 
+		// OTYPOWAĆ TO
 		if (!user || !(await user.correctPassword(password, user.password))) {
 			return next(new AppError('Incorrect email or password', 401));
 		}
 
-		createSendToken(user, 200, res);
+		const userDto: UserDto = toUserDto(user);
+
+		createSendToken(userDto, 200, res);
 	} catch (err) {
 		next(err);
 	}
@@ -136,22 +148,25 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		// OTYPOWAĆ TO
 		const { email } = req.body;
 
-		const user = await UserModel.findOne({ email });
+		const user: User | null = await UserModel.findOne({ email });
 
 		if (!user) {
 			return next(new AppError('There is no user with that email address.', 404));
 		}
 
+		// OTYPOWAĆ TO
 		const resetToken = user.createPasswordResetToken();
 
 		await user.save({ validateBeforeSave: false });
 
-		const resetURLFRONT = `${process.env.CLIENT_URL}/reset-password/${resetToken}`; // to API_URL_FRONTEND
+		const resetURLFRONT: string = `${process.env.CLIENT_URL}/reset-password/${resetToken}`; // to API_URL_FRONTEND
 
 		const message: string = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURLFRONT}.\nIf you didn't forget your password, please ignore this email!`;
 
+		// OTYPOWAĆ TO
 		await sendEmail({
 			email: user.email,
 			subject: 'Your password reset token (valid for 10 min)',
@@ -174,9 +189,9 @@ export const forgetPassword = async (req: Request, res: Response, next: NextFunc
 
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+		const hashedToken: string = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
-		const user = await UserModel.findOne({
+		const user: User | null = await UserModel.findOne({
 			passwordResetToken: hashedToken,
 			passwordResetExpires: { $gt: Date.now() },
 		});
@@ -192,7 +207,9 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 
 		await user.save();
 
-		createSendToken(user, 200, res);
+		const userDto: UserDto = toUserDto(user);
+
+		createSendToken(userDto, 200, res);
 	} catch (err) {
 		next(err);
 	}
@@ -200,7 +217,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 
 export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const user = await UserModel.findById(req.user.id).select('+password');
+		const user: User | null = await UserModel.findById(req.user.id).select('+password');
 
 		if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
 			return next(new AppError('Your current password is wrong', 401));
@@ -211,7 +228,9 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
 
 		await user.save();
 
-		createSendToken(user, 200, res);
+		const userDto: UserDto = toUserDto(user);
+
+		createSendToken(userDto, 200, res);
 	} catch (err) {
 		next(err);
 	}
@@ -225,10 +244,13 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 
 		let user: any = await UserModel.findOne({ email: decodedGoogleToken.email });
 
+		const userDto: UserDto = toUserDto(user);
+
 		if (!user) {
 			user = await UserModel.create({ email: decodedGoogleToken.email, googleId: decodedGoogleToken.sub });
 			const token = signToken(user._id);
-			return res.status(201).json({ status: 'success', token, user });
+
+			return res.status(201).json({ status: 'success', token, user: userDto });
 		}
 
 		if (user && !user.googleId) {
@@ -237,7 +259,8 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 		}
 
 		const token: any = signToken(user._id);
-		res.status(200).json({ status: 'success', token, user });
+
+		res.status(200).json({ status: 'success', token, user: userDto });
 	} catch (err) {
 		next(err);
 	}
@@ -265,7 +288,7 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 	try {
 		const { tokens, userProfile } = req.body;
 
-		let user: any = await UserModel.findOne({ email: userProfile.email });
+		let user: User | null = await UserModel.findOne({ email: userProfile.email });
 
 		const verifyToken: any = await verifyFacebookToken(tokens);
 
@@ -293,7 +316,10 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 				facebookData: facebookObj,
 			});
 			const token = signToken(user._id);
-			return res.status(201).json({ status: 'success', token, user });
+
+			const userDto: UserDto = toUserDto(user);
+
+			return res.status(201).json({ status: 'success', token, user: userDto });
 		}
 
 		if (user && !user.hasOwnProperty('facebook')) {
@@ -303,10 +329,12 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 
 		const token: any = signToken(user._id);
 
+		const userDto: UserDto = toUserDto(user);
+
 		res.status(200).json({
 			status: 'success',
 			message: 'Facebook login success',
-			user,
+			user: userDto,
 			token,
 		});
 	} catch (err) {

@@ -222,7 +222,7 @@ import type { Event } from '../models/eventModel.ts';
 
 */
 
-type ForumPostDto = Pick<Forum, '_id' | 'date' | 'user' | 'event' | 'message'>;
+export type ForumPostDto = Pick<Forum, '_id' | 'date' | 'user' | 'event' | 'message'>;
 
 export type GetAllForumPostsResponse =
 	| { status: 'success'; results: number; forumPosts: ForumPostDto[] }

@@ -1,7 +1,11 @@
-import UserModel from '../models/userModel.ts';
+import UserModel, { type User } from '../models/userModel.ts';
 import AppError from '../utils/appError.ts';
 import mongoose from 'mongoose';
 import { type Request, type Response, type NextFunction } from 'express';
+import type { UserDto } from '../types/users.ts';
+import { toUserDto } from '../mappers/userMapper.ts';
+import type { EventDto } from '../types/events.ts';
+import { toEventDto } from '../mappers/eventMapper.ts';
 
 const { ObjectId } = mongoose.Types;
 
@@ -18,12 +22,14 @@ const filterObj = (obj: any, ...allowedFields: any) => {
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const users = await UserModel.find().select('-__v');
+		const users: User[] = await UserModel.find().select('-__v');
+
+		const usersDto: UserDto[] = users.map((u: User) => toUserDto(u));
 
 		res.status(200).json({
 			status: 'success',
-			results: users.length,
-			users,
+			results: usersDto.length,
+			users: usersDto,
 		});
 	} catch (err) {
 		next(err);
@@ -34,11 +40,13 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 	try {
 		const { id } = req.params;
 
-		const user = await UserModel.findById(id).select('-__v');
+		const user: User | null = await UserModel.findById(id).select('-__v'); // do poprawy
+
+		const userDto: UserDto = toUserDto(user);
 
 		res.status(200).json({
 			status: 'success',
-			user,
+			user: userDto,
 		});
 	} catch (err) {
 		console.error(err);
@@ -58,13 +66,16 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
 		const filteredBody = filterObj(req.body, 'username', 'email', 'lastName', 'firstName');
 
 		const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, filteredBody, {
+			// do poprawy
 			new: true,
 			runValidators: true,
 		});
 
+		const updatedUserDto: UserDto = toUserDto(updatedUser);
+
 		res.status(200).json({
 			status: 'success',
-			updatedUser,
+			updatedUser: updatedUserDto,
 		});
 	} catch (err) {
 		next(err);
@@ -86,7 +97,7 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction) 
 
 export const getUserFavoriteEvents = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const user = await UserModel.findById(req.user.id).populate('favouriteEvents').exec();
+		const user = await UserModel.findById(req.user.id).populate('favouriteEvents').exec(); // do poprawy
 
 		if (!user) {
 			return next(new AppError('This event is not on your list of favourites.', 404));
@@ -107,9 +118,9 @@ export const addEventToFavourite = async (req: Request, res: Response, next: Nex
 	try {
 		const { eventId } = req.body;
 
-		const user = await UserModel.findById(req.user.id);
+		const user: User | null = await UserModel.findById(req.user.id); // do poprawy
 
-		const isExistEvent = e => e.toString() === eventId;
+		const isExistEvent = (e: any) => e.toString() === eventId;
 
 		if (user.favouriteEvents.findIndex(isExistEvent) !== -1) {
 			return next(new AppError('This event is on your list of favourites.', 409));
@@ -131,9 +142,9 @@ export const removeEventFromFavourite = async (req: Request, res: Response, next
 	try {
 		const { eventId } = req.body;
 
-		const user = await UserModel.findById(req.user.id);
+		const user: User | null = await UserModel.findById(req.user.id);
 
-		const isExistEvent = e => e.toString() === eventId.toString();
+		const isExistEvent = (e: any) => e.toString() === eventId.toString();
 
 		const searchIndex = user.favouriteEvents.findIndex(isExistEvent);
 
@@ -152,14 +163,14 @@ export const removeEventFromFavourite = async (req: Request, res: Response, next
 };
 
 export const addCart = async (req: Request, res: Response, next: NextFunction) => {
-	const userId = req.user.id;
+	const userId: User['_id'] = req.user.id; // do poprawy
 
 	const { cart } = req.body;
 
-	const user = await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
+	const user: User | null = await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
 
 	res.status(200).json({
-		cart,
+		cart, // jaki ma to kształt tak w ogóle
 		userId,
 		status: 'error',
 		message: 'This route is not yet defined!',
@@ -177,15 +188,17 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 	try {
 		const { id } = req.params;
 
-		console.log('ID:', id);
-		console.log('Request body:', req.body);
+		const updatedUser: User | null = await UserModel.findByIdAndUpdate(id, req.body, {
+			new: true,
+			runValidators: true,
+		});
 
-		const updatedUser = await UserModel.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+		const updatedUserDto: UserDto = toUserDto(updatedUser);
 
 		res.status(200).json({
 			status: 'success',
 			message: `User ${id} updated!`,
-			updatedUser,
+			updatedUser: updatedUserDto,
 		});
 	} catch (err) {
 		res.status(500).json({
@@ -199,7 +212,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 	try {
 		const { id } = req.params;
 
-		const user = await UserModel.findById(id);
+		const user: User | null = await UserModel.findById(id);
 
 		console.log(user);
 

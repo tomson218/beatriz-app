@@ -1,9 +1,9 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 import { TICKET_TYPES } from '../capacityHall.ts';
 import { seatingSchema } from './utils.ts';
 
 export type Ticket = InferSchemaType<typeof ticketSchema> & {
-	_id: string;
+	_id: Types.ObjectId;
 };
 
 const ticketSchema = new Schema({
@@ -31,7 +31,6 @@ const ticketSchema = new Schema({
 		type: Number,
 		required: [true, 'Please tell us your price'],
 		min: 1,
-		// positive number, max 2 decimal places
 	},
 	type: {
 		type: String,

@@ -13,7 +13,7 @@ export type GetAllDiscountCodesResponse = {
 
 export type AddDiscountCodeRequest = Pick<
 	DiscountCodeDto,
-	'code' | 'value' | 'expirationDate' | 'usageLimit' | 'minAmountOrder'
+	'code' | 'value' | 'expiration' | 'usageLimit' | 'usageConditions'
 >;
 
 export type AddDiscountCodeResponse = {}; // | { status: 'error' | 'fail'; message: string };

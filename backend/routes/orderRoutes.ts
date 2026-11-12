@@ -16,7 +16,7 @@ router
 	.get(protect, getAllOrders); // DZIAŁA
 
 router
-	.route('/:id')
+	.route('/users/:id') // /users/:id  ---> POPRAWIONO
 
 	.get(protect, getUserOrders); // DZIAŁA
 
