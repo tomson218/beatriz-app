@@ -28,7 +28,7 @@ export const sectorSchema = {
 
 export const seatingSchema = {
 	sector: {
-		sectorSchema,
+		...sectorSchema,
 		required: [true, 'Please tell us your sector of seating'],
 	},
 

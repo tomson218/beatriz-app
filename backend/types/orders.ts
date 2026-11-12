@@ -1,6 +1,6 @@
 import type { Order } from '../models/orderModel.ts';
 
-type OrderDto = Pick<Order, '_id' | 'totalAmount' | 'date' | 'user' | 'currency' | 'tickets' | 'countOfTickets'>;
+export type OrderDto = Pick<Order, '_id' | 'totalAmount' | 'date' | 'user' | 'currency' | 'tickets' | 'countOfTickets'>;
 
 /* 
 

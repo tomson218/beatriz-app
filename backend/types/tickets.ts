@@ -1,6 +1,6 @@
 import type { Ticket } from '../models/ticketModel.ts';
 
-type TicketDto = Pick<Ticket, '_id' | 'event' | 'seating' | 'user' | 'quantity' | 'price' | 'type' | 'date'> & {
+export type TicketDto = Pick<Ticket, '_id' | 'event' | 'seating' | 'user' | 'quantity' | 'price' | 'type' | 'date'> & {
 	_v?: number;
 };
 

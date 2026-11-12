@@ -1,8 +1,8 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, Types, model, type InferSchemaType } from 'mongoose';
 import { sectorSchema, pricesSchema } from './utils.ts';
 
 export type Event = InferSchemaType<typeof eventSchema> & {
-	_id: string;
+	_id: Types.ObjectId;
 };
 
 const eventSchema = new Schema(

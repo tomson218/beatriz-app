@@ -1,8 +1,8 @@
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 import { ticketSchema } from './utils.ts';
 
 export type Order = InferSchemaType<typeof orderSchema> & {
-	_id: string;
+	_id: Types.ObjectId;
 };
 
 const orderSchema = new Schema({

@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
 import UserModel from '../models/userModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
+import type { User } from '../models/userModel.ts';
 
 dotenv.config({ path: './.env.local' });
 
@@ -12,7 +13,7 @@ export const createCheckoutSession = async (req: Request, res: Response, next: N
 	try {
 		const { products } = req.body;
 
-		const user = await UserModel.findById(req.user.id);
+		const user: User | null = await UserModel.findById(req.user.id);
 
 		if (user.cart.length > 0) {
 			user.cart = [];
@@ -23,6 +24,7 @@ export const createCheckoutSession = async (req: Request, res: Response, next: N
 
 		await user.save();
 
+		// otypowac to
 		const productsList = products.map(({ id, name, images, price, seating, sector, date, block }: any) => {
 			const eventDate = new Date(date);
 

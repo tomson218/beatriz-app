@@ -1,15 +1,19 @@
-import DiscountCodeModel from '../models/discountCodeModel.ts';
+import DiscountCodeModel, { type DiscountCode } from '../models/discountCodeModel.ts';
 import UserModel from '../models/userModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
+import type { DiscountCodeDto } from '../types/discountCodes.ts';
+import { toDiscountCodeDto } from '../mappers/discountCodeMapper.ts';
 
 export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const discountCodes = await DiscountCodeModel.find().select('-__v');
+		const discountCodes: DiscountCode[] = await DiscountCodeModel.find().select('-__v');
+
+		const discountCodesDto: DiscountCodeDto[] = discountCodes.map((d: DiscountCode) => toDiscountCodeDto(d));
 
 		res.status(200).json({
 			status: 'success',
-			results: discountCodes.length,
-			discountCodes,
+			results: discountCodesDto.length,
+			discountCodes: discountCodesDto,
 		});
 	} catch (err) {
 		next(err);
@@ -29,7 +33,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 			});
 		}
 
-		const discountCode = await DiscountCodeModel.findOne({ code: enteredCode });
+		const discountCode: DiscountCode | null = await DiscountCodeModel.findOne({ code: enteredCode });
 
 		if (!discountCode) {
 			return res.status(404).json({
@@ -70,7 +74,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 
 		res.status(200).json({
 			status: 'success',
-			discount,
+			discount, // check!!!!!!!!!!!
 		});
 	} catch (err) {
 		console.error(err);
@@ -85,19 +89,21 @@ export const addDiscountCode = async (req: Request, res: Response, next: NextFun
 	try {
 		console.log(req.body);
 
-		const { code, value, expirationDate, usageLimit, minAmountOrder } = req.body;
+		const { code, value, expiration, usageLimit, usageConditions } = req.body;
 
-		const newDiscountCode = await DiscountCodeModel.create({
+		const newDiscountCode: DiscountCode = await DiscountCodeModel.create({
 			code,
 			value,
-			expiration: expirationDate,
+			expiration,
 			usageLimit,
-			usageConditions: minAmountOrder,
+			usageConditions,
 		});
+
+		const newDiscountCodeDto: DiscountCodeDto = toDiscountCodeDto(newDiscountCode);
 
 		res.status(200).json({
 			status: 'success',
-			newDiscountCode,
+			newDiscountCode: newDiscountCodeDto, // tu na pewno nie bedzie id???/
 		});
 	} catch (err) {
 		next(err);

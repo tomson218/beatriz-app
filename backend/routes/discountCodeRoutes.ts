@@ -19,7 +19,7 @@ router
 
 router
 
-	.route('/applyCode')
+	.route('/applyCode') // check
 
 	.post(protect, applyDiscountCode);
 

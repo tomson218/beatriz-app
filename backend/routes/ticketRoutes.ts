@@ -22,17 +22,17 @@ router
 	.get(protect, getAllTickets); // DZIAŁA
 
 router
-	.route('/:id')
+	.route('/users/:id') // /users/:id ---> POPRAWIONO
 
 	.get(protect, getUserTickets); // działa
 
 router
-	.route('/availableSectors/:eventId')
+	.route('/events/:eventId/available-sectors') // poprawionnnnnnnnnnneeeeeeeeeeeeeeeeee
 
 	.get(protect, groupAvailableSectors);
 
 router
-	.route('/occupiedSeats/:eventId/:sector/:block')
+	.route('/events/:eventId/occupied-seats/:sector/:block') //POIORAWIONNNNNNNNNNEEEEEEEEEEEEEEEEEE
 
 	.get(protect, getOccupiedSeats);
 

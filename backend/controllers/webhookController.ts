@@ -71,7 +71,7 @@ export const listenWebhook = async (request: Request, response: Response, next: 
 
 				await Promise.all(tickets.map(ticket => TicketModel.create(ticket)));
 
-				const message = `<p>Dziękujęmy za złożenie zamówienia na kwotę ${order.totalAmount} ${order.currency}. W załączniku znajduje się plik bilety.pdf, który zawiera listę zakupionych biletów oraz szczegóły dotyczące wydarzenia.</p> <p>Pozdrawiamy</p> <p>Zespół aplikacji Beatriz App</p>`;
+				const message: string = `<p>Dziękujęmy za złożenie zamówienia na kwotę ${order.totalAmount} ${order.currency}. W załączniku znajduje się plik bilety.pdf, który zawiera listę zakupionych biletów oraz szczegóły dotyczące wydarzenia.</p> <p>Pozdrawiamy</p> <p>Zespół aplikacji Beatriz App</p>`;
 
 				const { email } = await UserModel.findById(user._id).select('email');
 

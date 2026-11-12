@@ -29,7 +29,7 @@ router.post('/facebookLogin', facebookLogin);
 
 router.post('/forgetPassword', protect, forgetPassword);
 
-router.patch('/resetPassword/:token', protect, resetPassword);
+router.patch('/resetPassword/:token', protect, resetPassword); // sprawdzić!!!!
 
 router.patch('/updateMyPassword', protect, updatePassword);
 

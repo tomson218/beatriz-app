@@ -15,11 +15,11 @@ router
 
 	.get(protect, getAllForumPosts) // DZIALA
 
-	.post(protect, addNewPostToForum);
+	.post(protect, addNewPostToForum); // rename function name
 
 router
-	.route('/:eventId')
+	.route('/events/:eventId') // tu raczej /events/eventId
 
-	.get(protect, getPostsByEventId);
+	.get(protect, getPostsByEventId); // fix route
 
 export default router;

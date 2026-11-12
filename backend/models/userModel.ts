@@ -1,11 +1,11 @@
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, Types, model, type InferSchemaType } from 'mongoose';
 import type { NextFunction } from 'express';
 
 export type User = InferSchemaType<typeof userSchema> & {
-	_id: string;
+	_id: Types.ObjectId;
 };
 
 const userSchema = new Schema({
