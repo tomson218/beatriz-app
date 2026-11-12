@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
 	cors({
-		origin: 'http://localhost:5173', // chyba do .env
+		origin: process.env.CLIENT_URL,
 		credentials: true,
 	}),
 );
@@ -71,7 +71,6 @@ app.use(globalErrorHandler);
 
 export default app;
 
-
 /* 
 
 1) pomocncize schematy dla mongoose
@@ -79,5 +78,10 @@ export default app;
 2) endpointy w backendzie, robiąc sukcesywnie dokumnetację w Postmanie
 
 3) w tym czasie ogarnąć typy, żeby wywalić te wszelkie any (req.body, req.params, req.query, res.locals, itp.)
+
+4) dodać refresh tokeny
+
+
+/ err: Error 
 
 */

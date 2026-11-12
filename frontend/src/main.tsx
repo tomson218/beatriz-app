@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 				<App />
 			</GoogleOAuthProvider>
 		</QueryClientProvider>
-	</React.StrictMode>
+	</React.StrictMode>,
 );
 
 import.meta.env.VITE_GOOGLE_CLIENT_ID;

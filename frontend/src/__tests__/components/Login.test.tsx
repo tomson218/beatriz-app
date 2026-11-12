@@ -18,7 +18,7 @@ describe('RENDERING COMPONENTS', () => {
 						<Login />
 					</QueryClientProvider>
 				</GoogleOAuthProvider>
-			</MemoryRouter>
+			</MemoryRouter>,
 		);
 
 		expect(screen.getByRole('button', { name: 'Zaloguj się' })).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe('RENDERING COMPONENTS', () => {
 						<Seats />
 					</QueryClientProvider>
 				</GoogleOAuthProvider>
-			</MemoryRouter>
+			</MemoryRouter>,
 		);
 
 		waitFor(() => {
@@ -50,7 +50,7 @@ describe('RENDERING COMPONENTS', () => {
 						<Blocks />
 					</QueryClientProvider>
 				</GoogleOAuthProvider>
-			</MemoryRouter>
+			</MemoryRouter>,
 		);
 
 		waitFor(() => {
@@ -66,7 +66,7 @@ describe('RENDERING COMPONENTS', () => {
 						<OrderSummary />
 					</QueryClientProvider>
 				</GoogleOAuthProvider>
-			</MemoryRouter>
+			</MemoryRouter>,
 		);
 
 		waitFor(() => {
@@ -82,7 +82,7 @@ describe('RENDERING COMPONENTS', () => {
 						<OrderSummary />
 					</QueryClientProvider>
 				</GoogleOAuthProvider>
-			</MemoryRouter>
+			</MemoryRouter>,
 		);
 
 		waitFor(() => {

@@ -11,12 +11,12 @@ const useApplyDiscountCodeMutation = () => {
 
 	return useMutation({
 		mutationFn: applyDiscountCode,
-		onSuccess: (data, v) => {
+		onSuccess: (data: any, variables: any) => {
 			console.log(data);
 			toast.success('Pomyślnie zastosowany rabat');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się zastosować rabatu');
 		},

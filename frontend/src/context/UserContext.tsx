@@ -9,7 +9,7 @@ const UserContext = createContext({
 });
 
 export const UserContextProvider = ({ children }) => {
-	const [userProgress, setUserProgress] = useState('DZIALA, WIEC ISC JESC');
+	const [userProgress, setUserProgress] = useState<string>('');
 
 	const [userId, setUserId] = useState(getItemLocalStorage('user-id') || '');
 

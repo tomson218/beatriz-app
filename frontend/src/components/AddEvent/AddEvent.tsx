@@ -12,11 +12,11 @@ const AddEvent = () => {
 
 	const handleSelectSector = (sector: string) => {
 		if (selectedSectors.includes(sector)) {
-			setSelectedSectors(prevSelectedSectors =>
-				prevSelectedSectors.filter(selectedSector => selectedSector !== sector).sort()
+			setSelectedSectors((prevSelectedSectors: any) =>
+				prevSelectedSectors.filter((selectedSector: any) => selectedSector !== sector).sort(),
 			);
 		} else {
-			setSelectedSectors(prevSelectedSectors => [...prevSelectedSectors, sector].sort());
+			setSelectedSectors((prevSelectedSectors: any) => [...prevSelectedSectors, sector].sort());
 		}
 	};
 

@@ -64,10 +64,10 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 											block === 'blue'
 												? 'blue'
 												: block === 'green'
-												? 'green'
-												: block === 'yellow'
-												? 'yellow'
-												: 'black',
+													? 'green'
+													: block === 'yellow'
+														? 'yellow'
+														: 'black',
 										padding: '10px',
 										border: '1px solid black',
 										color: 'white',
@@ -85,7 +85,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 								onClick={() => {
 									setTimeout(
 										setIsShow(prevState => !prevState),
-										5000
+										5000,
 									);
 								}}>
 								{isShow ? 'Ukryj' : 'Pokaż'} szczegóły biletu

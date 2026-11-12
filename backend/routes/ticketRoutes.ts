@@ -19,12 +19,12 @@ const router = express.Router({ caseSensitive: true, strict: true });
 router
 	.route('/')
 
-	.get(protect, getAllTickets);
+	.get(protect, getAllTickets); // DZIAŁA
 
 router
 	.route('/:id')
 
-	.get(protect, getUserTickets);
+	.get(protect, getUserTickets); // działa
 
 router
 	.route('/availableSectors/:eventId')

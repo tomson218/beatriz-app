@@ -1,67 +1,7 @@
 import EventModel from '../models/eventModel.ts';
 import AppError from '../utils/appError.ts';
-import multer from 'multer';
 import { type Request, type Response, type NextFunction } from 'express';
-
-const multerFilter = (req: Request, file: any, cb: any) => {
-	if (file.mimetype.startsWith('image')) {
-		cb(null, true);
-	} else {
-		cb(new Error('This is not an image!'), false);
-	}
-};
-
-const multerStorage = multer.diskStorage({
-	destination: (req: Request, file: any, cb: any) => {
-		cb(null, 'public/images/events');
-	},
-	filename: (req: Request, file: any, cb: any) => {
-		const extension = file.mimetype.split('/')[1];
-
-		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-
-		cb(null, `event-${uniqueSuffix}.${extension}`);
-	},
-});
-
-const upload = multer({
-	storage: multerStorage,
-	fileFilter: multerFilter,
-});
-
-export const uploadEventImage = upload.single('image');
-
-const calcDiscountPrice = (eventDate: Date) => {
-	const daysUntilEvent = Math.floor((new Date(eventDate) - Date.now()) / (1000 * 60 * 60 * 24));
-
-	if (daysUntilEvent >= 90) {
-		return 0.25;
-	} else if (daysUntilEvent >= 60) {
-		return 0.15;
-	} else if (daysUntilEvent >= 30) {
-		return 0.1;
-	} else if (daysUntilEvent >= 20) {
-		return 1.1;
-	} else if (daysUntilEvent >= 10) {
-		return 1.2;
-	} else if (daysUntilEvent >= 5) {
-		return 1.3;
-	}
-
-	return 0;
-};
-
-const calcPricesAfterDiscount = (discount: number, prices: any) => {
-	const discountedEntries = Object.entries(prices).map(([key, value]) => {
-		if (discount >= 1) {
-			return [key, Math.ceil(value * discount)];
-		} else {
-			return [key, Math.ceil(value - value * discount)];
-		}
-	});
-
-	return Object.fromEntries(discountedEntries);
-};
+import { calcDiscountPrice, calcPricesAfterDiscount } from '../utils/discounts.ts';
 
 export const getAllEvents = async (req: Request, res: Response) => {
 	try {

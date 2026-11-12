@@ -6,6 +6,7 @@ import { sendEmail } from '../utils/email.ts';
 import UserModel from '../models/userModel.ts';
 import { generatePDF } from '../utils/pdfGenerator.ts';
 import { type Request, type Response, type NextFunction } from 'express';
+import AppError from '../utils/appError.ts';
 
 dotenv.config({ path: './.env.local' });
 

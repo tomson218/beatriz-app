@@ -7,9 +7,9 @@ import OrderContext from '@/context/OrderContext';
 const DiscountCodeForm = () => {
 	const { setOrder, totalPrice, setTotalPrice } = useContext(OrderContext);
 
-	const discountRef = useRef('');
+	const discountRef = useRef<HTMLInputElement>(null);
 
-	const [discountPercent, setDiscountPercent] = useState(0);
+	const [discountPercent, setDiscountPercent] = useState<number>(0);
 	const [discountError, setDiscountError] = useState({
 		message: '',
 		visible: false,
@@ -17,7 +17,7 @@ const DiscountCodeForm = () => {
 
 	const { mutateAsync: applyDiscountCode } = useApplyDiscountCodeMutation();
 
-	const handleSubmitDiscount = async e => {
+	const handleSubmitDiscount = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		setDiscountError({

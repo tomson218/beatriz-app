@@ -13,12 +13,12 @@ const useForgetPasswordMutation = () => {
 	return useMutation({
 		mutationFn: forgetPassword,
 
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Success');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(error);
 			toast.error('Error');
 		},

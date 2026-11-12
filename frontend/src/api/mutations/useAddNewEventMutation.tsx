@@ -12,12 +12,12 @@ const useAddNewEventMutation = () => {
 
 	return useMutation({
 		mutationFn: addNewEvent,
-		onSuccess: data => {
+		onSuccess: (data: any) => {
 			console.log(data);
 			toast.success('Pomyślnie dodano wydarzenie');
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Nie udało się dodać wydarzenia');
 		},

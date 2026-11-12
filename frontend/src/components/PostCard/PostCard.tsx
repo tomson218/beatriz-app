@@ -1,6 +1,5 @@
 import { Divider } from '@nextui-org/divider';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
-
 import { Post } from '../../interfaces/Post';
 
 interface PostProps {

@@ -13,11 +13,20 @@ const router = express.Router({ caseSensitive: true, strict: true });
 router
 	.route('/')
 
-	.get(protect, getAllOrders);
+	.get(protect, getAllOrders); // DZIAŁA
 
 router
 	.route('/:id')
 
-	.get(protect, getUserOrders);
+	.get(protect, getUserOrders); // DZIAŁA
 
 export default router;
+
+/* 
+
+{
+    "status": "fail",
+    "message": "Access requires a login. Please log in."
+}
+
+*/

@@ -1,8 +1,10 @@
 import { Schema, model, type InferSchemaType } from 'mongoose';
+import { TICKET_TYPES } from '../capacityHall.ts';
+import { seatingSchema } from './utils.ts';
 
-export type Ticket = InferSchemaType<typeof ticketSchema>;
-
-const seatingSchema = ""; // TO__DO
+export type Ticket = InferSchemaType<typeof ticketSchema> & {
+	_id: string;
+};
 
 const ticketSchema = new Schema({
 	event: {
@@ -11,10 +13,8 @@ const ticketSchema = new Schema({
 		required: [true, 'Please tell us your event'],
 	},
 	seating: {
-		type: Object,
+		type: seatingSchema,
 		required: [true, 'Please tell us your seating'],
-
-		// sector, block, seat
 	},
 	user: {
 		type: Schema.Types.ObjectId,
@@ -30,13 +30,13 @@ const ticketSchema = new Schema({
 	price: {
 		type: Number,
 		required: [true, 'Please tell us your price'],
-		min: 0,
+		min: 1,
 		// positive number, max 2 decimal places
 	},
 	type: {
 		type: String,
 		required: [true, 'Please tell us your type of ticket'],
-		enum: ['normal', 'VIP', 'child'],
+		enum: TICKET_TYPES,
 	},
 
 	date: {
