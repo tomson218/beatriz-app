@@ -38,13 +38,9 @@ export const getAllEvents = async (req: Request, res: Response<GetAllEventsRespo
 	}
 };
 
-export const getEvent = async (
-	req: Request<{ id: Event['_id'] }>,
-	res: Response<GetEventResponse>,
-	next: NextFunction,
-): Promise<void> => {
+export const getEvent = async (req: Request, res: Response<GetEventResponse>, next: NextFunction): Promise<void> => {
 	try {
-		const { id } = req.params;
+		const { id } = req.params as { id: string };
 
 		const event: Event | null = await EventModel.findById(id).select('-__v').lean();
 
@@ -117,12 +113,8 @@ export const createEvent = async (
 	}
 };
 
-export const deleteEvent = async (
-	req: Request<{ id: Event['_id'] }>,
-	res: Response,
-	next: NextFunction,
-): Promise<void> => {
-	const { id } = req.params;
+export const deleteEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	const { id } = req.params as { id: string };
 
 	const event: Event | null = await EventModel.findByIdAndDelete(id);
 
@@ -137,12 +129,12 @@ export const deleteEvent = async (
 };
 
 export const updateEvent = async (
-	req: Request<{ id: Event['_id'] }>,
+	req: Request,
 	res: Response<UpdateEventResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const { id } = req.params;
+		const { id } = req.params as { id: string };
 		const { description } = req.body;
 
 		const updatedEvent: Event | null = await EventModel.findByIdAndUpdate(id, { description });

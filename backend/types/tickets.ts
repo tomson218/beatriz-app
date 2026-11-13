@@ -5,14 +5,40 @@ export type TicketDto = Pick<Ticket, '_id' | 'event' | 'seating' | 'user' | 'qua
 	_v?: number;
 };
 
+export type TicketSeating = Ticket['seating'];
+
+export type TicketIdParams = { id: Ticket['_id'] };
+export type EventTicketsParams = { eventId: Ticket['event'] };
+export type OccupiedSeatsParams = {
+	eventId: Ticket['event'];
+	sector: TicketSeating['sector'];
+	block: TicketSeating['block'];
+};
+
 export type GetAllTicketsResponse = SuccessList<'tickets'> | ErrorResponse;
 
 export type GetUserTicketsResponse = GetAllTicketsResponse;
 
-export type GroupAvailableSectorsRequest = {};
+export type GroupAvailableSectorsRequest = EventTicketsParams;
 
-export type GroupAvailableSectorsResponse = {};
+export type GroupAvailableSectorsResponse =
+	| {
+			status: 'success';
+			data: {
+				results: number;
+				freeSectorsCount: Record<string, number>;
+			};
+	  }
+	| ErrorResponse;
 
-export type GetOccupiedSeatsRequest = {};
+export type GetOccupiedSeatsRequest = OccupiedSeatsParams;
 
-export type GetOccupiedSeatsResponse = {};
+export type GetOccupiedSeatsResponse =
+	| {
+			status: 'success';
+			data: {
+				results: number;
+				occupiedSeats: number[];
+			};
+	  }
+	| ErrorResponse;

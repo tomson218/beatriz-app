@@ -4,9 +4,20 @@ import mongoose from 'mongoose';
 import { type Request, type Response, type NextFunction } from 'express';
 import type { UserDto } from '../types/users.ts';
 import { toUserDto } from '../mappers/userMapper.ts';
-import type { EventDto } from '../types/events.ts';
-import { toEventDto } from '../mappers/eventMapper.ts';
-import type { GetUserResponse, GetAllUsersResponse } from '../types/users.ts';
+import type {
+	GetUserResponse,
+	GetAllUsersResponse,
+	UpdateMeResponse,
+	GetUserFavoriteEventsResponse,
+	UpdateUserResponse,
+	DeleteUserResponse,
+	AddCartResponse,
+	UpdateMeRequest,
+	UpdateUserRequest,
+	UserIdParams,
+	FavouriteEventRequest,
+	AddCartRequest,
+} from '../types/users.ts';
 
 const { ObjectId } = mongoose.Types;
 
@@ -43,7 +54,11 @@ export const getAllUsers = async (
 	}
 };
 
-export const getUser = async (req: Request, res: Response<GetUserResponse>, next: NextFunction): Promise<void> => {
+export const getUser = async (
+	req: Request<UserIdParams>,
+	res: Response<GetUserResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -66,7 +81,7 @@ export const getUser = async (req: Request, res: Response<GetUserResponse>, next
 	}
 };
 
-export const updateMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateMe = async (req: Request, res: Response<UpdateMeResponse>, next: NextFunction): Promise<void> => {
 	try {
 		if (req.body.password || req.body.passwordConfirm) {
 			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword", 400));
@@ -85,7 +100,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction):
 		res.status(200).json({
 			status: 'success',
 			data: {
-				updatedUser: updatedUserDto,
+				user: updatedUserDto,
 			},
 		});
 	} catch (err) {
@@ -106,7 +121,11 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction):
 	}
 };
 
-export const getUserFavoriteEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUserFavoriteEvents = async (
+	req: Request,
+	res: Response<GetUserFavoriteEventsResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const user = await UserModel.findById(req.user.id).populate('favouriteEvents').exec(); // do poprawy
 
@@ -119,7 +138,8 @@ export const getUserFavoriteEvents = async (req: Request, res: Response, next: N
 		res.status(200).json({
 			status: 'success',
 			data: {
-				favouriteEvents,
+				results: favouriteEvents.length,
+				events: favouriteEvents,
 			},
 		});
 	} catch (err) {
@@ -127,7 +147,11 @@ export const getUserFavoriteEvents = async (req: Request, res: Response, next: N
 	}
 };
 
-export const addEventToFavourite = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const addEventToFavourite = async (
+	req: Request<{}, {}, FavouriteEventRequest>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { eventId } = req.body;
 
@@ -151,7 +175,11 @@ export const addEventToFavourite = async (req: Request, res: Response, next: Nex
 	}
 };
 
-export const removeEventFromFavourite = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const removeEventFromFavourite = async (
+	req: Request<{}, {}, FavouriteEventRequest>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { eventId } = req.body;
 
@@ -175,7 +203,11 @@ export const removeEventFromFavourite = async (req: Request, res: Response, next
 	}
 };
 
-export const addCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const addCart = async (
+	req: Request<{}, {}, AddCartRequest>,
+	res: Response<AddCartResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	const userId: User['_id'] = req.user.id; // do poprawy
 
 	const { cart } = req.body;
@@ -199,7 +231,11 @@ export const createUser = (req: Request, res: Response) => {
 	});
 };
 
-export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateUser = async (
+	req: Request<UserIdParams, {}, UpdateUserRequest>,
+	res: Response<UpdateUserResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -225,7 +261,11 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 	}
 };
 
-export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteUser = async (
+	req: Request<UserIdParams>,
+	res: Response<DeleteUserResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 

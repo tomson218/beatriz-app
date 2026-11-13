@@ -21,6 +21,7 @@ import forumRoutes from './routes/forumRoutes.ts';
 import webhookRoutes from './routes/webhookRoutes.ts';
 import orderRoutes from './routes/orderRoutes.ts';
 import authRouter from './routes/authRoutes.ts';
+import swaggerDocs from './swagger.ts';
 
 const app: Express = express();
 
@@ -62,6 +63,8 @@ app.use('/api/v2/orders', orderRoutes);
 app.use('/api/v2/tickets', ticketRoutes);
 app.use('/api/v2/discount-codes', discountCodeRoutes);
 app.use('/api/v2/forum', forumRoutes);
+
+swaggerDocs(app);
 
 app.all('*', (req: Request, res: Response, next: NextFunction): void => {
 	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

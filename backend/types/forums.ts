@@ -4,6 +4,8 @@ import type { SuccessList, SuccessItem, ErrorResponse } from './users.ts';
 
 export type ForumPostDto = Pick<Forum, '_id' | 'date' | 'user' | 'event' | 'message'>;
 
+export type EventIdParams = { eventId: Event['_id'] };
+
 export type GetAllForumPostsResponse = SuccessList<'posts'> | ErrorResponse;
 
 export type AddNewPostToForumRequest = Pick<ForumPostDto, 'message'> & { eventId: Event['_id'] };
@@ -11,3 +13,5 @@ export type AddNewPostToForumRequest = Pick<ForumPostDto, 'message'> & { eventId
 export type AddNewPostToForumResponse = SuccessItem<'post'> | ErrorResponse;
 
 export type GetPostsByEventIdResponse = GetAllForumPostsResponse;
+
+export type ForumMessageParams = EventIdParams;
