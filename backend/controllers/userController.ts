@@ -6,6 +6,7 @@ import type { UserDto } from '../types/users.ts';
 import { toUserDto } from '../mappers/userMapper.ts';
 import type { EventDto } from '../types/events.ts';
 import { toEventDto } from '../mappers/eventMapper.ts';
+import type { GetUserResponse, GetAllUsersResponse } from '../types/users.ts';
 
 const { ObjectId } = mongoose.Types;
 
@@ -20,7 +21,11 @@ const filterObj = (obj: any, ...allowedFields: any): any => {
 	return newObj;
 };
 
-export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getAllUsers = async (
+	req: Request,
+	res: Response<GetAllUsersResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const users: User[] = await UserModel.find().select('-__v');
 
@@ -28,15 +33,17 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 
 		res.status(200).json({
 			status: 'success',
-			results: usersDto.length,
-			users: usersDto,
+			data: {
+				results: usersDto.length,
+				users: usersDto,
+			},
 		});
 	} catch (err) {
 		next(err);
 	}
 };
 
-export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUser = async (req: Request, res: Response<GetUserResponse>, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -46,7 +53,9 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
 
 		res.status(200).json({
 			status: 'success',
-			user: userDto,
+			data: {
+				user: userDto,
+			},
 		});
 	} catch (err) {
 		console.error(err);
@@ -75,7 +84,9 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction):
 
 		res.status(200).json({
 			status: 'success',
-			updatedUser: updatedUserDto,
+			data: {
+				updatedUser: updatedUserDto,
+			},
 		});
 	} catch (err) {
 		next(err);
@@ -107,7 +118,9 @@ export const getUserFavoriteEvents = async (req: Request, res: Response, next: N
 
 		res.status(200).json({
 			status: 'success',
-			favouriteEvents,
+			data: {
+				favouriteEvents,
+			},
 		});
 	} catch (err) {
 		next(err);
@@ -156,7 +169,7 @@ export const removeEventFromFavourite = async (req: Request, res: Response, next
 
 		await user.save({ validateBeforeSave: false });
 
-		res.status(200).json({ message: 'Wydarzenie usuniete z ulubionych' });
+		res.status(200).json({ status: 'success', message: 'Wydarzenie usuniete z ulubionych' });
 	} catch (err) {
 		next(err);
 	}
@@ -170,8 +183,10 @@ export const addCart = async (req: Request, res: Response, next: NextFunction): 
 	const user: User | null = await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
 
 	res.status(200).json({
-		cart, // jaki ma to kształt tak w ogóle
-		userId,
+		data: {
+			cart, // jaki ma to kształt tak w ogóle
+			userId,
+		},
 		status: 'error',
 		message: 'This route is not yet defined!',
 	});
@@ -198,7 +213,9 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 		res.status(200).json({
 			status: 'success',
 			message: `User ${id} updated!`,
-			updatedUser: updatedUserDto,
+			data: {
+				updatedUser: updatedUserDto,
+			},
 		});
 	} catch (err) {
 		res.status(500).json({

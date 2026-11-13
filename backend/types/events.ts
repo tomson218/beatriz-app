@@ -1,38 +1,26 @@
 import type { Event } from '../models/eventModel.ts';
+import type { SuccessList, SuccessItem, ErrorResponse } from './users.ts';
 
 export type EventDto = Pick<
 	Event,
 	'_id' | 'name' | 'description' | 'star' | 'date' | 'image' | 'seatRequired' | 'sectors' | 'prices' | 'type'
 > & { discount: number };
 
-export type GetAllEventsResponse =
-	| {
-			status: 'success';
-			results: number;
-			events: EventDto[];
-	  }
-	| { status: 'error' | 'fail'; message: string };
+export type GetAllEventsResponse = SuccessList<'events'> | ErrorResponse;
 
-export type GetEventResponse =
-	| {
-			status: 'success';
-			event: EventDto;
-	  }
-	| { status: 'error' | 'fail'; message: string };
-
-/* 		const { date, description, child, normal, seatRequired, sectors, star, vip, name, type } = req.body;  ---- chiod, nonroaml i vip oganrac */
+export type GetEventResponse = SuccessItem<'event'> | ErrorResponse;
 
 export type CreateEventRequest = Pick<
 	EventDto,
 	'date' | 'description' | 'seatRequired' | 'sectors' | 'type' | 'name' | 'star'
 >;
 
-export type CreateEventResponse = [];
+export type CreateEventResponse = (SuccessItem<'event'> & { file: any }) | ErrorResponse;
 
 export type UpdateEventRequest = Pick<EventDto, 'description'>;
 
-export type UpdateEventResponse = {}; // | { status: 'error' | 'fail'; message: string };
+export type UpdateEventResponse = SuccessItem<'event'> | ErrorResponse;
 
-export type DeleteEventRequest = {};
+type DeleteEventRequest = {};
 
-export type DeleteEventResponse = {}; // | { status: 'error' | 'fail'; message: string };
+type DeleteEventResponse = {}; // | { status: 'error' | 'fail'; message: string };

@@ -2,17 +2,7 @@
 
 import type { UserDto } from './users.ts';
 
-/* {
-  "username": "jan_kowalski",
-  "firstName": "Jan",
-  "lastName": "Kowalski",
-  "email": "jan.kowalski@example.com",
-  "password": "StrongPassword123!",
-  "passwordConfirm": "StrongPassword123!",
-  "passwordChangedAt": null,
-  "role": "user"
-}
- */
+import type { SuccessList, SuccessItem, ErrorResponse } from './users.ts';
 
 // raczej passwordChangedAt nie powinien byc w req.body, bo to jest ustawiane automatycznie przy zmianie hasla, a nie przy rejestracji.
 // podobnie jak role, bo to w bazie danych powinno być zmienione
@@ -63,7 +53,8 @@ export type SignUpResponse =
 	| { status: 'error' | 'fail'; message: string };
 
 export type LoginRequest = Pick<UserDto, 'email'> & { password: string };
-//export type LoginResponse = []; // sprawdzić
+
+type LoginResponse = []; // sprawdzić
 
 export type GoogleLoginRequest = {
 	authCode: any;

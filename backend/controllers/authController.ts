@@ -11,6 +11,7 @@ import { type User } from '../models/userModel.ts';
 import type { UserDto } from '../types/users.ts';
 import { toUserDto } from '../mappers/userMapper.ts';
 import { Types } from 'mongoose';
+import type { LoginRequest } from '../types/auth.ts';
 
 /* te funkcje niebedace kntrolerem wywlic dokads */
 
@@ -25,8 +26,10 @@ const createSendToken = (user: UserDto, statusCode: number, res: Response): void
 
 	res.status(statusCode).json({
 		status: 'success',
-		token,
-		user,
+		data: {
+			token,
+			user,
+		},
 	});
 };
 
@@ -122,7 +125,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction): P
 	}
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (req: Request<LoginRequest>, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		// OTYPOWAĆ TO
 		const { email, password } = req.body;
@@ -260,7 +263,13 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 
 		const token: any = signToken(user._id);
 
-		res.status(200).json({ status: 'success', token, user: userDto });
+		res.status(200).json({
+			status: 'success',
+			data: {
+				token,
+				user: userDto,
+			},
+		});
 	} catch (err) {
 		next(err);
 	}
@@ -319,7 +328,7 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 
 			const userDto: UserDto = toUserDto(user);
 
-			return res.status(201).json({ status: 'success', token, user: userDto });
+			return res.status(201).json({ status: 'success', data: { token, user: userDto } });
 		}
 
 		if (user && !user.hasOwnProperty('facebook')) {
@@ -334,8 +343,10 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 		res.status(200).json({
 			status: 'success',
 			message: 'Facebook login success',
-			user: userDto,
-			token,
+			data: {
+				user: userDto,
+				token,
+			},
 		});
 	} catch (err) {
 		next(err);

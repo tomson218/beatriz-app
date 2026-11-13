@@ -1,10 +1,14 @@
 import OrderModel from '../models/orderModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { OrderDto } from '../types/orders.ts';
+import type { GetAllOrdersResponse, GetUserOrdersResponse, OrderDto } from '../types/orders.ts';
 import { toOrderDto } from '../mappers/orderMapper.ts';
 import type { Order } from '../models/orderModel.ts';
 
-export const getAllOrders = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+export const getAllOrders = async (
+	req: Request,
+	res: Response<GetAllOrdersResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const orders = await OrderModel.find().select('-__v');
 
@@ -12,15 +16,21 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
 
 		res.status(200).json({
 			status: 'success',
-			results: ordersDto.length,
-			orders: ordersDto,
+			data: {
+				results: ordersDto.length,
+				orders: ordersDto,
+			},
 		});
 	} catch (error) {
 		next(error);
 	}
 };
 
-export const getUserOrders = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+export const getUserOrders = async (
+	req: Request<{ id: Order['_id'] }>,
+	res: Response<GetUserOrdersResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -34,8 +44,10 @@ export const getUserOrders = async (req: Request, res: Response, next: NextFunct
 
 		res.status(200).json({
 			status: 'success',
-			results: ordersDto.length,
-			orders: ordersDto,
+			data: {
+				results: ordersDto.length,
+				orders: ordersDto,
+			},
 		});
 	} catch (error) {
 		next(error);
