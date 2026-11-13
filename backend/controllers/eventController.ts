@@ -3,15 +3,21 @@ import AppError from '../utils/appError.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 import { calcDiscountPrice, calcPricesAfterDiscount } from '../utils/discounts.ts';
 import { toEventDto } from '../mappers/eventMapper.ts';
-import type { EventDto } from '../types/events.ts';
+import type {
+	CreateEventResponse,
+	EventDto,
+	GetAllEventsResponse,
+	GetEventResponse,
+	UpdateEventResponse,
+} from '../types/events.ts';
 
-export const getAllEvents = async (req: Request, res: Response): Promise<void> => {
+export const getAllEvents = async (req: Request, res: Response<GetAllEventsResponse>): Promise<void> => {
 	try {
 		const events: Event[] = await EventModel.find({ date: { $gte: new Date() } })
 			.sort({ date: 1 })
 			.lean();
 
-		const updatedEvents: EventDto[] = events.map(event => {
+		const updatedEventsDto: EventDto[] = events.map(event => {
 			const discount = calcDiscountPrice(event.date);
 			const newPrices = calcPricesAfterDiscount(discount, event.prices);
 			return { ...event, discount, prices: newPrices };
@@ -19,8 +25,10 @@ export const getAllEvents = async (req: Request, res: Response): Promise<void> =
 
 		res.status(200).json({
 			status: 'success',
-			results: updatedEvents.length,
-			events: updatedEvents,
+			data: {
+				results: updatedEventsDto.length,
+				events: updatedEventsDto,
+			},
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -30,7 +38,11 @@ export const getAllEvents = async (req: Request, res: Response): Promise<void> =
 	}
 };
 
-export const getEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getEvent = async (
+	req: Request<{ id: Event['_id'] }>,
+	res: Response<GetEventResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -50,14 +62,20 @@ export const getEvent = async (req: Request, res: Response, next: NextFunction):
 
 		res.status(200).json({
 			status: 'success',
-			event: eventDto,
+			data: {
+				event: eventDto,
+			},
 		});
 	} catch (err) {
 		next(err);
 	}
 };
 
-export const createEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createEvent = async (
+	req: Request,
+	res: Response<CreateEventResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		console.log(req.body);
 
@@ -89,15 +107,21 @@ export const createEvent = async (req: Request, res: Response, next: NextFunctio
 
 		res.status(201).json({
 			status: 'success',
-			newEvent: newEventDto,
-			file,
+			data: {
+				event: newEventDto,
+				file,
+			},
 		});
 	} catch (err) {
 		next(err);
 	}
 };
 
-export const deleteEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteEvent = async (
+	req: Request<{ id: Event['_id'] }>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	const { id } = req.params;
 
 	const event: Event | null = await EventModel.findByIdAndDelete(id);
@@ -112,7 +136,11 @@ export const deleteEvent = async (req: Request, res: Response, next: NextFunctio
 	});
 };
 
-export const updateEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateEvent = async (
+	req: Request<{ id: Event['_id'] }>,
+	res: Response<UpdateEventResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 		const { description } = req.body;
@@ -127,7 +155,9 @@ export const updateEvent = async (req: Request, res: Response, next: NextFunctio
 
 		res.status(200).json({
 			status: 'success',
-			updatedEvent: updatedEventDto,
+			data: {
+				event: updatedEventDto,
+			},
 		});
 	} catch (err) {
 		next(err);

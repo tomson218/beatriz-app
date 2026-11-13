@@ -12,8 +12,10 @@ export const getAllDiscountCodes = async (req: Request, res: Response, next: Nex
 
 		res.status(200).json({
 			status: 'success',
-			results: discountCodesDto.length,
-			discountCodes: discountCodesDto,
+			data: {
+				results: discountCodesDto.length,
+				discountCodes: discountCodesDto,
+			},
 		});
 	} catch (err) {
 		next(err);
@@ -24,6 +26,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 	try {
 		const currentDate = Date.now();
 		const { enteredCode, totalAmount } = req.body;
+
 		const user = await UserModel.findById(req.user.id);
 
 		if (!user) {
@@ -76,7 +79,9 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 
 		res.status(200).json({
 			status: 'success',
-			discount, // check!!!!!!!!!!!
+			data: {
+				discount, // check!!!!!!!!!!!
+			},
 		});
 	} catch (err) {
 		console.error(err);
@@ -91,21 +96,23 @@ export const addDiscountCode = async (req: Request, res: Response, next: NextFun
 	try {
 		console.log(req.body);
 
-		const { code, value, expiration, usageLimit, usageConditions } = req.body;
+		const enteredDiscountCode: DiscountCodeDto = req.body;
 
 		const newDiscountCode: DiscountCode = await DiscountCodeModel.create({
-			code,
-			value,
-			expiration,
-			usageLimit,
-			usageConditions,
+			code: enteredDiscountCode.code,
+			value: enteredDiscountCode.value,
+			expiration: enteredDiscountCode.expiration,
+			usageLimit: enteredDiscountCode.usageLimit,
+			usageConditions: enteredDiscountCode.usageConditions,
 		});
 
 		const newDiscountCodeDto: DiscountCodeDto = toDiscountCodeDto(newDiscountCode);
 
 		res.status(200).json({
 			status: 'success',
-			newDiscountCode: newDiscountCodeDto, // tu na pewno nie bedzie id???/
+			data: {
+				newDiscountCode: newDiscountCodeDto, // tu na pewno nie bedzie id???/
+			},
 		});
 	} catch (err) {
 		next(err);

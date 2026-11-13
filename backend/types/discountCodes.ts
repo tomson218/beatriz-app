@@ -1,22 +1,19 @@
 import type { DiscountCode } from '../models/discountCodeModel.ts';
+import type { SuccessList, SuccessItem, ErrorResponse } from './users.ts';
 
 export type DiscountCodeDto = Pick<
 	DiscountCode,
 	'_id' | 'code' | 'value' | 'expiration' | 'usageLimit' | 'usageConditions'
 >;
 
-export type GetAllDiscountCodesResponse = {
-	status: 'success';
-	results: number;
-	discountCodes: DiscountCodeDto[];
-};
+export type GetAllDiscountCodesResponse = SuccessList<'discountCodes'> | ErrorResponse;
 
 export type AddDiscountCodeRequest = Pick<
 	DiscountCodeDto,
 	'code' | 'value' | 'expiration' | 'usageLimit' | 'usageConditions'
 >;
 
-export type AddDiscountCodeResponse = {}; // | { status: 'error' | 'fail'; message: string };
+export type AddDiscountCodeResponse = SuccessItem<'discountCode'> | ErrorResponse;
 
 export type ApplyDiscountCodeRequest = {
 	enteredCode: any;

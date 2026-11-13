@@ -2,19 +2,27 @@ import TicketModel from '../models/ticketModel.ts';
 import EventModel from '../models/eventModel.ts';
 import { COUNT_BLOCKS, COUNT_SEAT } from '../capacityHall.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { TicketDto } from '../types/tickets.ts';
+import type { GetAllTicketsResponse, GetUserTicketsResponse, TicketDto } from '../types/tickets.ts';
 import { toTicketDto } from '../mappers/ticketMapper.ts';
 import type { Ticket } from '../models/ticketModel.ts';
+import type { User } from '../models/userModel.ts';
 
-export const getAllTickets = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getAllTickets = async (
+	req: Request,
+	res: Response<GetAllTicketsResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const tickets: Ticket[] = await TicketModel.find();
 
-		const ticketDto: TicketDto[] = tickets.map((t: Ticket) => toTicketDto(t));
+		const ticketsDto: TicketDto[] = tickets.map((t: Ticket) => toTicketDto(t));
 
 		res.status(200).json({
 			status: 'success',
-			tickets: ticketDto,
+			data: {
+				results: ticketsDto.length,
+				tickets: ticketsDto,
+			},
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -24,7 +32,11 @@ export const getAllTickets = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const getUserTickets = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUserTickets = async (
+	req: Request<{ id: User['_id'] }>,
+	res: Response<GetUserTicketsResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { id } = req.params;
 
@@ -34,8 +46,10 @@ export const getUserTickets = async (req: Request, res: Response, next: NextFunc
 
 		res.status(200).json({
 			status: 'success',
-			results: ticketsDto.length,
-			tickets: ticketsDto,
+			data: {
+				results: ticketsDto.length,
+				tickets: ticketsDto,
+			},
 		});
 	} catch (err) {
 		res.status(500).json({
@@ -45,7 +59,11 @@ export const getUserTickets = async (req: Request, res: Response, next: NextFunc
 	}
 };
 
-export const groupAvailableSectors = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const groupAvailableSectors = async (
+	req: Request<{ eventId: Event['_id'] }>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { eventId } = req.params;
 		const tickets: Ticket[] = await TicketModel.find({ event: eventId }).select('-__v').exec();
@@ -66,10 +84,14 @@ export const groupAvailableSectors = async (req: Request, res: Response, next: N
 			return acc;
 		}, {});
 
+		const ticketsDto: TicketDto[] = tickets.map((t: Ticket) => toTicketDto(t));
+
 		res.status(200).json({
 			status: 'success',
-			results: tickets.length,
-			freeSectorsCount,
+			data: {
+				results: ticketsDto.length,
+				freeSectorsCount,
+			},
 		});
 	} catch (err) {
 		next(err);
@@ -92,8 +114,10 @@ export const getOccupiedSeats = async (req: Request, res: Response, next: NextFu
 
 		res.status(200).json({
 			status: 'success',
-			results: sortedOccupiedSeats.length,
-			occupiedSeats: sortedOccupiedSeats,
+			data: {
+				results: sortedOccupiedSeats.length,
+				occupiedSeats: sortedOccupiedSeats,
+			},
 		});
 	} catch (err) {
 		next(err);

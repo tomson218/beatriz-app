@@ -1,9 +1,19 @@
 import ForumModel, { type Forum } from '../models/forumModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { ForumPostDto } from '../types/forums.ts';
+import type {
+	AddNewPostToForumResponse,
+	ForumPostDto,
+	GetAllForumPostsResponse,
+	GetPostsByEventIdResponse,
+} from '../types/forums.ts';
 import { toForumDto } from '../mappers/forumMapper.ts';
+import type { User } from '../models/userModel.ts';
 
-export const getAllForumPosts = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+export const getAllForumPosts = async (
+	req: Request,
+	res: Response<GetAllForumPostsResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const forumPosts: Forum[] = await ForumModel.find().select('-__v');
 
@@ -11,15 +21,21 @@ export const getAllForumPosts = async (req: Request, res: Response, next: NextFu
 
 		res.status(200).json({
 			status: 'success',
-			results: forumPostsDto.length,
-			forumPosts: forumPostsDto,
+			data: {
+				results: forumPostsDto.length,
+				posts: forumPostsDto,
+			},
 		});
 	} catch (err) {
 		next(err);
 	}
 };
 
-export const getPostsByEventId = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+export const getPostsByEventId = async (
+	req: Request<{ eventId: Event['_id'] }>,
+	res: Response<GetPostsByEventIdResponse>,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const { eventId } = req.params;
 
@@ -32,17 +48,19 @@ export const getPostsByEventId = async (req: Request, res: Response, next: NextF
 
 		res.status(200).json({
 			status: 'success',
-			results: forumPostsDto.length,
-			forumPosts: forumPostsDto,
+			data: {
+				results: forumPostsDto.length,
+				posts: forumPostsDto,
+			},
 		});
 	} catch (err) {
 		next(err);
 	}
 };
 
-export const addNewPostToForum = async (req: Request, res: Response, next: NextFunction) => {
+export const addNewPostToForum = async (req: Request, res: Response<AddNewPostToForumResponse>, next: NextFunction) => {
 	try {
-		const userId: string = req.user.id;
+		const userId: User['_id'] = req.user.id;
 
 		const { message, eventId } = req.body;
 
@@ -57,7 +75,9 @@ export const addNewPostToForum = async (req: Request, res: Response, next: NextF
 
 		res.status(200).json({
 			status: 'success',
-			newPost: newPostDto,
+			data: {
+				post: newPostDto,
+			},
 		});
 	} catch (err) {
 		next(err);
