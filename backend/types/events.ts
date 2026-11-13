@@ -6,21 +6,29 @@ export type EventDto = Pick<
 	'_id' | 'name' | 'description' | 'star' | 'date' | 'image' | 'seatRequired' | 'sectors' | 'prices' | 'type'
 > & { discount: number };
 
+export type EventIdParams = { id: Event['_id'] };
+
 export type GetAllEventsResponse = SuccessList<'events'> | ErrorResponse;
 
 export type GetEventResponse = SuccessItem<'event'> | ErrorResponse;
 
 export type CreateEventRequest = Pick<
 	EventDto,
-	'date' | 'description' | 'seatRequired' | 'sectors' | 'type' | 'name' | 'star'
->;
+	'date' | 'description' | 'seatRequired' | 'sectors' | 'type' | 'name' | 'star' | 'prices'
+> & {
+	file?: { filename?: string };
+};
 
-export type CreateEventResponse = (SuccessItem<'event'> & { file: any }) | ErrorResponse;
+export type CreateEventResponse =
+	| (SuccessItem<'event'> & {
+			data: SuccessItem<'event'>['data'] & { file?: any };
+	  })
+	| ErrorResponse;
 
 export type UpdateEventRequest = Pick<EventDto, 'description'>;
 
 export type UpdateEventResponse = SuccessItem<'event'> | ErrorResponse;
 
-type DeleteEventRequest = {};
+export type DeleteEventRequest = EventIdParams;
 
-type DeleteEventResponse = {}; // | { status: 'error' | 'fail'; message: string };
+export type DeleteEventResponse = { status: 'success'; data?: null } | ErrorResponse;

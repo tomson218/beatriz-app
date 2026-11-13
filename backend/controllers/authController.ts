@@ -11,7 +11,16 @@ import { type User } from '../models/userModel.ts';
 import type { UserDto } from '../types/users.ts';
 import { toUserDto } from '../mappers/userMapper.ts';
 import { Types } from 'mongoose';
-import type { LoginRequest } from '../types/auth.ts';
+import type {
+	LoginRequest,
+	SignUpRequest,
+	ForgetPasswordRequest,
+	ResetPasswordParams,
+	ResetPasswordRequest,
+	UpdatePasswordRequest,
+	GoogleLoginRequest,
+	FacebookLoginRequest,
+} from '../types/auth.ts';
 
 /* te funkcje niebedace kntrolerem wywlic dokads */
 
@@ -21,16 +30,51 @@ export const signToken = (userId: Types.ObjectId): string => {
 	});
 };
 
+export const signRefreshToken = (userId: Types.ObjectId): string => {
+	return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+	});
+};
+
+const setRefreshTokenCookie = (res: Response, refreshToken: string): void => {
+	res.cookie('refreshToken', refreshToken, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'strict',
+		maxAge: 7 * 24 * 60 * 60 * 1000,
+	});
+};
+
 const createSendToken = (user: UserDto, statusCode: number, res: Response): void => {
-	const token = signToken(user._id);
+	const accessToken = signToken(user._id);
+	const refreshToken = signRefreshToken(user._id);
+
+	setRefreshTokenCookie(res, refreshToken);
 
 	res.status(statusCode).json({
 		status: 'success',
 		data: {
-			token,
+			accessToken,
 			user,
 		},
 	});
+};
+
+export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		res.clearCookie('refreshToken', {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'strict',
+		});
+
+		res.status(200).json({
+			status: 'success',
+			data: null,
+		});
+	} catch (err) {
+		next(err);
+	}
 };
 
 // zamiast string[] to Role[]
@@ -87,7 +131,11 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
 
 */
 
-export const signup = async (req: Request, res: Response, next: NextFunction): Promise<void | string> => {
+export const signup = async (
+	req: Request<{}, {}, SignUpRequest>,
+	res: Response,
+	next: NextFunction,
+): Promise<void | string> => {
 	try {
 		// OTYPOWAĆ TO
 
@@ -149,7 +197,11 @@ export const login = async (req: Request<LoginRequest>, res: Response, next: Nex
 	}
 };
 
-export const forgetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const forgetPassword = async (
+	req: Request<{}, {}, ForgetPasswordRequest>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		// OTYPOWAĆ TO
 		const { email } = req.body;
@@ -190,7 +242,11 @@ export const forgetPassword = async (req: Request, res: Response, next: NextFunc
 	}
 };
 
-export const resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const resetPassword = async (
+	req: Request<ResetPasswordParams, {}, ResetPasswordRequest>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const hashedToken: string = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
@@ -218,7 +274,58 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const updatePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const refreshAccessToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const cookies = req.headers.cookie ?? '';
+		const cookieEntries = cookies.split(';').reduce<Record<string, string>>((acc, item) => {
+			const [key, ...rest] = item.trim().split('=');
+			if (!key || rest.length === 0) return acc;
+			acc[key] = rest.join('=');
+			return acc;
+		}, {});
+
+		const refreshToken = cookieEntries.refreshToken;
+
+		if (!refreshToken) {
+			return next(new AppError('Refresh token is missing.', 401));
+		}
+
+		const decodedToken = (await promisify(jwt.verify)(
+			refreshToken,
+			process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+		)) as {
+			id: Types.ObjectId;
+		};
+
+		const user: User | null = await UserModel.findById(decodedToken.id);
+
+		if (!user) {
+			return next(new AppError('User not found for refresh token.', 401));
+		}
+
+		const userDto: UserDto = toUserDto(user);
+		const newAccessToken = signToken(user._id);
+		const newRefreshToken = signRefreshToken(user._id);
+
+		setRefreshTokenCookie(res, newRefreshToken);
+
+		res.status(200).json({
+			status: 'success',
+			data: {
+				accessToken: newAccessToken,
+				user: userDto,
+			},
+		});
+	} catch (err) {
+		next(new AppError('Invalid or expired refresh token.', 401));
+	}
+};
+
+export const updatePassword = async (
+	req: Request<{}, {}, UpdatePasswordRequest>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const user: User | null = await UserModel.findById(req.user.id).select('+password');
 
@@ -239,7 +346,7 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
 	}
 };
 
-export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
+export const googleLogin = async (req: Request<{}, {}, GoogleLoginRequest>, res: Response, next: NextFunction) => {
 	try {
 		const { authCode, clientId, selectBy } = req.body;
 
@@ -251,9 +358,9 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 
 		if (!user) {
 			user = await UserModel.create({ email: decodedGoogleToken.email, googleId: decodedGoogleToken.sub });
-			const token = signToken(user._id);
+			const accessToken = signToken(user._id);
 
-			return res.status(201).json({ status: 'success', token, user: userDto });
+			return res.status(201).json({ status: 'success', data: { accessToken, user: userDto } });
 		}
 
 		if (user && !user.googleId) {
@@ -261,12 +368,12 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 			await user.save();
 		}
 
-		const token: any = signToken(user._id);
+		const accessToken: any = signToken(user._id);
 
 		res.status(200).json({
 			status: 'success',
 			data: {
-				token,
+				accessToken,
 				user: userDto,
 			},
 		});
@@ -293,7 +400,7 @@ const verifyFacebookToken = async (auth: any): Promise<boolean> => {
 	}
 };
 
-export const facebookLogin = async (req: Request, res: Response, next: NextFunction) => {
+export const facebookLogin = async (req: Request<{}, {}, FacebookLoginRequest>, res: Response, next: NextFunction) => {
 	try {
 		const { tokens, userProfile } = req.body;
 
@@ -324,11 +431,11 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 				email: userProfile.email,
 				facebookData: facebookObj,
 			});
-			const token = signToken(user._id);
+			const accessToken = signToken(user._id);
 
 			const userDto: UserDto = toUserDto(user);
 
-			return res.status(201).json({ status: 'success', data: { token, user: userDto } });
+			return res.status(201).json({ status: 'success', data: { accessToken, user: userDto } });
 		}
 
 		if (user && !user.hasOwnProperty('facebook')) {
@@ -336,7 +443,7 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 			await user.save();
 		}
 
-		const token: any = signToken(user._id);
+		const accessToken: any = signToken(user._id);
 
 		const userDto: UserDto = toUserDto(user);
 
@@ -345,7 +452,7 @@ export const facebookLogin = async (req: Request, res: Response, next: NextFunct
 			message: 'Facebook login success',
 			data: {
 				user: userDto,
-				token,
+				accessToken,
 			},
 		});
 	} catch (err) {

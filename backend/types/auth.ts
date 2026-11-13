@@ -1,15 +1,103 @@
-//import type { User } from '../models/userModel.ts';
+import type { User } from '../models/userModel.ts';
 
 import type { UserDto } from './users.ts';
 
-import type { SuccessList, SuccessItem, ErrorResponse } from './users.ts';
+export type AuthSuccessResponse = {
+	status: 'success';
+	data: {
+		accessToken: string;
+		user: UserDto;
+	};
+};
+
+export type AuthSuccessList<T extends string, V> = {
+	status: 'success';
+	data: {
+		results: number;
+	} & {
+		[K in T]: V;
+	};
+};
+
+export type AuthSuccessItem<T extends string, V> = {
+	status: 'success';
+	data: {
+		[K in T]: V;
+	};
+};
+
+export type ErrorResponse = { status: 'error' | 'fail'; message: string };
+
+export type SignUpRequest = Pick<UserDto, 'username' | 'firstName' | 'lastName' | 'email' | 'role'> &
+	Pick<User, 'password' | 'passwordConfirm' | 'passwordChangedAt'>;
+
+export type SignUpResponse = AuthSuccessResponse | ErrorResponse;
+
+export type LoginRequest = Pick<UserDto, 'email'> & Pick<User, 'password'>;
+
+export type LoginResponse = AuthSuccessResponse | ErrorResponse;
+
+export type ForgetPasswordRequest = Pick<UserDto, 'email'>;
+
+export type ForgetPasswordResponse = { status: 'success'; message: string } | ErrorResponse;
+
+export type ResetPasswordParams = {
+	token: string;
+};
+
+export type ResetPasswordRequest = Pick<User, 'password' | 'passwordConfirm'>;
+
+export type ResetPasswordResponse = AuthSuccessResponse | ErrorResponse;
+
+export type RefreshTokenResponse = AuthSuccessResponse | ErrorResponse;
+
+export type LogoutResponse = { status: 'success'; data: null } | ErrorResponse;
+
+export type UpdatePasswordRequest = {
+	passwordCurrent: string;
+} & Pick<User, 'password' | 'passwordConfirm'>;
+
+export type UpdatePasswordResponse = AuthSuccessResponse | ErrorResponse;
+
+export type GoogleLoginRequest = {
+	authCode: string;
+	clientId?: string;
+	selectBy?: string;
+};
+
+export type GoogleLoginResponse = AuthSuccessResponse | ErrorResponse;
+
+export type FacebookLoginRequest = {
+	tokens: {
+		accessToken: string;
+		data_access_expiration_time: number;
+		userID: string;
+	};
+	userProfile: {
+		email: string;
+		id: string;
+		name: string;
+		picture: {
+			data: {
+				url: string;
+			};
+		};
+	};
+};
+
+export type FacebookLoginResponse =
+	| {
+			status: 'success';
+			message?: string;
+			data: {
+				accessToken: string;
+				user: UserDto;
+			};
+	  }
+	| ErrorResponse;
 
 // raczej passwordChangedAt nie powinien byc w req.body, bo to jest ustawiane automatycznie przy zmianie hasla, a nie przy rejestracji.
 // podobnie jak role, bo to w bazie danych powinno być zmienione
-
-export type SignUpRequest = Pick<UserDto, 'username' | 'firstName' | 'lastName' | 'email'> & {
-	passwordChangedAt: string;
-} & { password: string } & { role: string };
 
 /* 
 
@@ -39,35 +127,6 @@ export type SignUpRequest = Pick<UserDto, 'username' | 'firstName' | 'lastName' 
 // wywalic stad role, password, passwordChangedAt, cart, myCart, appliedDiscountCodes, __v, _id, bo to nie powinno byc wysylane do frontendu. Wysylac tylko username, firstName, lastName, email, photo, role, favouriteEvents
 
 */
-
-export type SignUpResponse =
-	| {
-			status: string;
-			token: string;
-			user: UserDto & { passwordChangedAt: string } & { password: string } & { active: boolean } & {
-				myCart: any;
-			} & {
-				role: string;
-			};
-	  }
-	| { status: 'error' | 'fail'; message: string };
-
-export type LoginRequest = Pick<UserDto, 'email'> & { password: string };
-
-type LoginResponse = []; // sprawdzić
-
-export type GoogleLoginRequest = {
-	authCode: any;
-	clientId: any;
-	selectBy: any;
-};
-
-export type FacebookLoginRequest = {
-	tokens: any;
-	userProfile: any;
-};
-
-export type ForgetPasswordRequest = Pick<UserDto, 'email'>;
 
 /* 
 

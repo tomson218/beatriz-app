@@ -15,6 +15,8 @@ import {
 	protect,
 	googleLogin,
 	facebookLogin,
+	refreshAccessToken,
+	logout,
 } from '../controllers/authController.ts';
 
 const router = express.Router({ caseSensitive: true, strict: true });
@@ -22,6 +24,10 @@ const router = express.Router({ caseSensitive: true, strict: true });
 router.post('/signup', signup); /* DZIAŁA */
 
 router.post('/login', login);
+
+router.post('/refresh-token', refreshAccessToken);
+
+router.post('/logout', protect, logout);
 
 router.post('/googleLogin', googleLogin);
 

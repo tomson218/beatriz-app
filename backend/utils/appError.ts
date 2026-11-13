@@ -1,5 +1,11 @@
+type HttpStatusCode = 400 | 401 | 403 | 404 | 409 | 422 | 500;
+
 class AppError extends Error {
-	constructor(message: any, statusCode: any) {
+	statusCode: number;
+	status: string;
+	isOperational: boolean;
+
+	constructor(message: string, statusCode: HttpStatusCode) {
 		super(message);
 
 		this.statusCode = statusCode;
