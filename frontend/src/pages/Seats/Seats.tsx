@@ -4,7 +4,14 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useGetOccupiedSeatsQuery from '../../api/queries/useGetOccupiedSeatsQuery';
 import { Button } from '@/components/ui/button';
-import Modal from '../../components/UI/Modal/Modal';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import Seat from '../../components/Seat/Seat';
 
 const Seats = () => {
@@ -14,14 +21,14 @@ const Seats = () => {
 
 	const { eventId, sector, block, seats } = params;
 
-	const INITIAL_SELECTED_SEATS = seats && seats !== '0' ? seats.split(',').map(seat => +seat) : [];
+	const INITIAL_SELECTED_SEATS: number[] = seats && seats !== '0' ? seats.split(',').map(seat => Number(seat)) : [];
 
-	const [selectedSeats, setSelectedSeats] = useState(INITIAL_SELECTED_SEATS ?? []);
+	const [selectedSeats, setSelectedSeats] = useState<number[]>(INITIAL_SELECTED_SEATS);
 
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	const location = useLocation();
-	const currentUrl = `${location.pathname}${location.search}`;
+	const getCurrentUrl = (): string => `${location.pathname}${location.search}`;
 
 	const { data: occupiedSeats, isLoading: isOccupiedSeatsLoading } = useGetOccupiedSeatsQuery(eventId, sector, block);
 
@@ -68,7 +75,7 @@ const Seats = () => {
 			</h1>
 
 			<div className={classes['seats-container']}>
-				{Array.from({ length: 100 }, (v, index) => (
+				{Array.from({ length: 100 }, (_, index) => (
 					<Seat
 						isSelected={selectedSeats.includes(index + 1)}
 						isOccupied={occupiedSeats.includes(index + 1)}
@@ -104,13 +111,13 @@ const Seats = () => {
 					to={
 						selectedSeats.length !== 0
 							? `/ticket-choice?eventId=${eventId}&sector=${sector}&block=${block}&seats=${sortedSelectedSeats.join(
-									','
-							  )}`
-							: `${currentUrl}`
+									',',
+								)}`
+							: getCurrentUrl()
 					}>
 					<Button
 						onClick={() => {
-							localStorage.setItem('seats', selectedSeats);
+							localStorage.setItem('seats', JSON.stringify(selectedSeats));
 							if (selectedSeats.length === 0) {
 								setIsOpen(true);
 							}
@@ -120,13 +127,21 @@ const Seats = () => {
 				</Link>
 			</div>
 
-			{isOpen && (
-				<Modal
-					title='Brak wybranego miejsca!!!'
-					content='Żeby przejść dalej, musisz najpierw wybrać przynajmniej jedno miejsce siedzące.'
-					onClick={() => setIsOpen(false)}
-				/>
-			)}
+			<Dialog open={isOpen} onOpenChange={setIsOpen}>
+				<DialogContent className='sm:max-w-md'>
+					<DialogHeader>
+						<DialogTitle>Brak wybranego miejsca!!!</DialogTitle>
+						<DialogDescription>
+							Żeby przejść dalej, musisz najpierw wybrać przynajmniej jedno miejsce siedzące.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+							OK
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</section>
 	);
 };

@@ -2,9 +2,8 @@ import UserModel, { type User } from '../models/userModel.ts';
 import AppError from '../utils/appError.ts';
 import mongoose from 'mongoose';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { UserDto } from '../types/users.ts';
-import { toUserDto } from '../mappers/userMapper.ts';
 import type {
+	UserDto,
 	GetUserResponse,
 	GetAllUsersResponse,
 	UpdateMeResponse,
@@ -17,7 +16,8 @@ import type {
 	UserIdParams,
 	FavouriteEventRequest,
 	AddCartRequest,
-} from '../types/users.ts';
+} from '@beatriz/shared';
+import { toUserDto } from '../mappers/userMapper.ts';
 
 const { ObjectId } = mongoose.Types;
 

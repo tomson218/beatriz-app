@@ -1,5 +1,5 @@
 import type { Forum } from '../models/forumModel.ts';
-import type { ForumPostDto } from '../types/forums.ts';
+import type { ForumPostDto } from '@beatriz/shared';
 
 export const toForumDto = (forum: Forum): ForumPostDto => ({
 	_id: forum._id,

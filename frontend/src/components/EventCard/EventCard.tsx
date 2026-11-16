@@ -1,13 +1,14 @@
-import Card from '../UI/Card/Card';
+import { Card, CardContent, CardFooter } from '@/components/UI/card';
 import classes from './EventCard.module.css';
 import { Link } from 'react-router-dom';
-import calendarIcon from '../../assets/svg/calendar-icon.svg';
+import calendarIcon from '@/assets/svg/calendar-icon.svg';
 import { checkEventIsNew } from '@/utils/checkEventIsNew';
-import { formattedDate, formattedTime } from './../../utils/formatting-date';
+import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import OutlineHeartIcon from '@/assets/icons/OutlineHeartIcon';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Event } from '../../interfaces/Event';
+import type { Event } from '@beatriz/shared';
+import { ASSET_BASE_URL } from '@/api/apiConfig';
 
 interface EventProps {
 	event: Event;
@@ -18,66 +19,81 @@ interface EventProps {
 
 const EventCard = ({ event, isFavourite, addToFavourites, removeFromFavourites }: EventProps) => {
 	const eventDate = new Date(event.date);
-
-	const [isEventFavourite, setIsEventFavourite] = useState(isFavourite);
-
-	const handleClickFavourite = (id: string) => {
-		if (isEventFavourite) {
-			setIsEventFavourite(!isEventFavourite);
-			removeFromFavourites(id);
-		} else {
-			setIsEventFavourite(!isEventFavourite);
-			addToFavourites(id);
-		}
-	};
-
+	const [isEventFavourite, setIsEventFavourite] = useState<boolean>(isFavourite);
 	const isNewEvent = checkEventIsNew(eventDate);
+
+	const handleClickFavourite = (id: string): void => {
+		const nextValue = !isEventFavourite;
+		setIsEventFavourite(nextValue);
+
+		if (nextValue) {
+			addToFavourites(id);
+			return;
+		}
+
+		removeFromFavourites(id);
+	};
 
 	return (
 		<Card className={classes.container}>
-			<div className={classes['clickable-card']}>
-				<article>
+			<CardContent className='p-0'>
+				<article className={classes['clickable-card']} aria-label={`Wydarzenie ${event.name}`}>
 					<div className={classes['article-wrapper']} style={{ position: 'relative' }}>
-						{isNewEvent && <div className={classes.label}>NOWE</div>}
+						{isNewEvent && <span className={classes.label}>NOWE</span>}
 
 						<figure>
 							<img
 								className={classes['event-image']}
-								src={`http://localhost:3000/images/events/${event.image}`}
-								alt={event?.image}
+								src={`${ASSET_BASE_URL}/images/events/${event.image}`}
+								alt={event.name}
 							/>
 						</figure>
-						<div className={classes['article-body']}>
-							<h2>{event.name}</h2>
-							<div className={classes['event-stars']}>
-								{event?.star.map(s => (
-									<span className={classes['star-badge']}>{s}</span>
+
+						<section className={classes['article-body']} aria-labelledby={`event-${event._id}`}>
+							<header>
+								<h2 id={`event-${event._id}`}>{event.name}</h2>
+							</header>
+
+							<ul className={classes['event-stars']} aria-label='Gatunki wydarzenia'>
+								{event.star.map((star, index) => (
+									<li key={`${star}-${index}`} className={classes['star-badge']}>
+										{star}
+									</li>
 								))}
-							</div>
-							<div className={classes['event-date-time']}>
-								<img src={calendarIcon} alt='Calendar Icon' />
+							</ul>
+
+							<p className={classes['event-date-time']}>
+								<img src={calendarIcon} alt='' aria-hidden='true' />
 								<span>
 									{formattedDate(eventDate)} {formattedTime(eventDate)}
 								</span>
-							</div>
-							<div className={classes['event-actions']}>
-								<Link to={`/event-details/${event._id}`}>
-									<Button>Szczegóły</Button>
-								</Link>
+							</p>
 
-								<Link to={`/forum/${event._id}`}>
-									<Button style={{ backgroundColor: '#007BFF' }}>Forum</Button>
-								</Link>
+							<CardFooter className={`${classes['event-actions']} p-0`}>
+								<Button asChild type='button'>
+									<Link to={`/event-details/${event._id}`}>Szczegóły</Link>
+								</Button>
 
-								<OutlineHeartIcon
+								<Button asChild type='button' variant='secondary'>
+									<Link to={`/forum/${event._id}`}>Forum</Link>
+								</Button>
+
+								<Button
+									type='button'
+									variant='ghost'
+									size='icon'
+									aria-label={isEventFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
 									onClick={() => handleClickFavourite(event._id)}
-									className={`${classes.icon} ${isEventFavourite ? `${classes.favourite}` : ''}`}
-								/>
-							</div>
-						</div>
+									className={classes.iconButton}>
+									<OutlineHeartIcon
+										className={`${classes.icon} ${isEventFavourite ? classes.favourite : ''}`}
+									/>
+								</Button>
+							</CardFooter>
+						</section>
 					</div>
 				</article>
-			</div>
+			</CardContent>
 		</Card>
 	);
 };

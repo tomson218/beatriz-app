@@ -3,7 +3,14 @@ import classes from './Hall.module.css';
 import { useEffect, useState } from 'react';
 import useGetEventByIdQuery from '../../api/queries/useGetEventByIdQuery';
 import { Button } from '@/components/ui/button';
-import Modal from '../../components/UI/Modal/Modal';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import Sector from '../../components/Sector/Sector';
 import { INITIAL_SECTORS } from '@/constants/constants';
 
@@ -82,13 +89,19 @@ const Hall = () => {
 				</Link>
 			</div>
 
-			{isOpen && (
-				<Modal
-					title='Brak wybranego sektora hali!!!'
-					content='Żeby przejść dalej, musisz najpierw wybrać sektor hali.'
-					onClick={() => setIsOpen(false)}
-				/>
-			)}
+			<Dialog open={isOpen} onOpenChange={setIsOpen}>
+				<DialogContent className='sm:max-w-md'>
+					<DialogHeader>
+						<DialogTitle>Brak wybranego sektora hali!!!</DialogTitle>
+						<DialogDescription>Żeby przejść dalej, musisz najpierw wybrać sektor hali.</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+							OK
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };

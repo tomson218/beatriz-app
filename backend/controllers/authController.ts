@@ -8,10 +8,8 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { type Request, type Response, type NextFunction } from 'express';
 import { type User } from '../models/userModel.ts';
-import type { UserDto } from '../types/users.ts';
-import { toUserDto } from '../mappers/userMapper.ts';
-import { Types } from 'mongoose';
 import type {
+	UserDto,
 	LoginRequest,
 	SignUpRequest,
 	ForgetPasswordRequest,
@@ -20,7 +18,9 @@ import type {
 	UpdatePasswordRequest,
 	GoogleLoginRequest,
 	FacebookLoginRequest,
-} from '../types/auth.ts';
+} from '@beatriz/shared';
+import { toUserDto } from '../mappers/userMapper.ts';
+import { Types } from 'mongoose';
 
 /* te funkcje niebedace kntrolerem wywlic dokads */
 
@@ -36,13 +36,16 @@ export const signRefreshToken = (userId: Types.ObjectId): string => {
 	});
 };
 
+const getRefreshTokenCookieOptions = () => ({
+	httpOnly: true,
+	secure: process.env.NODE_ENV === 'production',
+	sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+	path: '/',
+	maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
 const setRefreshTokenCookie = (res: Response, refreshToken: string): void => {
-	res.cookie('refreshToken', refreshToken, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === 'production',
-		sameSite: 'strict',
-		maxAge: 7 * 24 * 60 * 60 * 1000,
-	});
+	res.cookie('refreshToken', refreshToken, getRefreshTokenCookieOptions());
 };
 
 const createSendToken = (user: UserDto, statusCode: number, res: Response): void => {
@@ -63,9 +66,7 @@ const createSendToken = (user: UserDto, statusCode: number, res: Response): void
 export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		res.clearCookie('refreshToken', {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === 'production',
-			sameSite: 'strict',
+			...getRefreshTokenCookieOptions(),
 		});
 
 		res.status(200).json({

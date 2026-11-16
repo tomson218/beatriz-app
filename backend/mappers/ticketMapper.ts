@@ -1,4 +1,4 @@
-import type { TicketDto } from '../types/tickets.ts';
+import type { TicketDto } from '@beatriz/shared';
 import type { Ticket } from '../models/ticketModel.ts';
 
 export const toTicketDto = (ticket: Ticket): TicketDto => ({

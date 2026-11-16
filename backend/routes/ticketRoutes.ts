@@ -16,24 +16,41 @@ import {
 
 const router = express.Router({ caseSensitive: true, strict: true });
 
-router
-	.route('/')
+const getCurrentUserTickets = (req: any, res: any, next: any): void => {
+	const currentUserTicketsReq = {
+		...req,
+		params: {
+			...req.params,
+			id: req.user.id,
+		},
+	};
 
-	.get(protect, getAllTickets); // DZIAŁA
+	return getUserTickets(currentUserTicketsReq, res, next);
+};
 
-router
-	.route('/users/:id') // /users/:id ---> POPRAWIONO
+const getSeatsByQuery = (req: any, res: any, next: any): void => {
+	const seatsReq = {
+		...req,
+		params: {
+			...req.params,
+			sector: String(req.query.sector ?? ''),
+			block: String(req.query.block ?? ''),
+		},
+	};
 
-	.get(protect, getUserTickets); // działa
+	return getOccupiedSeats(seatsReq, res, next);
+};
 
-router
-	.route('/events/:eventId/available-sectors') // poprawionnnnnnnnnnneeeeeeeeeeeeeeeeee
+router.route('/').get(protect, getAllTickets);
 
-	.get(protect, groupAvailableSectors);
+router.get('/me', protect, getCurrentUserTickets);
+router.get('/users/:id', protect, getUserTickets);
 
-router
-	.route('/events/:eventId/occupied-seats/:sector/:block') //POIORAWIONNNNNNNNNNEEEEEEEEEEEEEEEEEE
+router.get('/events/:eventId/available-sectors', protect, groupAvailableSectors);
+router.get('/events/:eventId/availability', protect, groupAvailableSectors);
+router.get('/events/:eventId/tickets/availability', protect, groupAvailableSectors);
 
-	.get(protect, getOccupiedSeats);
+router.get('/events/:eventId/occupied-seats/:sector/:block', protect, getOccupiedSeats);
+router.get('/events/:eventId/tickets/seats', protect, getSeatsByQuery);
 
 export default router;

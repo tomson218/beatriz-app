@@ -9,7 +9,7 @@ import type {
 	GetAllEventsResponse,
 	GetEventResponse,
 	UpdateEventResponse,
-} from '../types/events.ts';
+} from '@beatriz/shared';
 
 export const getAllEvents = async (req: Request, res: Response<GetAllEventsResponse>): Promise<void> => {
 	try {

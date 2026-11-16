@@ -1,7 +1,7 @@
 import DiscountCodeModel, { type DiscountCode } from '../models/discountCodeModel.ts';
 import UserModel from '../models/userModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { DiscountCodeDto } from '../types/discountCodes.ts';
+import type { DiscountCodeDto } from '@beatriz/shared';
 import { toDiscountCodeDto } from '../mappers/discountCodeMapper.ts';
 
 export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

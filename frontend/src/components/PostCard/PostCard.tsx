@@ -1,48 +1,50 @@
 import { Divider } from '@nextui-org/divider';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
-import { Post } from '../../interfaces/Post';
+import type { ForumPostDto, UserDto } from '@beatriz/shared';
+import { ASSET_BASE_URL } from '@/api/apiConfig';
+import { Card, CardContent, CardHeader } from '@/components/UI/card';
+
+type PostUser = Pick<UserDto, '_id' | 'email' | 'photo' | 'username'>;
 
 interface PostProps {
-	post: Post;
+	post: ForumPostDto & { user: PostUser };
 	isMyPost?: boolean;
 }
 
 const PostCard = ({ post, isMyPost }: PostProps) => {
 	const postDate = `${formattedDate(new Date(post.date))} ${formattedTime(new Date(post.date))}`;
+	const userAvatar = post.user.photo
+		? `${ASSET_BASE_URL}/images/users/${post.user.photo}`
+		: `${ASSET_BASE_URL}/images/users/defaultUser.jpg`;
 
 	return (
-		<>
-			<section
-				key={post._id}
-				style={{
-					margin: '1rem 2rem',
-					borderLeft: isMyPost ? '5px solid orange' : '5px solid black',
-					alignSelf: isMyPost ? 'flex-end' : 'flex-start',
-					backgroundColor: '#fff',
-					borderRadius: '1rem',
-					boxShadow: '13px 15px 18px -5px rgba(66, 68, 90, 1)',
-					padding: '1rem 2rem',
-					maxWidth: '40rem',
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '1.5rem',
-				}}>
-				<div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-					<img
-						src='http://localhost:3000/images/users/defaultUser.jpg'
-						alt='avatar'
-						style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '1rem' }}
-					/>
+		<Card
+			key={post._id}
+			className='m-4 max-w-2xl rounded-2xl border border-border bg-white shadow-lg'
+			style={{
+				margin: isMyPost ? '1rem 2rem 1rem auto' : '1rem auto 1rem 2rem',
+				borderLeft: isMyPost ? '5px solid orange' : '5px solid black',
+				alignSelf: isMyPost ? 'flex-end' : 'flex-start',
+			}}>
+			<CardHeader className='flex items-center gap-4 pb-3'>
+				<img
+					src={userAvatar}
+					alt={`${post.user.username ?? post.user.email} avatar`}
+					className='h-10 w-10 rounded-xl object-cover'
+				/>
 
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-						<h1>{post.user.email}</h1>
-						<time>{postDate}</time>
-					</div>
+				<div className='flex flex-col gap-1'>
+					<h2 className='text-base font-semibold'>{post.user.email}</h2>
+					<time className='text-sm text-muted-foreground'>{postDate}</time>
 				</div>
-				<Divider />
-				<p style={{ lineHeight: 1.8 }}>{post.message}</p>
-			</section>
-		</>
+			</CardHeader>
+
+			<Divider />
+
+			<CardContent className='pt-4'>
+				<p className='leading-8 text-base'>{post.message}</p>
+			</CardContent>
+		</Card>
 	);
 };
 

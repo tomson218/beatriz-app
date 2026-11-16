@@ -10,15 +10,23 @@ import { getAllOrders, getUserOrders } from '../controllers/orderController.ts';
 
 const router = express.Router({ caseSensitive: true, strict: true });
 
-router
-	.route('/')
+const getCurrentUserOrders = (req: any, res: any, next: any): void => {
+	const currentUserOrdersReq = {
+		...req,
+		params: {
+			...req.params,
+			id: req.user.id,
+		},
+	};
 
-	.get(protect, getAllOrders); // DZIAŁA
+	return getUserOrders(currentUserOrdersReq, res, next);
+};
 
-router
-	.route('/users/:id') // /users/:id  ---> POPRAWIONO
+router.route('/').get(protect, getAllOrders);
 
-	.get(protect, getUserOrders); // DZIAŁA
+router.get('/me', protect, getCurrentUserOrders);
+router.get('/users/:id', protect, getUserOrders);
+router.get('/:id', protect, getCurrentUserOrders);
 
 export default router;
 

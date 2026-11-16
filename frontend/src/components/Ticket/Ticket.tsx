@@ -1,12 +1,12 @@
 import classes from './Ticket.module.css';
-import calendarIcon from '../../assets/svg/calendar-icon.svg';
-import chairIcon from '../../assets/svg/chair-icon.svg';
-import { formattedDate, formattedTime } from '../../utils/formatting-date.ts';
+import calendarIcon from '@/assets/svg/calendar-icon.svg';
+import chairIcon from '@/assets/svg/chair-icon.svg';
+import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import QRCode from 'react-qr-code';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { getNameBlock, getNameTypeTicket } from '@/utils/namingTicket.ts';
-import { Ticket as ITicket } from '@/interfaces/Ticket.ts';
+import { getNameBlock, getNameTypeTicket } from '@/utils/namingTicket';
+import type { Ticket as ITicket } from '@beatriz/shared';
 
 interface TicketProps {
 	ticket: ITicket;

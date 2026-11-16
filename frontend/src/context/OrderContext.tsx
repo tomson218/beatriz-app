@@ -1,12 +1,32 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, type Dispatch, type SetStateAction } from 'react';
 
-const OrderContext = createContext({
+type OrderItem = {
+	id?: number;
+	date?: string | Date;
+	eventId?: string;
+	images?: string[];
+	name?: string;
+	price?: number;
+	seating?: number | string;
+	sector?: string;
+	block?: string;
+	type?: string;
+};
+
+const OrderContext = createContext<{
+	order: OrderItem[];
+	setOrder: Dispatch<SetStateAction<OrderItem[]>>;
+	totalPrice: number;
+	setTotalPrice: Dispatch<SetStateAction<number>>;
+	discountCode: string | number;
+	setDiscountCode: Dispatch<SetStateAction<number | string>>;
+}>({
 	order: [],
-	setOrder: (order = []) => {},
+	setOrder: () => {},
 	totalPrice: 0,
-	setTotalPrice: (totalPrice = 0) => {},
+	setTotalPrice: () => {},
 	discountCode: '',
-	setDiscountCode: (discountCode = 0) => {},
+	setDiscountCode: () => {},
 });
 
 export const OrderContextProvider = ({ children }) => {

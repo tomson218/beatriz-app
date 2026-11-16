@@ -73,10 +73,20 @@ const swaggerOptions = {
 					},
 				},
 			},
-			'/api/v2/auth/refresh-token': {
+			'/api/v2/auth/refresh': {
 				post: {
 					tags: ['Auth'],
 					summary: 'Odświeżenie access tokena',
+					responses: {
+						200: { description: 'Nowy access token' },
+						401: { description: 'Brak lub nieważny refresh token' },
+					},
+				},
+			},
+			'/api/v2/auth/refresh-token': {
+				post: {
+					tags: ['Auth'],
+					summary: 'Alias odświeżenia access tokena',
 					responses: {
 						200: { description: 'Nowy access token' },
 						401: { description: 'Brak lub nieważny refresh token' },
@@ -99,7 +109,7 @@ const swaggerOptions = {
 					tags: ['Auth'],
 					summary: 'Logowanie przez Google',
 					responses: {
-						200: { description: 'Pomyślne logowanie google' },
+						200: { description: 'Pomyślne logowanie Google' },
 						400: { description: 'Nieprawidłowy token Google' },
 					},
 				},
@@ -109,24 +119,33 @@ const swaggerOptions = {
 					tags: ['Auth'],
 					summary: 'Logowanie przez Facebook',
 					responses: {
-						200: { description: 'Pomyślne logowanie facebook' },
+						200: { description: 'Pomyślne logowanie Facebook' },
 						400: { description: 'Nieprawidłowy token Facebook' },
+					},
+				},
+			},
+			'/api/v2/auth/password/forgot': {
+				post: {
+					tags: ['Auth'],
+					summary: 'Zapomniane hasło',
+					responses: {
+						200: { description: 'Wysłano link resetujący hasło' },
+						400: { description: 'Błędne dane' },
 					},
 				},
 			},
 			'/api/v2/auth/forgetPassword': {
 				post: {
 					tags: ['Auth'],
-					summary: 'Zapomniane hasło',
-					security: [{ bearerAuth: [] }],
+					summary: 'Alias zapomnianego hasła',
 					responses: {
 						200: { description: 'Wysłano link resetujący hasło' },
-						401: { description: 'Brak autoryzacji' },
+						400: { description: 'Błędne dane' },
 					},
 				},
 			},
-			'/api/v2/auth/resetPassword/{token}': {
-				patch: {
+			'/api/v2/auth/password/reset/{token}': {
+				post: {
 					tags: ['Auth'],
 					summary: 'Resetowanie hasła po tokenie',
 					parameters: [
@@ -138,17 +157,46 @@ const swaggerOptions = {
 							description: 'Token resetujący hasło z e-maila',
 						},
 					],
-					security: [{ bearerAuth: [] }],
 					responses: {
 						200: { description: 'Hasło zresetowane' },
 						400: { description: 'Niepoprawny token lub dane' },
 					},
 				},
 			},
-			'/api/v2/auth/updateMyPassword': {
+			'/api/v2/auth/resetPassword/{token}': {
+				patch: {
+					tags: ['Auth'],
+					summary: 'Alias resetowania hasła po tokenie',
+					parameters: [
+						{
+							name: 'token',
+							in: 'path',
+							required: true,
+							schema: { type: 'string' },
+							description: 'Token resetujący hasło z e-maila',
+						},
+					],
+					responses: {
+						200: { description: 'Hasło zresetowane' },
+						400: { description: 'Niepoprawny token lub dane' },
+					},
+				},
+			},
+			'/api/v2/auth/password': {
 				patch: {
 					tags: ['Auth'],
 					summary: 'Aktualizacja bieżącego hasła użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: 'Hasło zostało zaktualizowane' },
+						401: { description: 'Brak autoryzacji' },
+					},
+				},
+			},
+			'/api/v2/auth/updateMyPassword': {
+				patch: {
+					tags: ['Auth'],
+					summary: 'Alias aktualizacji bieżącego hasła użytkownika',
 					security: [{ bearerAuth: [] }],
 					responses: {
 						200: { description: 'Hasło zostało zaktualizowane' },
@@ -175,6 +223,58 @@ const swaggerOptions = {
 					},
 				},
 			},
+			'/api/v2/users/me': {
+				get: {
+					tags: ['Users'],
+					summary: 'Pobierz profil bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: 'Profil użytkownika' },
+						401: { description: 'Brak autoryzacji' },
+					},
+				},
+				patch: {
+					tags: ['Users'],
+					summary: 'Zaktualizuj profil bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: 'Profil zaktualizowany' },
+						401: { description: 'Brak autoryzacji' },
+					},
+				},
+				delete: {
+					tags: ['Users'],
+					summary: 'Usuń bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: 'Użytkownik usunięty' },
+						401: { description: 'Brak autoryzacji' },
+					},
+				},
+			},
+			'/api/v2/users/me/favourites': {
+				get: {
+					tags: ['Users'],
+					summary: 'Pobierz ulubione eventy bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Lista ulubionych eventów' } },
+				},
+				post: {
+					tags: ['Users'],
+					summary: 'Dodaj event do ulubionych bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Dodano do ulubionych' } },
+				},
+			},
+			'/api/v2/users/me/favourites/{eventId}': {
+				delete: {
+					tags: ['Users'],
+					summary: 'Usuń event z ulubionych bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 200: { description: 'Usunięto z ulubionych' } },
+				},
+			},
 			'/api/v2/users/{id}': {
 				get: {
 					tags: ['Users'],
@@ -185,6 +285,13 @@ const swaggerOptions = {
 						200: { description: 'Szczegóły użytkownika' },
 						404: { description: 'Użytkownik nie istnieje' },
 					},
+				},
+				patch: {
+					tags: ['Users'],
+					summary: 'Edytuj użytkownika po ID',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 200: { description: 'Zaktualizowano użytkownika' } },
 				},
 				delete: {
 					tags: ['Users'],
@@ -200,7 +307,7 @@ const swaggerOptions = {
 			'/api/v2/users/editUser/{id}': {
 				patch: {
 					tags: ['Users'],
-					summary: 'Edytuj użytkownika po ID',
+					summary: 'Legacy alias: edytuj użytkownika po ID',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
 					responses: { 200: { description: 'Zaktualizowano użytkownika' } },
@@ -209,7 +316,7 @@ const swaggerOptions = {
 			'/api/v2/users/updateMe': {
 				patch: {
 					tags: ['Users'],
-					summary: 'Zaktualizuj profil bieżącego użytkownika',
+					summary: 'Legacy alias: zaktualizuj profil bieżącego użytkownika',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Zaktualizowano profil' } },
 				},
@@ -217,7 +324,7 @@ const swaggerOptions = {
 			'/api/v2/users/deleteMe': {
 				delete: {
 					tags: ['Users'],
-					summary: 'Usuń bieżącego użytkownika',
+					summary: 'Legacy alias: usuń bieżącego użytkownika',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Usunięto bieżącego użytkownika' } },
 				},
@@ -225,7 +332,7 @@ const swaggerOptions = {
 			'/api/v2/users/favourite': {
 				get: {
 					tags: ['Users'],
-					summary: 'Pobierz ulubione eventy użytkownika',
+					summary: 'Legacy alias: pobierz ulubione eventy użytkownika',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Lista ulubionych eventów' } },
 				},
@@ -233,7 +340,7 @@ const swaggerOptions = {
 			'/api/v2/users/addFavourite': {
 				post: {
 					tags: ['Users'],
-					summary: 'Dodaj event do ulubionych',
+					summary: 'Legacy alias: dodaj event do ulubionych',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Dodano do ulubionych' } },
 				},
@@ -241,7 +348,7 @@ const swaggerOptions = {
 			'/api/v2/users/removeFavourite': {
 				delete: {
 					tags: ['Users'],
-					summary: 'Usuń event z ulubionych',
+					summary: 'Legacy alias: usuń event z ulubionych',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Usunięto z ulubionych' } },
 				},
@@ -299,6 +406,14 @@ const swaggerOptions = {
 					responses: { 200: { description: 'Lista zamówień' } },
 				},
 			},
+			'/api/v2/orders/me': {
+				get: {
+					tags: ['Orders'],
+					summary: 'Pobierz zamówienia bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Lista zamówień bieżącego użytkownika' } },
+				},
+			},
 			'/api/v2/orders/users/{id}': {
 				get: {
 					tags: ['Orders'],
@@ -308,12 +423,29 @@ const swaggerOptions = {
 					responses: { 200: { description: 'Lista zamówień użytkownika' } },
 				},
 			},
+			'/api/v2/orders/{id}': {
+				get: {
+					tags: ['Orders'],
+					summary: 'Pobierz zamówienie po ID',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 200: { description: 'Szczegóły zamówienia' } },
+				},
+			},
 			'/api/v2/tickets': {
 				get: {
 					tags: ['Tickets'],
 					summary: 'Pobierz wszystkie bilety',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Lista biletów' } },
+				},
+			},
+			'/api/v2/tickets/me': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Pobierz bilety bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Lista biletów bieżącego użytkownika' } },
 				},
 			},
 			'/api/v2/tickets/users/{id}': {
@@ -334,6 +466,24 @@ const swaggerOptions = {
 					responses: { 200: { description: 'Lista dostępnych sektorów' } },
 				},
 			},
+			'/api/v2/tickets/events/{eventId}/availability': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Alias dostępnych sektorów dla wydarzenia',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 200: { description: 'Lista dostępnych sektorów' } },
+				},
+			},
+			'/api/v2/tickets/events/{eventId}/tickets/availability': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Alias dostępności biletów dla wydarzenia',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 200: { description: 'Lista dostępnych sektorów' } },
+				},
+			},
 			'/api/v2/tickets/events/{eventId}/occupied-seats/{sector}/{block}': {
 				get: {
 					tags: ['Tickets'],
@@ -343,6 +493,19 @@ const swaggerOptions = {
 						{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } },
 						{ name: 'sector', in: 'path', required: true, schema: { type: 'string' } },
 						{ name: 'block', in: 'path', required: true, schema: { type: 'string' } },
+					],
+					responses: { 200: { description: 'Zajęte miejsca' } },
+				},
+			},
+			'/api/v2/tickets/events/{eventId}/tickets/seats': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Pobierz zajęte miejsca wg query paramów sector i block',
+					security: [{ bearerAuth: [] }],
+					parameters: [
+						{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } },
+						{ name: 'sector', in: 'query', required: false, schema: { type: 'string' } },
+						{ name: 'block', in: 'query', required: false, schema: { type: 'string' } },
 					],
 					responses: { 200: { description: 'Zajęte miejsca' } },
 				},

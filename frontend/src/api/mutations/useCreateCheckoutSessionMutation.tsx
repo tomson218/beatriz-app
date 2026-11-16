@@ -1,30 +1,30 @@
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import type { CreateCheckoutSessionRequest, CreateCheckoutSessionResponse } from '@beatriz/shared';
 
 const useCreateCheckoutSessionMutation = () => {
-	const createCheckoutSession = async (lineItems: {}[]) => {
-		const uri = `/create-checkout-session`;
-		const response = await instance.post(uri, {
+	const createCheckoutSession = async (
+		lineItems: CreateCheckoutSessionRequest['products'],
+	): Promise<CreateCheckoutSessionResponse> => {
+		const uri = '/create-checkout-session';
+		const payload: CreateCheckoutSessionRequest = {
 			products: lineItems,
-			discountCode: JSON.parse(localStorage.getItem('code')),
-		});
+		};
+		const response = await instance.post<CreateCheckoutSessionResponse>(uri, payload);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: createCheckoutSession,
 
-		onSuccess: (data: any) => {
+		onSuccess: (data: CreateCheckoutSessionResponse) => {
 			console.log(data);
 			toast.success('Pomyślnie utworzono sesję realizacji zakupu');
-			setTimeout(() => {
-				window.location.href = data.url;
-			}, 1000);
 		},
 
-		onError: (error: any) => {
-			console.log(`${error}`);
+		onError: (error: unknown) => {
+			console.log(error);
 			toast.error('Nieudane utworzenie sesji realizacji zakupu');
 		},
 	});

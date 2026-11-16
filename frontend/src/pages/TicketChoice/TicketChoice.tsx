@@ -3,13 +3,20 @@ import { Link, useLocation } from 'react-router-dom';
 import useCreateCheckoutSessionMutation from '../../api/mutations/useCreateCheckoutSessionMutation';
 import useGetEventByIdQuery from '../../api/queries/useGetEventByIdQuery';
 import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import classes from './TicketChoice.module.css';
 import Order from '../../components/Order/Order';
 import useAddUserCartMutation from '@/api/mutations/useAddUserCartMutation';
 import OrderContext from '@/context/OrderContext';
 import OrderWithOutSeats from '../../components/OrderWithoutSeats/OrderWithoutSeats';
 import TotalAmount from '../../components/TotalAmount/TotalAmount';
-import Modal from '../../components/UI/Modal/Modal';
 
 const getTicketTypeByPrice = (object, value) => {
 	return Object.keys(object).find(key => object[key] === value);
@@ -187,13 +194,21 @@ const TicketChoice = () => {
 					</Button>
 				</Link>
 			</div>
-			{isOpen && (
-				<Modal
-					title='Błąd!'
-					content='Łączna liczba wybranych biletów ma być równa sumie liczby typów biletów'
-					onClick={() => setIsOpen(false)}
-				/>
-			)}
+			<Dialog open={isOpen} onOpenChange={setIsOpen}>
+				<DialogContent className='sm:max-w-md'>
+					<DialogHeader>
+						<DialogTitle>Błąd!</DialogTitle>
+						<DialogDescription>
+							Łączna liczba wybranych biletów ma być równa sumie liczby typów biletów.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+							OK
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };

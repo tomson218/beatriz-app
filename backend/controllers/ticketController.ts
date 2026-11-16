@@ -2,7 +2,7 @@ import TicketModel from '../models/ticketModel.ts';
 import EventModel from '../models/eventModel.ts';
 import { COUNT_BLOCKS, COUNT_SEAT } from '../capacityHall.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { GetAllTicketsResponse, GetUserTicketsResponse, TicketDto } from '../types/tickets.ts';
+import type { GetAllTicketsResponse, GetUserTicketsResponse, TicketDto } from '@beatriz/shared';
 import { toTicketDto } from '../mappers/ticketMapper.ts';
 import type { Ticket } from '../models/ticketModel.ts';
 import type { User } from '../models/userModel.ts';

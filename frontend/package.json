@@ -11,6 +11,7 @@
 		"test": "vitest"
 	},
 	"dependencies": {
+		"@beatriz/shared": "file:../shared",
 		"@emotion/react": "^11.13.3",
 		"@emotion/styled": "^11.13.0",
 		"@fortawesome/fontawesome-svg-core": "^6.6.0",

@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import useGetTicketsByUserQuery from '../../api/queries/useGetTicketsByUserQuery';
-import Ticket from '../../components/Ticket/Ticket';
+import useGetTicketsByUserQuery from '@/api/queries/useGetTicketsByUserQuery';
+import Ticket from '@/components/Ticket/Ticket';
 import classes from './Tickets.module.css';
-import Loader from '../../components/libs/Loader';
+import Loader from '@/components/libs/Loader';
 import UserContext from '@/context/UserContext';
 import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
-import { Ticket as ITicket } from '../../interfaces/Ticket';
+import type { Ticket as ITicket } from '@beatriz/shared';
 
 const Tickets = () => {
 	const { userId } = useContext(UserContext);

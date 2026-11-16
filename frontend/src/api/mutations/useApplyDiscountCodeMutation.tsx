@@ -1,23 +1,24 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
+import type { ApplyDiscountCodeRequest, ApplyDiscountCodeResponse } from '@beatriz/shared';
 
 const useApplyDiscountCodeMutation = () => {
-	const applyDiscountCode = async discountDetails => {
-		const uri = `/discount-codes/applyCode`;
-		const response = await instance.post(uri, discountDetails);
+	const applyDiscountCode = async (discountDetails: ApplyDiscountCodeRequest): Promise<ApplyDiscountCodeResponse> => {
+		const uri = '/discount-codes/applyCode';
+		const response = await instance.post<ApplyDiscountCodeResponse>(uri, discountDetails);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: applyDiscountCode,
-		onSuccess: (data: any, variables: any) => {
+		onSuccess: (data: ApplyDiscountCodeResponse) => {
 			console.log(data);
 			toast.success('Pomyślnie zastosowany rabat');
 		},
 
-		onError: (error: any) => {
-			console.log(`${error}`);
+		onError: (error: unknown) => {
+			console.log(error);
 			toast.error('Nie udało się zastosować rabatu');
 		},
 	});
