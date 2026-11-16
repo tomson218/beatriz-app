@@ -2,8 +2,10 @@ import { Button } from '@/components/ui/button';
 import classes from './Blocks.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { Event } from '@beatriz/shared/events';
+import type { BlockType } from '@beatriz/shared/tickets';
 import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
-import Block from '../../components/Block/Block';
+import Block from '@/components/Block/Block';
 import {
 	Dialog,
 	DialogContent,
@@ -14,9 +16,9 @@ import {
 } from '@/components/ui/dialog';
 
 interface Params {
-	eventId: string;
+	eventId: Event["_id"];
 	sector?: string;
-	block?: string;
+	block?: BlockType;
 }
 const Blocks = () => {
 	const navigate = useNavigate();
@@ -25,16 +27,23 @@ const Blocks = () => {
 
 	const { eventId, sector, block } = params;
 
-	const [selectedBlock, setSelectedBlock] = useState(block ?? '');
-	const [isOpen, setIsOpen] = useState(false);
+	const [selectedBlock, setSelectedBlock] = useState<BlockType>(block ?? '');
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	const { data: eventDetails, isLoading: isEventDetailsLoading } = useGetEventByIdQuery(eventId);
 
-	if (isEventDetailsLoading) return <div>Loading...</div>;
+	if (isEventDetailsLoading) return <div>Ładowanie...</div>;
 
 	const isSeatRequired = eventDetails.seatRequired;
+	const needsSeatSelection = selectedBlock && isSeatRequired;
 
-	const handleSelectBlock = (id: string) => {
+	const buildNextPageUrl = () => {
+		if (!selectedBlock) return null;
+		const base = `?eventId=${eventId}&sector=${sector}&block=${selectedBlock}`;
+		return needsSeatSelection ? `/seats${base}` : `/ticket-choice${base}`;
+	};
+
+	const handleSelectBlock = (id: BlockType) => {
 		setSelectedBlock(id);
 		const newUrl = `/blocks?eventId=${eventId}&sector=${sector}&block=${id}`;
 		navigate(newUrl, { replace: true });
@@ -44,22 +53,20 @@ const Blocks = () => {
 		if (!selectedBlock) {
 			setIsOpen(true);
 			return;
-		} else if (selectedBlock && isSeatRequired) {
-			return navigate(`/seats?eventId=${eventId}&sector=${sector}&block=${selectedBlock}`);
-		} else {
-			return navigate(`/ticket-choice?eventId=${eventId}&sector=${sector}&block=${selectedBlock}`);
 		}
+		const nextUrl = buildNextPageUrl();
+		if (nextUrl) return navigate(nextUrl);
 	};
 
 	return (
-		<div className={classes.container}>
+		<main className={classes.container}>
 			<h1 className={classes.heading}>Wybierz strefę</h1>
 
 			<section className={classes.blocks}>
-				<Block value='blue' onClick={handleSelectBlock} isSelected={selectedBlock === 'blue'} />
-				<Block value='green' onClick={handleSelectBlock} isSelected={selectedBlock === 'green'} />
-				<Block value='yellow' onClick={handleSelectBlock} isSelected={selectedBlock === 'yellow'} />
-				<Block value='black' onClick={handleSelectBlock} isSelected={selectedBlock === 'black'} />
+				<Block block='blue' onSelect={handleSelectBlock} isSelected={selectedBlock === 'blue'} />
+				<Block block='green' onSelect={handleSelectBlock} isSelected={selectedBlock === 'green'} />
+				<Block block='yellow' onSelect={handleSelectBlock} isSelected={selectedBlock === 'yellow'} />
+				<Block block='black' onSelect={handleSelectBlock} isSelected={selectedBlock === 'black'} />
 			</section>
 
 			<Button onClick={handleChoosePage} className={classes.link}>
@@ -79,7 +86,7 @@ const Blocks = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</main>
 	);
 };
 

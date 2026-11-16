@@ -150,3 +150,110 @@ body {
 	margin-bottom: 1.5rem;
 	text-align: center;
 }
+
+/* Modal / overlay for ticket details */
+.modal-overlay {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #ffffff;
+	border: 1px solid orange;
+	width: 400px;
+	max-width: 90%;
+	padding: 2rem;
+	border-radius: 16px;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+	z-index: 1000;
+	font-family: 'Roboto', sans-serif;
+	cursor: pointer;
+}
+
+.modal-close {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	background-color: transparent;
+	border: none;
+	font-size: 2rem;
+	color: #ff6347;
+	cursor: pointer;
+	transition: color 0.3s ease;
+	padding: 0;
+	line-height: 1;
+}
+
+.modal-close:hover {
+	color: #d32f2f;
+}
+
+.modal-title {
+	text-align: center;
+	margin-bottom: 1rem;
+	color: #333;
+	font-size: 1.5rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.modal-content {
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+.modal-row {
+	margin-bottom: 1rem;
+	font-size: 1.1rem;
+	color: #555;
+}
+
+.modal-row span {
+	font-weight: 400;
+}
+
+/* Block color badges */
+.block-badge {
+	padding: 10px;
+	border: 1px solid black;
+	color: white;
+	margin-left: 5px;
+	display: inline-block;
+}
+
+.block-badge--blue {
+	background-color: blue;
+}
+
+.block-badge--green {
+	background-color: green;
+}
+
+.block-badge--yellow {
+	background-color: yellow;
+	color: black;
+}
+
+.block-badge--black {
+	background-color: black;
+}
+
+/* Seating info row */
+.seating-row {
+	display: flex;
+	align-items: center;
+	flex: 1;
+}
+
+/* Details button section */
+.details-section {
+	padding: 2rem 0.5rem 0;
+}
+
+/* QR code styling */
+.qr-code svg {
+	width: 100%;
+	max-width: 300px;
+	margin: 0 auto;
+	border-radius: 8px;
+}

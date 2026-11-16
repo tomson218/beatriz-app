@@ -1,26 +1,16 @@
-import { createContext, useState, type Dispatch, type SetStateAction } from 'react';
+import { createContext, useState, type Dispatch, type SetStateAction, type ReactNode } from 'react';
+import type { CartTicket } from '@beatriz/shared/orders';
 
-type OrderItem = {
-	id?: number;
-	date?: string | Date;
-	eventId?: string;
-	images?: string[];
-	name?: string;
-	price?: number;
-	seating?: number | string;
-	sector?: string;
-	block?: string;
-	type?: string;
-};
-
-const OrderContext = createContext<{
-	order: OrderItem[];
-	setOrder: Dispatch<SetStateAction<OrderItem[]>>;
+export interface OrderContextType {
+	order: CartTicket[];
+	setOrder: Dispatch<SetStateAction<CartTicket[]>>;
 	totalPrice: number;
 	setTotalPrice: Dispatch<SetStateAction<number>>;
 	discountCode: string | number;
 	setDiscountCode: Dispatch<SetStateAction<number | string>>;
-}>({
+}
+
+const OrderContext = createContext<OrderContextType>({
 	order: [],
 	setOrder: () => {},
 	totalPrice: 0,
@@ -29,7 +19,11 @@ const OrderContext = createContext<{
 	setDiscountCode: () => {},
 });
 
-export const OrderContextProvider = ({ children }) => {
+interface OrderContextProviderProps {
+	children: ReactNode;
+}
+
+export const OrderContextProvider = ({ children }: OrderContextProviderProps) => {
 	const [order, setOrder] = useState(JSON.parse(localStorage.getItem('ORDERS')) || []);
 	const [totalPrice, setTotalPrice] = useState(JSON.parse(localStorage.getItem('totalPrice')) || 0);
 	const [discountCode, setDiscountCode] = useState(0);

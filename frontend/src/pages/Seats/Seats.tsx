@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import classes from './Seats.module.css';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import useGetOccupiedSeatsQuery from '../../api/queries/useGetOccupiedSeatsQuery';
+import useGetOccupiedSeatsQuery from '@/api/queries/useGetOccupiedSeatsQuery';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -12,7 +12,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
-import Seat from '../../components/Seat/Seat';
+import Seat from '@/components/Seat/Seat';
+import {
+	parseInitialSelectedSeats,
+	isSeatOccupied,
+	isSeatSelected,
+	hasNoSelectedSeats,
+} from '@/utils/seats';
 
 const Seats = () => {
 	const navigate = useNavigate();
@@ -21,9 +27,7 @@ const Seats = () => {
 
 	const { eventId, sector, block, seats } = params;
 
-	const INITIAL_SELECTED_SEATS: number[] = seats && seats !== '0' ? seats.split(',').map(seat => Number(seat)) : [];
-
-	const [selectedSeats, setSelectedSeats] = useState<number[]>(INITIAL_SELECTED_SEATS);
+	const [selectedSeats, setSelectedSeats] = useState<number[]>(() => parseInitialSelectedSeats(seats));
 
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -33,27 +37,21 @@ const Seats = () => {
 	const { data: occupiedSeats, isLoading: isOccupiedSeatsLoading } = useGetOccupiedSeatsQuery(eventId, sector, block);
 
 	const handleAddSeats = (seat: number) => {
-		let updatedSeats;
-		if (occupiedSeats.includes(seat)) {
+		if (isSeatOccupied(seat, occupiedSeats)) {
 			return;
-		} else if (selectedSeats.includes(seat)) {
+		}
+
+		if (isSeatSelected(seat, selectedSeats)) {
 			setSelectedSeats(prevSelectedSeats => {
-				updatedSeats = prevSelectedSeats.filter(element => element !== seat);
-
-				const newUrl = `${
-					location.pathname
-				}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${updatedSeats.join(',')}`;
+				const updatedSeats = prevSelectedSeats.filter(element => element !== seat);
+				const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${updatedSeats.join(',')}`;
 				navigate(newUrl, { replace: true });
-
 				return updatedSeats;
 			});
-		} else if (!selectedSeats.includes(seat)) {
+		} else {
 			setSelectedSeats(prevSelectedSeats => {
-				updatedSeats = [...prevSelectedSeats, seat];
-
-				const newUrl = `${
-					location.pathname
-				}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${updatedSeats.join(',')}`;
+				const updatedSeats = [...prevSelectedSeats, seat];
+				const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${updatedSeats.join(',')}`;
 				navigate(newUrl, { replace: true });
 				return updatedSeats;
 			});
@@ -63,69 +61,71 @@ const Seats = () => {
 	localStorage.setItem('selected-seats', JSON.stringify(selectedSeats));
 
 	if (isOccupiedSeatsLoading) {
-		return <p>Loading...</p>;
+		return <p>Ładowanie...</p>;
 	}
 
 	const sortedSelectedSeats = [...selectedSeats].sort((a, b) => a - b);
 
 	return (
-		<section style={{ minHeight: '94.4dvh', backgroundColor: 'white' }}>
-			<h1 className={classes.title} style={{ color: 'black' }}>
+		<section className={classes['seats-page']}>
+			<h1 className={classes.title}>
 				Wybierz miejsca dla sektora: {sector} i strefy {block}
 			</h1>
 
-			<div className={classes['seats-container']}>
-				{Array.from({ length: 100 }, (_, index) => (
-					<Seat
-						isSelected={selectedSeats.includes(index + 1)}
-						isOccupied={occupiedSeats.includes(index + 1)}
-						onAddSeats={handleAddSeats}
-						index={index}
-					/>
-				))}
-			</div>
+			<section className={classes['seats-container']}>
+				{Array.from({ length: 100 }, (_, index) => {
+					const seatNumber = index + 1;
+					return (
+						<Seat
+							key={seatNumber}
+							isSelected={isSeatSelected(seatNumber, selectedSeats)}
+							isOccupied={isSeatOccupied(seatNumber, occupiedSeats)}
+							onAddSeats={handleAddSeats}
+							index={index}
+						/>
+					);
+				})}
+			</section>
 
-			<section className={classes['legend']} style={{}}>
-				<h3 style={{ textAlign: 'center', padding: '1rem' }}>Legenda</h3>
-				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
-					<article style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+			<aside className={classes['legend']}>
+				<h3 className={classes['legend-title']}>Legenda</h3>
+				<div className={classes['legend-row']}>
+					<article className={classes['legend-item']}>
 						<div className={`${classes['legend-seat']} ${classes['free']}`}></div>
 						<span>wolne</span>
 					</article>
 
-					<article style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+					<article className={classes['legend-item']}>
 						<div className={`${classes['legend-seat']} ${classes['selected']}`}></div>
 
 						<span>wybrane</span>
 					</article>
 
-					<article style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+					<article className={classes['legend-item']}>
 						<div className={`${classes['legend-seat']} ${classes['occupied']}`}></div>
 						<span>zajęte</span>
 					</article>
 				</div>
-			</section>
+			</aside>
 
-			<div style={{ padding: '0 1rem 1rem' }}>
+			<nav className={classes['seats-nav']}>
 				<Link
 					to={
-						selectedSeats.length !== 0
-							? `/ticket-choice?eventId=${eventId}&sector=${sector}&block=${block}&seats=${sortedSelectedSeats.join(
-									',',
-								)}`
+						!hasNoSelectedSeats(selectedSeats)
+							? `/ticket-choice?eventId=${eventId}&sector=${sector}&block=${block}&seats=${sortedSelectedSeats.join(',')}`
 							: getCurrentUrl()
-					}>
+						}>
 					<Button
 						onClick={() => {
 							localStorage.setItem('seats', JSON.stringify(selectedSeats));
-							if (selectedSeats.length === 0) {
+							if (hasNoSelectedSeats(selectedSeats)) {
 								setIsOpen(true);
 							}
 						}}>
 						Przejdź do wyboru biletów
 					</Button>
 				</Link>
-			</div>
+			</nav>
 
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogContent className='sm:max-w-md'>

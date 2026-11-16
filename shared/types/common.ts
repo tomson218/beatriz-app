@@ -1,13 +1,12 @@
-export type ErrorResponse = { status: 'error' | 'fail'; message: string };
+export interface ErrorResponse {
+	message: string;
+	statusCode: number;
+}
 
-export type SuccessList<K extends string, T> = {
-  status: 'success';
-  data: {
-    results: number;
-  } & Record<K, T[]>;
-};
+export interface SuccessList<T = unknown> {
+	data: T[];
+}
 
-export type SuccessItem<K extends string, T> = {
-  status: 'success';
-  data: Record<K, T>;
-};
+export interface SuccessItem<T = unknown> {
+	data: T;
+}

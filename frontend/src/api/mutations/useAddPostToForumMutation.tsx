@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
-import type { AddNewPostToForumRequest, AddNewPostToForumResponse } from '@beatriz/shared';
+import type { AddNewPostToForumRequest, AddNewPostToForumResponse } from '@beatriz/shared/forums';
 
 const useAddPostToForumMutation = (refetch: () => void) => {
 	const addPostToForum = async (postDetails: AddNewPostToForumRequest): Promise<AddNewPostToForumResponse> => {

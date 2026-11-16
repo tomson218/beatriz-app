@@ -1,4 +1,4 @@
-import { NEW_EVENT } from '@/constants/constants';
+import { NEW_EVENT } from '@beatriz/shared/constants';
 
 export const checkEventIsNew = (date: Date) => {
 	const differenceInDays = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);

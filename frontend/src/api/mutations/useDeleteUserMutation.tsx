@@ -1,7 +1,7 @@
 import instance from '@/api/apiConfig';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import type { DeleteUserResponse } from '@beatriz/shared';
+import type { DeleteUserResponse } from '@beatriz/shared/users';
 
 const useDeleteUserMutation = () => {
 	const deleteUser = async (id: string): Promise<DeleteUserResponse> => {

@@ -1,9 +1,10 @@
 import FormInput from './FormInput';
 import FormButton from './FormButton';
+import PolishFormInput from './PolishFormInput';
+import type { FormHTMLAttributes, ReactNode } from 'react';
 
-interface FormProps {
-	children: React.ReactNode;
-	[key: string]: any;
+interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
+	children: ReactNode;
 }
 
 const Form = ({ children, ...props }: FormProps) => {
@@ -11,6 +12,7 @@ const Form = ({ children, ...props }: FormProps) => {
 };
 
 Form.Input = FormInput;
+Form.PolishInput = PolishFormInput;
 Form.Button = FormButton;
 
 export default Form;

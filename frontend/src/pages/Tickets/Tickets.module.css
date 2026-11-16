@@ -1,3 +1,12 @@
+.tickets-page {
+	background-color: white;
+	min-height: 94.4dvh;
+}
+
+.tickets {
+	padding: 20px;
+}
+
 .buttons {
 	display: flex;
 	gap: 1rem;

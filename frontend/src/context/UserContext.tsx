@@ -1,14 +1,25 @@
 import { getItemLocalStorage } from '@/utils/localStorage';
-import { createContext, useState } from 'react';
+import { createContext, useState, type Dispatch, type SetStateAction, type ReactNode } from 'react';
 
-const UserContext = createContext({
+export interface UserContextType {
+	userProgress: string;
+	userId: string;
+	setUserProgress: Dispatch<SetStateAction<string>>;
+	setUserId: Dispatch<SetStateAction<string>>;
+}
+
+const UserContext = createContext<UserContextType>({
 	userProgress: '',
 	userId: '',
 	setUserProgress: () => {},
 	setUserId: () => {},
 });
 
-export const UserContextProvider = ({ children }) => {
+interface UserContextProviderProps {
+	children: ReactNode;
+}
+
+export const UserContextProvider = ({ children }: UserContextProviderProps) => {
 	const [userProgress, setUserProgress] = useState<string>('');
 
 	const [userId, setUserId] = useState(getItemLocalStorage('user-id') || '');

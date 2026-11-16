@@ -1,26 +1,26 @@
 import { useMutation } from '@tanstack/react-query';
-import type { UpdateUserRequest, UpdateUserResponse } from '@beatriz/shared';
+import type { GetUserResponse, UpdateUserRequest } from '@beatriz/shared/users';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
 
 const useUpdateUserDetailsMutation = () => {
-	const updateUserDetails = async (updatedUser: UpdateUserRequest): Promise<UpdateUserResponse> => {
+	const updateUserDetails = async (updatedUser: UpdateUserRequest): Promise<GetUserResponse> => {
 		const uri = '/users/updateMe';
-		const response = await instance.patch<UpdateUserResponse>(uri, updatedUser);
+		const response = await instance.patch<GetUserResponse>(uri, updatedUser);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: updateUserDetails,
 
-		onSuccess: (data: UpdateUserResponse) => {
+		onSuccess: (data: GetUserResponse) => {
 			console.log(data);
-			toast.success('Successfully updated user details');
+ 		toast.success('Pomyślnie zaktualizowano dane użytkownika');
 		},
 
 		onError: (error: unknown) => {
 			console.log(error);
-			toast.error('Failed to update user details');
+			toast.error('Nie udało się zaktualizować danych użytkownika');
 		},
 	});
 };

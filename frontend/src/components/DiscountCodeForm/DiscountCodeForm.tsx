@@ -1,16 +1,24 @@
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useState, useRef } from 'react';
 import useApplyDiscountCodeMutation from '@/api/mutations/useApplyDiscountCodeMutation';
 import { useContext } from 'react';
-import OrderContext from '@/context/OrderContext';
+import OrderContext, { type OrderContextType } from '@/context/OrderContext';
+import classes from './DiscountCodeForm.module.css';
+
+interface DiscountError {
+	message: string;
+	visible: boolean;
+}
 
 const DiscountCodeForm = () => {
-	const { setOrder, totalPrice, setTotalPrice } = useContext(OrderContext);
+	const { setOrder, totalPrice, setTotalPrice } = useContext<OrderContextType>(OrderContext);
 
 	const discountRef = useRef<HTMLInputElement>(null);
 
 	const [discountPercent, setDiscountPercent] = useState<number>(0);
-	const [discountError, setDiscountError] = useState({
+	const [discountError, setDiscountError] = useState<DiscountError>({
 		message: '',
 		visible: false,
 	});
@@ -70,71 +78,26 @@ const DiscountCodeForm = () => {
 		}
 	};
 
-	return (
-		<>
-			<form
-				onSubmit={handleSubmitDiscount}
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					padding: '1rem',
-					backgroundColor: '#f5f5f5',
-					borderRadius: '1rem',
-					boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-					maxWidth: '400px',
-					margin: '1rem auto 2rem',
-				}}>
-				<label
-					htmlFor='discountCode'
-					style={{
-						fontSize: '1.2rem',
-						fontWeight: '600',
-						marginBottom: '0.5rem',
-						color: '#333',
-					}}>
-					Podaj kod zniżkowy:
-				</label>
-				<input
-					type='text'
-					id='discountCode'
-					ref={discountRef}
-					required
-					minLength={5}
-					style={{
-						backgroundColor: '#fff',
-						color: '#333',
-						padding: '0.75rem',
-						borderRadius: '0.5rem',
-						border: '1px solid #ccc',
-						width: '100%',
-						maxWidth: '300px',
-						marginBottom: '1rem',
-						boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.1)',
-					}}
-				/>
-				<Button
-					style={{
-						padding: '0.75rem 1.5rem',
-						backgroundColor: '#ff8c42',
-						color: '#fff',
-						fontWeight: 'bold',
-						border: 'none',
-						borderRadius: '0.5rem',
-						cursor: 'pointer',
-						transition: 'background-color 0.3s',
-						marginBottom: '1rem',
-					}}
-					onMouseEnter={e => (e.target.style.backgroundColor = '#e6762f')}
-					onMouseLeave={e => (e.target.style.backgroundColor = '#ff8c42')}>
-					Użyj kodu
-				</Button>
-				{discountError.visible && (
-					<p style={{ color: 'red', letterSpacing: '1px', fontWeight: 500 }}>{discountError.message}</p>
-				)}
-			</form>
-		</>
-	);
+ return (
+		<form onSubmit={handleSubmitDiscount} className={classes.form}>
+			<Label htmlFor='discountCode'>
+				Podaj kod zniżkowy:
+			</Label>
+			<Input
+				type='text'
+				id='discountCode'
+				ref={discountRef}
+				required
+				minLength={5}
+			/>
+			<Button className={classes.button}>
+				Użyj kodu
+			</Button>
+			{discountError.visible && (
+				<p className={classes.error}>{discountError.message}</p>
+			)}
+	</form>
+);
 };
 
 export default DiscountCodeForm;

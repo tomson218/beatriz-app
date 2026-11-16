@@ -8,21 +8,20 @@ import classes from './AddDiscountCode.module.css';
 const AddDiscountCode = () => {
 	const { mutate: addDiscountCode } = useAddDiscountCodeMutation();
 
-	const codeRef = useRef('');
-	const valueRef = useRef('');
-	const expirationDateRef = useRef('');
-	const usageLimitRef = useRef('');
-	const minAmountOrderRef = useRef('');
+	const codeRef = useRef<HTMLInputElement>(null);
+	const valueRef = useRef<HTMLInputElement>(null);
+	const expirationDateRef = useRef<HTMLInputElement>(null);
+	const usageLimitRef = useRef<HTMLInputElement>(null);
+	const minAmountOrderRef = useRef<HTMLInputElement>(null);
 
-	const handleSubmit = e => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const code = codeRef.current?.value;
-		const value = +valueRef.current?.value;
-
-		const expirationDate = expirationDateRef.current?.value;
-		const usageLimit = +usageLimitRef.current?.value;
-		const minAmountOrder = +minAmountOrderRef.current?.value;
+		const code = codeRef.current?.value ?? '';
+		const value = parseFloat(valueRef.current?.value ?? '0');
+		const expirationDate = expirationDateRef.current?.value ?? '';
+		const usageLimit = parseInt(usageLimitRef.current?.value ?? '0', 10);
+		const minAmountOrder = parseInt(minAmountOrderRef.current?.value ?? '0', 10);
 
 		const discountCode = {
 			code,
@@ -36,9 +35,9 @@ const AddDiscountCode = () => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className={`${classes.form} ${classes.formContainer}`}>
-			<div className={classes.gridContainer}>
-				<div className={classes.gridRow}>
+		<form onSubmit={handleSubmit} className={`${classes.form} ${classes['form-container']}`}>
+			<fieldset className={classes['grid-container']}>
+				<section className={classes['grid-row']}>
 					<Label htmlFor='code' className={classes.label}>
 						Kod rabatowy
 					</Label>
@@ -49,9 +48,9 @@ const AddDiscountCode = () => {
 						required
 						placeholder='Wprowadź kod rabatowy'
 					/>
-				</div>
+				</section>
 
-				<div className={classes.gridRow}>
+				<section className={classes['grid-row']}>
 					<Label htmlFor='discountValue' className={classes.label}>
 						Wartość kodu rabatowego (w %)
 					</Label>
@@ -67,9 +66,9 @@ const AddDiscountCode = () => {
 						required
 						placeholder='Podaj wartość (np. 0.1)'
 					/>
-				</div>
+				</section>
 
-				<div className={classes.gridRow}>
+				<section className={classes['grid-row']}>
 					<Label htmlFor='expirationDate' className={classes.label}>
 						Data wygaśnięcia
 					</Label>
@@ -80,9 +79,9 @@ const AddDiscountCode = () => {
 						ref={expirationDateRef}
 						required
 					/>
-				</div>
+				</section>
 
-				<div className={classes.gridRow}>
+				<section className={classes['grid-row']}>
 					<Label htmlFor='usageLimit' className={classes.label}>
 						Liczba limit do wykorzystania
 					</Label>
@@ -95,9 +94,9 @@ const AddDiscountCode = () => {
 						required
 						placeholder='Podaj limit wykorzystania'
 					/>
-				</div>
+				</section>
 
-				<div className={classes.gridRow}>
+				<section className={classes['grid-row']}>
 					<Label htmlFor='minOrderValue' className={classes.label}>
 						Minimalna wartość zamówienia
 					</Label>
@@ -110,12 +109,12 @@ const AddDiscountCode = () => {
 						required
 						placeholder='Podaj minimalną wartość zamówienia'
 					/>
-				</div>
-			</div>
+				</section>
+			</fieldset>
 
-			<div className={classes.submitButtonContainer}>
-				<Button className={classes.submitButton}>Dodaj</Button>
-			</div>
+			<footer className={classes['submit-button-container']}>
+				<Button className={classes['submit-button']}>Dodaj</Button>
+			</footer>
 		</form>
 	);
 };

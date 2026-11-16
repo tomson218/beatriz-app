@@ -6,17 +6,15 @@ import type {
 	UserDto,
 	GetUserResponse,
 	GetAllUsersResponse,
-	UpdateMeResponse,
 	GetUserFavoriteEventsResponse,
-	UpdateUserResponse,
 	DeleteUserResponse,
 	AddCartResponse,
 	UpdateMeRequest,
 	UpdateUserRequest,
 	UserIdParams,
-	FavouriteEventRequest,
 	AddCartRequest,
-} from '@beatriz/shared';
+} from '@beatriz/shared/users';
+import type { EventIdParams } from '@beatriz/shared/events';
 import { toUserDto } from '../mappers/userMapper.ts';
 
 const { ObjectId } = mongoose.Types;
@@ -81,7 +79,7 @@ export const getUser = async (
 	}
 };
 
-export const updateMe = async (req: Request, res: Response<UpdateMeResponse>, next: NextFunction): Promise<void> => {
+export const updateMe = async (req: Request, res: Response<GetUserResponse>, next: NextFunction): Promise<void> => {
 	try {
 		if (req.body.password || req.body.passwordConfirm) {
 			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword", 400));
@@ -148,7 +146,7 @@ export const getUserFavoriteEvents = async (
 };
 
 export const addEventToFavourite = async (
-	req: Request<{}, {}, FavouriteEventRequest>,
+	req: Request<{}, {}, EventIdParams>,
 	res: Response,
 	next: NextFunction,
 ): Promise<void> => {
@@ -176,7 +174,7 @@ export const addEventToFavourite = async (
 };
 
 export const removeEventFromFavourite = async (
-	req: Request<{}, {}, FavouriteEventRequest>,
+	req: Request<{}, {}, EventIdParams>,
 	res: Response,
 	next: NextFunction,
 ): Promise<void> => {
@@ -233,7 +231,7 @@ export const createUser = (req: Request, res: Response) => {
 
 export const updateUser = async (
 	req: Request<UserIdParams, {}, UpdateUserRequest>,
-	res: Response<UpdateUserResponse>,
+	res: Response<GetUserResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {

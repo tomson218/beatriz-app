@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { API_URL } from '@/api/apiConfig';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import type { FacebookLoginRequest, FacebookLoginResponse } from '@beatriz/shared';
+import type { FacebookLoginRequest, FacebookLoginResponse } from '@beatriz/shared/auth';
 
 const useFacebookLoginMutation = () => {
 	const navigate = useNavigate();

@@ -1,24 +1,20 @@
-import Button from '../../components/UI/Button/Button';
+import { Button } from '@/components/ui/button';
+import Form from '@/components/Form/Form';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import useChangeUserPasswordMutation from '../../api/mutations/useChangeUserPasswordMutation';
+import useChangeUserPasswordMutation from '@/api/mutations/useChangeUserPasswordMutation';
 import classes from './ChangeUserPassword.module.css';
+import type { ChangePasswordInputs } from '@beatriz/shared/auth';
 
 const ChangeUserPassword = () => {
-	type Inputs = {
-		passwordCurrent: string;
-		password: string;
-		passwordConfirm: string;
-	};
-
 	const { mutate: changePassword } = useChangeUserPasswordMutation();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<Inputs>();
+	} = useForm<ChangePasswordInputs>();
 
-	const onSubmit: SubmitHandler<Inputs> = data => {
+	const onSubmit: SubmitHandler<ChangePasswordInputs> = data => {
 		changePassword(data);
 	};
 
@@ -26,55 +22,46 @@ const ChangeUserPassword = () => {
 		<>
 			<h1 className={classes.heading}>Zmiana hasła</h1>
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<div className={classes['input-container']}>
-					<label htmlFor='passwordCurrent'>Password Current: </label>
-					<input
-						className={classes.input}
-						type='password'
-						id='passwordCurrent'
-						placeholder='Password Current'
-						{...register('passwordCurrent', {
-							required: { value: true, message: 'This field is required' },
-							minLength: { value: 8, message: 'Minimal length is 8' },
-						})}
-					/>
-					{errors.passwordCurrent && (
-						<p className={classes['error-message']}>{errors.passwordCurrent?.message}</p>
-					)}
-				</div>
-				<div className={classes['input-container']}>
-					<label htmlFor='password'>Password: </label>
-					<input
-						className={classes.input}
-						id='password'
-						placeholder='Password'
-						type='password'
-						{...register('password', {
-							required: { value: true, message: 'This field is required' },
-							minLength: { value: 8, message: 'Minimal length is 8' },
-						})}
-					/>
-					{errors.password && <p className={classes['error-message']}>{errors.password?.message}</p>}
-				</div>
-
-				<div className={classes['input-container']}>
-					<label htmlFor='passwordConfirm'>Password Confirm: </label>
-					<input
-						className={classes.input}
-						id='passwordConfirm'
-						placeholder='Password Confirm'
-						type='password'
-						{...register('passwordConfirm', {
-							required: { value: true, message: 'This field is required' },
-							minLength: { value: 8, message: 'Minimal length is 8' },
-						})}
-					/>
-					{errors.passwordConfirm && (
-						<p className={classes['error-message']}>{errors.passwordConfirm?.message}</p>
-					)}
-				</div>
-
-				<Button type='submit'>Change password</Button>
+				<Form.PolishInput
+					labelText='Obecne hasło'
+					inputId='passwordCurrent'
+					placeholder='Obecne hasło'
+					type='password'
+					register={register}
+					{...register('passwordCurrent')}
+					validation={{
+						required: 'To pole jest wymagane',
+						minLength: { value: 8, message: 'Hasło musi składać się z co najmniej 8 znaków' },
+					}}
+					className={classes['input-container']}
+				/>
+				<Form.PolishInput
+					labelText='Nowe hasło'
+					inputId='password'
+					placeholder='Nowe hasło'
+					type='password'
+					register={register}
+					{...register('password')}
+					validation={{
+						required: 'To pole jest wymagane',
+						minLength: { value: 8, message: 'Hasło musi składać się z co najmniej 8 znaków' },
+					}}
+					className={classes['input-container']}
+				/>
+				<Form.PolishInput
+					labelText='Potwierdzenie hasła'
+					inputId='passwordConfirm'
+					placeholder='Potwierdzenie hasła'
+					type='password'
+					register={register}
+					{...register('passwordConfirm')}
+					validation={{
+						required: 'To pole jest wymagane',
+						minLength: { value: 8, message: 'Hasło musi składać się z co najmniej 8 znaków' },
+					}}
+					className={classes['input-container']}
+				/>
+				<Button type='submit'>Zmień hasło</Button>
 			</form>
 		</>
 	);

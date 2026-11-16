@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
-import type { AddDiscountCodeResponse, DiscountCodeDto } from '@beatriz/shared';
+import type { AddDiscountCodeResponse, DiscountCodeDto } from '@beatriz/shared/discountCodes';
 
 const useAddDiscountCodeMutation = () => {
 	const addDiscountCode = async (discountCode: DiscountCodeDto): Promise<AddDiscountCodeResponse> => {

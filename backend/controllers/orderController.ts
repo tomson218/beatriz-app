@@ -1,6 +1,6 @@
 import OrderModel from '../models/orderModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { GetAllOrdersResponse, GetUserOrdersResponse, OrderDto } from '@beatriz/shared';
+import type { GetAllOrdersResponse, GetUserOrdersResponse, OrderDto } from '@beatriz/shared/orders';
 import { toOrderDto } from '../mappers/orderMapper.ts';
 import type { Order } from '../models/orderModel.ts';
 

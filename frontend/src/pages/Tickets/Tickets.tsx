@@ -3,18 +3,18 @@ import useGetTicketsByUserQuery from '@/api/queries/useGetTicketsByUserQuery';
 import Ticket from '@/components/Ticket/Ticket';
 import classes from './Tickets.module.css';
 import Loader from '@/components/libs/Loader';
-import UserContext from '@/context/UserContext';
+import UserContext, { type UserContextType } from '@/context/UserContext';
 import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
-import type { Ticket as ITicket } from '@beatriz/shared';
+import type { Ticket as ITicket } from '@beatriz/shared/tickets';
 
 const Tickets = () => {
-	const { userId } = useContext(UserContext);
+	const { userId } = useContext<UserContextType>(UserContext);
 
 	const { data: ticketsUser, isLoading: isTicketsUserLoading } = useGetTicketsByUserQuery(userId);
 
 	const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserByIdQuery(userId);
 
-	const [tickets, setTickets] = useState([]);
+	const [tickets, setTickets] = useState<ITicket[]>([]);
 
 	useEffect(() => {
 		if (ticketsUser) {
@@ -40,24 +40,24 @@ const Tickets = () => {
 	}
 
 	return (
-		<div style={{ backgroundColor: 'white', minHeight: '94.4dvh' }}>
-			<div className={classes.buttons}>
+		<main className={classes['tickets-page']}>
+			<nav className={classes.buttons}>
 				<button className={classes.upcoming} onClick={handleUpcomingTickets}>
 					Nadchodzące
 				</button>
 				<button className={classes.all} onClick={handleAllTickets}>
 					Wszystkie
 				</button>
-			</div>
+			</nav>
 
 			{tickets.length === 0 && <p>Brak zakupionych biletów</p>}
 
-			<div className={classes.tickets} style={{ padding: '20px' }}>
+			<section className={classes.tickets}>
 				{tickets.map(ticket => (
 					<Ticket key={ticket._id} ticket={ticket} userEmail={userDetails.email} />
 				))}
-			</div>
-		</div>
+			</section>
+		</main>
 	);
 };
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import type { ResetPasswordRequest, ResetPasswordResponse } from '@beatriz/shared';
+import type { ResetPasswordRequest, ResetPasswordResponse } from '@beatriz/shared/auth';
 
 const useResetPasswordMutation = (resetToken: string) => {
 	const navigate = useNavigate();

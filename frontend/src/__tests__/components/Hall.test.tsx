@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Hall from '../../pages/Hall/Hall';
+import Hall from '@/pages/Hall/Hall';
 import { vi } from 'vitest';
 
 const queryClient = new QueryClient();

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
-import type { SignUpRequest, SignUpResponse } from '@beatriz/shared';
+import type { SignUpRequest, SignUpResponse } from '@beatriz/shared/auth';
 import { API_URL } from '@/api/apiConfig';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';

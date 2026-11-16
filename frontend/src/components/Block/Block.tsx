@@ -1,17 +1,18 @@
 import { Button } from '@/components/ui/button';
 import classes from './Block.module.css';
+import type { BlockType } from '@beatriz/shared/tickets';
 
 interface BlockProps {
-	onClick: (value: string) => void;
+	onSelect: (block: BlockType) => void;
 	isSelected: boolean;
-	value: string;
+	block: BlockType;
 }
 
-const Block = ({ onClick, isSelected, value }: BlockProps) => {
+const Block = ({ onSelect, isSelected, block }: BlockProps) => {
 	return (
 		<Button
-			className={`${classes.block} ${classes[value]}  ${isSelected ? classes.selected : ''}`}
-			onClick={() => onClick(value)}></Button>
+			className={`${classes.block} ${classes[block]} ${isSelected ? classes.selected : ''}`}
+			onClick={() => onSelect(block)}></Button>
 	);
 };
 

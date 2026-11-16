@@ -1,46 +1,8 @@
-import type { Event } from '@beatriz/shared';
-
-export const NEW_EVENT = 7;
-
-type EventType = NonNullable<Event['type']>;
-
-export type FaqItem = {
+export interface FaqItem {
 	id: number;
 	question: string;
 	answer: string;
-};
-
-export const EVENT_TYPE_OPTIONS: Array<{ value: EventType; label: string }> = [
-	{ value: 'concert', label: 'Koncert' },
-	{ value: 'theater', label: 'Teatr' },
-	{ value: 'opera', label: 'Opera' },
-	{ value: 'musical', label: 'Musical' },
-	{ value: 'festival', label: 'Festiwal' },
-	{ value: 'other', label: 'Inne' },
-];
-
-export const INITIAL_SECTORS = [
-	'A',
-	'B',
-	'C',
-	'D',
-	'E',
-	'F',
-	'G',
-	'H',
-	'I',
-	'J',
-	'K',
-	'L',
-	'M',
-	'N',
-	'O',
-	'P',
-	'Q',
-	'R',
-	'S',
-	'T',
-];
+}
 
 export const FAQ_ITEMS: FaqItem[] = [
 	{

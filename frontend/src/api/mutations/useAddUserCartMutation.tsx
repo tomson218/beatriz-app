@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
-import type { AddCartRequest, AddCartResponse } from '@beatriz/shared';
+import type { AddCartRequest, AddCartResponse } from '@beatriz/shared/users';
 
 const useAddUserCartMutation = () => {
 	const addUserCart = async (cart: AddCartRequest['cart']): Promise<AddCartResponse> => {

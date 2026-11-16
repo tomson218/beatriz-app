@@ -7,17 +7,17 @@
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.formContainer {
+.form-container {
 	margin-left: 2rem;
 	margin-right: 2rem;
 }
 
-.gridContainer {
+.grid-container {
 	display: grid;
 	gap: 1.5rem;
 }
 
-.gridRow {
+.grid-row {
 	display: grid;
 	grid-template-columns: 1fr 3fr;
 	align-items: center;
@@ -37,13 +37,13 @@
 	width: 100%;
 }
 
-.submitButtonContainer {
+.submit-button-container {
 	display: flex;
 	margin-top: 1rem;
 	justify-content: flex-end;
 }
 
-.submitButton {
+.submit-button {
 	background-color: #3b82f6;
 	color: white;
 	padding: 1rem;
@@ -53,6 +53,6 @@
 	text-align: center;
 }
 
-.submitButton:hover {
+.submit-button:hover {
 	background-color: #2563eb;
 }

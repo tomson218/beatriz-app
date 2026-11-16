@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import instance from '@/api/apiConfig';
 import toast from 'react-hot-toast';
-import type { UpdatePasswordRequest, UpdatePasswordResponse } from '@beatriz/shared';
+import type { UpdatePasswordRequest, UpdatePasswordResponse } from '@beatriz/shared/auth';
 
 const useChangeUserPasswordMutation = () => {
 	const changeUserPassword = async (data: UpdatePasswordRequest): Promise<UpdatePasswordResponse> => {

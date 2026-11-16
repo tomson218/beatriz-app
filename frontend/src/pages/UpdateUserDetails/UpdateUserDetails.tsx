@@ -1,9 +1,10 @@
-import useGetUserByIdQuery from '../../api/queries/useGetUserByIdQuery';
+import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import useUpdateUserDetailsMutation from '../../api/mutations/useUpdateUserDetailsMutation';
+import useUpdateUserDetailsMutation from '@/api/mutations/useUpdateUserDetailsMutation';
 import classes from './UpdateUserDetails.module.css';
+import type { UpdateMeRequest } from '@beatriz/shared/users';
 
 import {
 	Dialog,
@@ -15,20 +16,14 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { FormField } from '@/components/ui/formField';
+import Form from '@/components/Form/Form';
 
 const UpdateUserDetails = () => {
 	const userId: string | null = localStorage.getItem('userId');
 
 	const { data: userDetails, isUserDetailsLoading } = useGetUserByIdQuery(userId ?? '');
-
-	type Inputs = {
-		username: string;
-		firstName: string;
-		lastName: string;
-		email: string;
-	};
 
 	const { mutate: updatedUser } = useUpdateUserDetailsMutation();
 
@@ -37,7 +32,7 @@ const UpdateUserDetails = () => {
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<Inputs>();
+	} = useForm<UpdateMeRequest>();
 
 	useEffect(() => {
 		if (userDetails) {
@@ -50,107 +45,103 @@ const UpdateUserDetails = () => {
 		}
 	}, [userDetails, reset]);
 
-	const onSubmit: SubmitHandler<Inputs> = data => {
+	const onSubmit: SubmitHandler<UpdateMeRequest> = data => {
 		updatedUser(data);
 	};
 
 	if (isUserDetailsLoading) {
-		<div>Loading...</div>;
+		return <div>Ładowanie...</div>;
 	}
 
 	return (
 		<>
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<div className={classes['input-form']}>
-					<label htmlFor='username'>Username: </label>
-					<input
-						id='username'
-						placeholder='Username'
-						{...register('username', { required: true, minLength: 8 })}
-					/>
-					{errors.username && <p className={classes['error-message']}>This field is required</p>}
-				</div>
+ 		<form onSubmit={handleSubmit(onSubmit)}>
+			<Form.PolishInput
+				labelText='Nazwa użytkownika'
+				inputId='username'
+				placeholder='Nazwa użytkownika'
+				register={register}
+				validation={{
+					required: true,
+					minLength: { value: 8 },
+				}}
+				className={classes['input-form']}
+			/>
 
-				<div className={classes['input-form']}>
-					<label htmlFor='firstName'>First Name: </label>
-					<input
-						id='firstName'
-						placeholder='First name'
-						{...register('firstName', { required: true, minLength: 8 })}
-					/>
-					{errors.firstName && <p className={classes['error-message']}>This field is required</p>}
-				</div>
+			<Form.PolishInput
+				labelText='Imię'
+				inputId='firstName'
+				placeholder='Imię'
+				register={register}
+				validation={{
+					required: true,
+					minLength: { value: 8 },
+				}}
+				className={classes['input-form']}
+			/>
 
-				<div className={classes['input-form']}>
-					<label htmlFor='lastName'>Last Name: </label>
-					<input
-						id='lastName'
-						placeholder='Last name'
-						{...register('lastName', { required: true, minLength: 8 })}
-					/>
-					{errors.lastName && <p className={classes['error-message']}>This field is required</p>}
-				</div>
-				<div className={classes['input-form']}>
-					<label htmlFor='email'>Email: </label>
-					<input
-						type='email'
-						id='email'
-						placeholder='Email'
-						{...register('email', { required: true, minLength: 8 })}
-					/>
-					{errors.email && <p className={classes['error-message']}>This field is required</p>}
-				</div>
+			<Form.PolishInput
+				labelText='Nazwisko'
+				inputId='lastName'
+				placeholder='Nazwisko'
+				register={register}
+				validation={{
+					required: true,
+					minLength: { value: 8 },
+				}}
+				className={classes['input-form']}
+			/>
+			<Form.PolishInput
+				labelText='Email'
+				inputId='email'
+				placeholder='Adres e-mail'
+				type='email'
+				register={register}
+				validation={{
+					required: true,
+					minLength: { value: 8 },
+				}}
+				className={classes['input-form']}
+			/>
 
-				<Button type='submit'>Update</Button>
-			</form>
-			<Link to='/'>
-				<p>I already have an account. Sign in</p>
-			</Link>
+			<Button type='submit'>Zaktualizuj</Button>
+		</form>
+		<Link to='/'>
+			<p>Mam już konto. Zaloguj się</p>
+		</Link>
 
-			<Dialog>
-				<DialogTrigger asChild>
-					<Button variant='outline'>Edit Profile</Button>
-				</DialogTrigger>
-				<DialogContent className='sm:max-w-[425px]'>
-					<DialogHeader>
-						<DialogTitle>Edit profile</DialogTitle>
-						<DialogDescription>
-							Make changes to your profile here. Click save when you're done.
-						</DialogDescription>
-					</DialogHeader>
-					<div className='grid gap-4 py-4'>
-						<div className='grid grid-cols-4 items-center gap-4'>
-							<Label htmlFor='name' className='text-right'>
-								Username
-							</Label>
-							<Input id='name' value={userDetails?.username} className='col-span-3' />
-						</div>
-						<div className='grid grid-cols-4 items-center gap-4'>
-							<Label htmlFor='firstName' className='text-right'>
-								First Name
-							</Label>
-							<Input id='firstName' value={userDetails?.firstName} className='col-span-3' />
-						</div>
-						<div className='grid grid-cols-4 items-center gap-4'>
-							<Label htmlFor='lastName' className='text-right'>
-								Last Name
-							</Label>
-							<Input id='lastName' value={userDetails?.lastName} className='col-span-3' />
-						</div>
-						<div className='grid grid-cols-4 items-center gap-4'>
-							<Label htmlFor='name' className='text-right'>
-								Email
-							</Label>
-							<Input id='name' value={userDetails?.email} className='col-span-3' />
-						</div>
-					</div>
+		<Dialog>
+			<DialogTrigger asChild>
+				<Button variant='outline'>Edytuj profil</Button>
+			</DialogTrigger>
+			<DialogContent className='sm:max-w-[425px]'>
+				<DialogHeader>
+					<DialogTitle>Edytuj profil</DialogTitle>
+					<DialogDescription>
+						Wprowadź zmiany w swoim profilu. Kliknij Zapisz, gdy skończysz.
+					</DialogDescription>
+				</DialogHeader>
+			<div className='grid gap-4 py-4'>
+				<FormField label='Nazwa użytkownika' htmlFor='name'>
+					<Input id='name' value={userDetails?.username} />
+				</FormField>
+				<FormField label='Imię' htmlFor='firstName'>
+					<Input id='firstName' value={userDetails?.firstName} />
+				</FormField>
+				<FormField label='Nazwisko' htmlFor='lastName'>
+					<Input id='lastName' value={userDetails?.lastName} />
+				</FormField>
+				<FormField label='Email' htmlFor='email'>
+					<Input id='email' value={userDetails?.email} />
+				</FormField>
+			</div>
 
-					<DialogFooter>
-						<Button type='submit'>Save changes</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</>
+				<DialogFooter>
+					<Button type='submit'>Zapisz zmiany</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	</>
 	);
 };
 

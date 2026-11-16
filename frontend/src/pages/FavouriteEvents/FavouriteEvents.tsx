@@ -1,17 +1,11 @@
-import { type Event } from '@beatriz/shared';
-import useGetFavouriteEventsQuery from '../../api/queries/useGetFavoriteEventsQuery';
-import useRemoveEventFromFavouriteMutation from '../../api/mutations/useRemoveEventFromFavouriteMutation';
-import EventCard from '../../components/EventCard/EventCard';
+import useGetFavouriteEventsQuery from '@/api/queries/useGetFavoriteEventsQuery';
+import useRemoveEventFromFavouriteMutation from '@/api/mutations/useRemoveEventFromFavouriteMutation';
+import EventCard from '@/components/EventCard/EventCard';
 import classes from './FavouirteEvents.module.css';
 
 const FavouriteEvents = () => {
 	const { data: favouriteEvents, isLoading: isFavouriteEventsLoading, refetch } = useGetFavouriteEventsQuery();
-
 	const { mutate: removeEventFromFavourite } = useRemoveEventFromFavouriteMutation(refetch);
-
-	const handleRemoveFavouriteEvent = (id: Event['_id']) => {
-		removeEventFromFavourite(id);
-	};
 
 	if (isFavouriteEventsLoading) {
 		return <section className={classes.loading}>Loading</section>;
@@ -26,17 +20,16 @@ const FavouriteEvents = () => {
 			</header>
 
 			<ul className={classes.list}>
-				{favouriteEvents &&
-					(favouriteEvents as Event[]).map((favouriteEvent: Event) => (
-						<li key={favouriteEvent._id} className={classes.item}>
-							<EventCard
-								event={favouriteEvent}
-								isFavourite
-								addToFavourites={() => undefined}
-								removeFromFavourites={handleRemoveFavouriteEvent}
-							/>
-						</li>
-					))}
+				{favouriteEvents?.map(favouriteEvent => (
+					<li key={favouriteEvent._id} className={classes.item}>
+						<EventCard
+							event={favouriteEvent}
+							isFavourite
+							onAddToFavourite={() => undefined}
+							onRemoveFromFavourite={removeEventFromFavourite}
+						/>
+					</li>
+				))}
 			</ul>
 		</section>
 	);

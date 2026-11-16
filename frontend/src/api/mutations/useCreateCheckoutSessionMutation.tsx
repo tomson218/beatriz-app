@@ -1,7 +1,7 @@
 import instance from '@/api/apiConfig';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import type { CreateCheckoutSessionRequest, CreateCheckoutSessionResponse } from '@beatriz/shared';
+import type { CreateCheckoutSessionRequest, CreateCheckoutSessionResponse } from '@beatriz/shared/payments';
 
 const useCreateCheckoutSessionMutation = () => {
 	const createCheckoutSession = async (

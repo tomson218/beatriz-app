@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
-import type { CreateEventResponse, Event } from '@beatriz/shared';
+import type { CreateEventResponse, Event } from '@beatriz/shared/events';
 
 const useAddNewEventMutation = () => {
 	const addNewEvent = async (newEvent: Event): Promise<CreateEventResponse> => {

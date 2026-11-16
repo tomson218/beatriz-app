@@ -1,11 +1,15 @@
-import useGetAllEventsQuery from '../../api/queries/useGetAllEventsQuery';
-import EventCard from '../../components/EventCard/EventCard';
+import useGetAllEventsQuery from '@/api/queries/useGetAllEventsQuery';
+import EventCard from '@/components/EventCard/EventCard';
 import classes from './Home.module.css';
 import useGetFavouriteEventsQuery from '@/api/queries/useGetFavoriteEventsQuery';
-import useAddEventToFavouriteMutation from '../../api/mutations/useAddEventToFavouriteMutation';
-import useRemoveEventFromFavouriteMutation from '../../api/mutations/useRemoveEventFromFavouriteMutation';
+import useAddEventToFavouriteMutation from '@/api/mutations/useAddEventToFavouriteMutation';
+import useRemoveEventFromFavouriteMutation from '@/api/mutations/useRemoveEventFromFavouriteMutation';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { calcDatePost } from '@/utils/calcDatePost';
+import { parseEventDate } from '@/utils/eventDate';
+import type { EventFilter } from '@beatriz/shared/events';
 
 const Home = () => {
 	const { data: events, isLoading: isEventsLoading } = useGetAllEventsQuery();
@@ -15,7 +19,7 @@ const Home = () => {
 	const { mutate: addEventToFavourites } = useAddEventToFavouriteMutation(refetch);
 	const { mutate: removeEventFromFavourites } = useRemoveEventFromFavouriteMutation(refetch);
 
-	const [filter, setFilter] = useState({
+	const [filter, setFilter] = useState<EventFilter>({
 		date: '',
 		name: '',
 		star: '',
@@ -26,7 +30,7 @@ const Home = () => {
 	});
 
 	if (isEventsLoading || isFavouriteEventsLoading) {
-		return <div>Loading...</div>;
+		return <div>Ładowanie...</div>;
 	}
 
 	const handleFilterChange = e => {
@@ -76,8 +80,8 @@ const Home = () => {
 
 	const filteredEvents = events
 		.filter(event => {
-			const eventDate = new Date(event.date).toISOString().split('T')[0];
-			const filterDate = filter.date ? new Date(filter.date).toISOString().split('T')[0] : '';
+			const eventDate = parseEventDate(event.date).toISOString().split('T')[0];
+			const filterDate = filter.date ? parseEventDate(filter.date).toISOString().split('T')[0] : '';
 
 			return (
 				(!filter.date || eventDate === filterDate) &&
@@ -89,18 +93,18 @@ const Home = () => {
 				event.prices.normal <= filter.maxPrice
 			);
 		})
-		.sort((a, b) => new Date(a.date) - new Date(b.date));
+		.toSorted((a, b) => parseEventDate(a.date).getTime() - parseEventDate(b.date).getTime());
 
 	return (
-		<div className={classes.container}>
-			<div className={classes['filter-container']}>
+		<main className={classes.container}>
+			<aside className={classes['filter-container']}>
 				<h3 className={classes['heading-filter']}>Filtrowanie</h3>
 
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					<label style={{ marginBottom: '0.5rem', color: '#555' }}>Kategoria wydarzenia</label>
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-						<label>
-							<input
+				<fieldset className={classes['filter-group']}>
+					<legend className={classes['filter-label']}>Kategoria wydarzenia</legend>
+					<section className={classes['filter-checkbox-group']}>
+						<Label>
+							<Input
 								type='checkbox'
 								name='type'
 								value='concert'
@@ -108,9 +112,9 @@ const Home = () => {
 								onChange={handleCategoryChange}
 							/>
 							Koncert
-						</label>
-						<label>
-							<input
+						</Label>
+						<Label>
+							<Input
 								type='checkbox'
 								name='type'
 								value='workshop'
@@ -118,9 +122,9 @@ const Home = () => {
 								onChange={handleCategoryChange}
 							/>
 							Warsztat
-						</label>
-						<label>
-							<input
+						</Label>
+						<Label>
+							<Input
 								type='checkbox'
 								name='type'
 								value='conference'
@@ -128,9 +132,9 @@ const Home = () => {
 								onChange={handleCategoryChange}
 							/>
 							Konferencja
-						</label>
-						<label>
-							<input
+						</Label>
+						<Label>
+							<Input
 								type='checkbox'
 								name='type'
 								value='festival'
@@ -138,75 +142,61 @@ const Home = () => {
 								onChange={handleCategoryChange}
 							/>
 							Festiwal
-						</label>
-					</div>
-				</div>
+						</Label>
+					</section>
+				</fieldset>
 
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					<label htmlFor='star' style={{ marginBottom: '0.5rem', color: '#555' }}>
+				<fieldset className={classes['filter-group']}>
+					<Label htmlFor='star' className={classes['filter-label']}>
 						Gwiazda wydarzenia
-					</label>
-					<input
+					</Label>
+					<Input
 						type='text'
 						name='star'
 						value={filter.star}
 						onChange={handleFilterChange}
 						placeholder='Wprowadź gwiazdę'
-						style={{
-							padding: '0.5rem',
-							border: '1px solid #ccc',
-							borderRadius: '4px',
-						}}
+						className={classes['filter-input']}
 					/>
-				</div>
+				</fieldset>
 
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					<label htmlFor='minPrice' style={{ marginBottom: '0.5rem', color: '#555' }}>
+				<fieldset className={classes['filter-group']}>
+					<Label htmlFor='minPrice' className={classes['filter-label']}>
 						Minimalna cena dla biletu normalnego{' '}
-						<span style={{ fontWeight: 600 }}>{filter.minPrice} PLN</span>
-					</label>
-					<input
+						<span className={classes['filter-value']}>{filter.minPrice} PLN</span>
+					</Label>
+					<Input
 						type='range'
 						name='minPrice'
 						value={filter.minPrice}
 						onChange={handleFilterChange}
 						min='0'
 						max='1000'
-						placeholder='Wprowadź minimalną cenę'
-						style={{
-							padding: '0.5rem',
-							border: '1px solid #ccc',
-							borderRadius: '4px',
-						}}
+						className={classes['filter-range']}
 					/>
-				</div>
+				</fieldset>
 
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					<label htmlFor='maxPrice' style={{ marginBottom: '0.5rem', color: '#555' }}>
+				<fieldset className={classes['filter-group']}>
+					<Label htmlFor='maxPrice' className={classes['filter-label']}>
 						Maksymalna cena dla biletu normalnego{' '}
-						<span style={{ fontWeight: 600 }}>{filter.maxPrice} PLN</span>
-					</label>
-					<input
+						<span className={classes['filter-value']}>{filter.maxPrice} PLN</span>
+					</Label>
+					<Input
 						type='range'
 						name='maxPrice'
 						value={filter.maxPrice}
 						onChange={handleFilterChange}
 						min='0'
 						max='1000'
-						placeholder='Wprowadź maksymalną cenę'
-						style={{
-							padding: '0.5rem',
-							border: '1px solid #ccc',
-							borderRadius: '4px',
-						}}
+						className={classes['filter-range']}
 					/>
-				</div>
+				</fieldset>
 
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					<label style={{ marginBottom: '0.5rem', color: '#555' }}>Wymagane miejsce numerowane</label>
-					<div style={{ display: 'flex', gap: '1rem' }}>
-						<label>
-							<input
+				<fieldset className={classes['filter-group']}>
+					<legend className={classes['filter-label']}>Wymagane miejsce numerowane</legend>
+					<section className={classes['filter-checkbox-row']}>
+						<Label>
+							<Input
 								type='checkbox'
 								name='seatRequired'
 								value='true'
@@ -214,9 +204,9 @@ const Home = () => {
 								onChange={handleSeatRequiredChange}
 							/>
 							Tak
-						</label>
-						<label>
-							<input
+						</Label>
+						<Label>
+							<Input
 								type='checkbox'
 								name='seatRequired'
 								value='false'
@@ -224,26 +214,26 @@ const Home = () => {
 								onChange={handleSeatRequiredChange}
 							/>
 							Nie
-						</label>
-					</div>
-				</div>
-			</div>
+						</Label>
+					</section>
+				</fieldset>
+			</aside>
 
-			<div className={classes.events} style={{ width: '70%' }}>
+			<section className={classes.events}>
 				{events &&
 					filteredEvents.map(event => (
 						<EventCard
 							event={event}
 							key={event._id}
 							isFavourite={favouriteEvents.some(favourite => favourite._id === event._id)}
-							addToFavourites={addEventToFavourites}
-							removeFromFavourites={removeEventFromFavourites}
+							onAddToFavourite={addEventToFavourites}
+							onRemoveFromFavourite={removeEventFromFavourites}
 						/>
 					))}
 
-				{filteredEvents.length === 0 && <p>No events found</p>}
-			</div>
-		</div>
+				{filteredEvents.length === 0 && <p>Nie znaleziono wydarzeń</p>}
+			</section>
+		</main>
 	);
 };
 

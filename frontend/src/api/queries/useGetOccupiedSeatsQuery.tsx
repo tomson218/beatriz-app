@@ -1,7 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import instance, { API_URL } from '../apiConfig';
+import type { Event } from '@beatriz/shared/events';
+import type { BlockType } from '@beatriz/shared/tickets';
+import instance, { API_URL } from '@/api/apiConfig';
+import { queryKeys } from '@/api/queryKeys';
 
-const useGetOccupiedSeatsQuery = (eventId: string, sector: string, block: string) => {
+const useGetOccupiedSeatsQuery = (eventId: Event["_id"], sector: string, block: BlockType) => {
 	const getOccupiedSeats = async () => {
 		const uri = `${API_URL}/tickets/occupiedSeats/${eventId}/${sector}/${block}`;
 		const response = await instance.get(uri);
@@ -9,7 +12,7 @@ const useGetOccupiedSeatsQuery = (eventId: string, sector: string, block: string
 	};
 
 	return useQuery({
-		queryKey: [`occupied-seats${eventId}-${sector}`],
+		queryKey: queryKeys.occupiedSeats.bySector(eventId, sector, block),
 		queryFn: getOccupiedSeats,
 	});
 };

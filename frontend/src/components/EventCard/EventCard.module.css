@@ -9,6 +9,10 @@
 	max-width: 240px;
 }
 
+.article-wrapper {
+	position: relative;
+}
+
 .clickable-card {
 	display: block;
 	min-width: 300px;

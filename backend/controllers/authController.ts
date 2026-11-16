@@ -9,7 +9,6 @@ import axios from 'axios';
 import { type Request, type Response, type NextFunction } from 'express';
 import { type User } from '../models/userModel.ts';
 import type {
-	UserDto,
 	LoginRequest,
 	SignUpRequest,
 	ForgetPasswordRequest,
@@ -18,7 +17,8 @@ import type {
 	UpdatePasswordRequest,
 	GoogleLoginRequest,
 	FacebookLoginRequest,
-} from '@beatriz/shared';
+} from '@beatriz/shared/auth';
+import type { UserDto } from '@beatriz/shared/users';
 import { toUserDto } from '../mappers/userMapper.ts';
 import { Types } from 'mongoose';
 

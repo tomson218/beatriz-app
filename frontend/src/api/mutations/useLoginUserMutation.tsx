@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
-import type { LoginResponse, LoginRequest } from '@beatriz/shared';
+import type { LoginResponse, LoginRequest } from '@beatriz/shared/auth';
 import { API_URL } from '@/api/apiConfig';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';

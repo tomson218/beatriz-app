@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import classes from './Hall.module.css';
 import { useEffect, useState } from 'react';
-import useGetEventByIdQuery from '../../api/queries/useGetEventByIdQuery';
+import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -11,8 +11,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
-import Sector from '../../components/Sector/Sector';
-import { INITIAL_SECTORS } from '@/constants/constants';
+import Sector from '@/components/Sector/Sector';
+import { INITIAL_SECTORS } from '@beatriz/shared/constants';
+import { isSectorAvailable, buildBlocksUrl } from '@/utils/sector';
 
 const Hall = () => {
 	const navigate = useNavigate();
@@ -20,9 +21,9 @@ const Hall = () => {
 	const params = Object.fromEntries(new URLSearchParams(window.location.search));
 	const { eventId, sector } = params;
 	const { data: eventDetails, isLoading: isEventLoading } = useGetEventByIdQuery(eventId);
-	const [selectedSector, setSelectedSector] = useState(sector ?? '');
+	const [selectedSector, setSelectedSector] = useState<string>(sector ?? '');
 	const [availableSector, setAvailableSector] = useState<string[]>([]);
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (eventDetails) {
@@ -32,38 +33,38 @@ const Hall = () => {
 	}, [eventDetails]);
 
 	const handleSelectSector = (sector: string) => {
-		if (!availableSector.includes(sector)) {
+		if (!isSectorAvailable(sector, availableSector)) {
 			return;
-		} else {
-			setSelectedSector(sector);
-
-			const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}`;
-			navigate(newUrl, { replace: true });
-
-			localStorage.setItem('sector', selectedSector);
 		}
+		setSelectedSector(sector);
+
+		const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}`;
+		navigate(newUrl, { replace: true });
+
+		localStorage.setItem('sector', selectedSector);
 	};
 
 	if (isEventLoading) {
 		return <p>Łaadowanie danych...</p>;
 	}
 
+	const blocksUrl = buildBlocksUrl(eventId, selectedSector);
+	const nextUrl = blocksUrl || currentUrl;
+
 	return (
-		<div style={{ minHeight: '94.4dvh', backgroundImage: 'linear-gradient(135deg, #f0f0f0, #e0e0e0)' }}>
-			<h1
-				className={classes.title}
-				style={{ fontSize: '3rem', color: '#000', textAlign: 'center', padding: '1rem 1rem 0' }}>
+		<main className={classes['hall-page']}>
+			<h1 className={classes.title}>
 				Wybierz odpowiedni sektor hali
 			</h1>
-			<div className={classes.container}>
-				<div className={classes['hala-container']}>
+			<section className={classes.container}>
+				<figure className={classes['hala-container']}>
 					<div className={classes['hala-grid']}>
 						{INITIAL_SECTORS.map((sectorName, index) => (
 							<Sector
 								key={sectorName}
 								sectorName={sectorName}
 								isSelected={selectedSector === sectorName}
-								isDisabled={!availableSector.includes(sectorName)}
+								isDisabled={!isSectorAvailable(sectorName, availableSector)}
 								index={index}
 								onClick={handleSelectSector}
 							/>
@@ -71,23 +72,23 @@ const Hall = () => {
 
 						<div className={classes.hala}></div>
 					</div>
-				</div>
-			</div>
+				</figure>
+			</section>
 
-			<div style={{ padding: '0 1rem 1rem' }}>
-				<Link to={selectedSector !== '' ? `/blocks?eventId=${eventId}&sector=${selectedSector}` : currentUrl}>
+			<nav className={classes['hall-nav']}>
+				<Link to={nextUrl}>
 					<Button
-						style={{ backgroundColor: 'black', color: 'white' }}
+						className={classes['hall-button']}
 						variant='ghost'
 						onClick={() => {
-							if (selectedSector === '') {
+							if (!selectedSector) {
 								setIsOpen(true);
 							}
 						}}>
 						Wybierz strefę
 					</Button>
 				</Link>
-			</div>
+			</nav>
 
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogContent className='sm:max-w-md'>
@@ -102,7 +103,7 @@ const Hall = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</main>
 	);
 };
 

@@ -15,7 +15,7 @@ const ProtectedRoutes = ({ children, isRequiredAdmin = false }: { children: Reac
 	}
 
 	if (isUserDetailsLoading) {
-		return <div>Loading...</div>;
+		return <div>Ładowanie...</div>;
 	}
 
 	const isAdmin = userDetails?.role === 'admin';

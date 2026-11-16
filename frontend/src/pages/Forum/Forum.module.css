@@ -56,6 +56,47 @@ body {
 	padding-top: 1rem;
 }
 
+.forum-page {
+	background-color: white;
+	min-height: 94.4dvh;
+}
+
+.forum-title {
+	text-align: center;
+	padding: 2rem 0;
+	color: #ffa500;
+	font-size: 2rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.forum-posts {
+	display: flex;
+	flex-direction: column;
+}
+
+.add-btn {
+	background-color: #28a745 !important;
+	color: #fff !important;
+	border-radius: 0.5rem !important;
+	flex: 1;
+	padding: 1rem !important;
+	font-size: 1rem;
+	border: none !important;
+	cursor: pointer;
+}
+
+.cancel-btn {
+	background-color: #dc3545 !important;
+	color: #fff !important;
+	border-radius: 0.5rem !important;
+	flex: 1;
+	padding: 1rem !important;
+	font-size: 1rem;
+	border: none !important;
+	cursor: pointer;
+}
+
 .toggle {
 	display: flex;
 	justify-content: center;

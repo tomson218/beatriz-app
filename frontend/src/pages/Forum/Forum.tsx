@@ -1,11 +1,13 @@
 import { useParams } from 'react-router-dom';
 import useGetPostsByEventIdQuery from '@/api/queries/useGetPostsByEventIdQuery';
 import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
-import Post from '../../components/PostCard/PostCard';
+import Post from '@/components/PostCard/PostCard';
 import { useState, useRef } from 'react';
 import useAddPostToForumMutation from '@/api/mutations/useAddPostToForumMutation';
 import { Button } from '@/components/ui/button';
 import classes from './Forum.module.css';
+import { isEmptyMessage } from '@/utils/sector';
+import { hasNoForumPosts, isPostAuthor } from '@/utils/forum';
 
 const Forum = () => {
 	const { eventId } = useParams();
@@ -13,9 +15,9 @@ const Forum = () => {
 	const { data: forumPosts, isLoading: isForumPostsLoading, refetch } = useGetPostsByEventIdQuery(eventId);
 	const { data: eventDetails, isLoading: isEventDetailsLoading } = useGetEventByIdQuery(eventId);
 
-	const [isShown, setIsShown] = useState(false);
+	const [isShown, setIsShown] = useState<boolean>(false);
 
-	const [error, setError] = useState(false);
+	const [error, setError] = useState<boolean>(false);
 
 	const { mutate: addPost } = useAddPostToForumMutation(refetch);
 
@@ -24,7 +26,7 @@ const Forum = () => {
 	const handleClickNewPost = () => {
 		const message = postRef.current?.value;
 
-		if (message.trim() === '') {
+		if (isEmptyMessage(message)) {
 			setError(true);
 			return;
 		}
@@ -39,32 +41,24 @@ const Forum = () => {
 	};
 
 	if (isForumPostsLoading || isEventDetailsLoading) {
-		return <p>Loading...</p>;
+		return <p>Ładowanie...</p>;
 	}
 
 	return (
-		<div style={{ backgroundColor: 'white', minHeight: '94.4dvh' }}>
-			<h2
-				style={{
-					textAlign: 'center',
-					padding: '2rem 0',
-					color: '#ffa500',
-					fontSize: '2rem',
-					textTransform: 'uppercase',
-					letterSpacing: '1px',
-				}}>
+		<main className={classes['forum-page']}>
+			<h2 className={classes['forum-title']}>
 				Opinie dla {eventDetails.name}
 			</h2>
 
-			{forumPosts.length === 0 && <p>Brak postów dla tego wydarzenia!</p>}
+			{hasNoForumPosts(forumPosts) && <p>Brak postów dla tego wydarzenia!</p>}
 
-			{forumPosts.length !== 0 && (
-				<section style={{ display: 'flex', flexDirection: 'column' }}>
+			{!hasNoForumPosts(forumPosts) && (
+				<section className={classes['forum-posts']}>
 					{forumPosts.map(forumPost => (
 						<Post
 							post={forumPost}
 							key={forumPost._id}
-							isMyPost={forumPost.user._id === JSON.parse(localStorage.getItem('user-id'))}
+							isAuthorPost={isPostAuthor(forumPost.user._id)}
 						/>
 					))}
 				</section>
@@ -90,31 +84,11 @@ const Forum = () => {
 						<section className={classes.buttons}>
 							<Button
 								className={classes['add-btn']}
-								style={{
-									backgroundColor: '#28a745',
-									color: '#fff',
-									borderRadius: '0.5rem',
-									flex: 1,
-									padding: '1rem',
-									fontSize: '1rem',
-									border: 'none',
-									cursor: 'pointer',
-								}}
 								onClick={handleClickNewPost}>
 								Dodaj
 							</Button>
 							<Button
 								className={classes['cancel-btn']}
-								style={{
-									backgroundColor: '#dc3545',
-									color: '#fff',
-									borderRadius: '0.5rem',
-									flex: 1,
-									padding: '1rem',
-									fontSize: '1rem',
-									border: 'none',
-									cursor: 'pointer',
-								}}
 								onClick={() => setIsShown(false)}>
 								Anuluj
 							</Button>
@@ -123,7 +97,7 @@ const Forum = () => {
 					</section>
 				)}
 			</div>
-		</div>
+		</main>
 	);
 };
 

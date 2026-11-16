@@ -1,23 +1,21 @@
-import useForgetPasswordMutation from '../../api/mutations/useForgetPasswordMutation';
+import useForgetPasswordMutation from '@/api/mutations/useForgetPasswordMutation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import classes from './ForgetPassword.module.css';
 import { Button } from '@/components/ui/button';
+import Form from '@/components/Form/Form';
 import { Toaster } from 'react-hot-toast';
+import type { ForgetPasswordRequest } from '@beatriz/shared/auth';
 
 const ForgetPassword = () => {
-	type Inputs = {
-		email: string;
-	};
-
 	const { mutate: forgetPassword } = useForgetPasswordMutation();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<Inputs>();
+	} = useForm<ForgetPasswordRequest>();
 
-	const onSubmit: SubmitHandler<Inputs> = data => {
+	const onSubmit: SubmitHandler<ForgetPasswordRequest> = data => {
 		forgetPassword(data);
 	};
 
@@ -25,20 +23,19 @@ const ForgetPassword = () => {
 		<div className={classes.container}>
 			<form onSubmit={handleSubmit(onSubmit)} className={classes['login-form']}>
 				<h2 className={classes['form-title']}>Zapomnienie hasła</h2>
-				<div className={classes['input-form']}>
-					<label htmlFor='email'>Email: </label>
-					<input
-						type='email'
-						id='email'
-						placeholder='Wprowadź swój e-mail'
-						className={classes['input']}
-						{...register('email', {
-							required: { value: true, message: 'To pole jest wymagane!' },
-							minLength: { value: 8, message: 'Minimalna długość hasła jest równa 8!' },
-						})}
-					/>
-					{errors.email && <p className={classes['error-message']}>{errors.email?.message}</p>}
-				</div>
+				<Form.Input
+					labelText='Email'
+					inputId='email'
+					placeholder='Wprowadź swój e-mail'
+					type='email'
+					register={register}
+					error={errors.email}
+					validation={{
+						required: { value: true, message: 'To pole jest wymagane!' },
+						minLength: { value: 8, message: 'Minimalna długość hasła jest równa 8!' },
+					}}
+					className={classes['input-form']}
+				/>
 				<Button type='submit' className={classes['submit-button']}>
 					Change
 				</Button>

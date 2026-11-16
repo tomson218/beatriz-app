@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import OrderContext from '../../context/OrderContext';
+import OrderContext, { type OrderContextType } from '@/context/OrderContext';
 import classes from './TotalAmount.module.css';
 
 const TotalAmount = () => {
-	const { totalPrice } = useContext(OrderContext);
+	const { totalPrice } = useContext<OrderContextType>(OrderContext);
 
 	return <div className={classes['total-amount']}>Łączna kwota do zapłaty: {totalPrice.toFixed(2)} PLN</div>;
 };

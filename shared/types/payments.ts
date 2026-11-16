@@ -1,5 +1,10 @@
-export type CreateCheckoutSessionRequest = {
-	products: any;
-};
+import type { CartTicket } from '@/orders';
 
-export type CreateCheckoutSessionResponse = {};
+export interface CreateCheckoutSessionRequest {
+	order: CartTicket[];
+}
+
+export interface CreateCheckoutSessionResponse {
+	url?: string;
+	error?: string;
+}

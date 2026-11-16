@@ -1,5 +1,5 @@
 import type { DiscountCode } from '../models/discountCodeModel.ts';
-import type { DiscountCodeDto } from '@beatriz/shared';
+import type { DiscountCodeDto } from '@beatriz/shared/discountCodes';
 
 export const toDiscountCodeDto = (discountCode: DiscountCode): DiscountCodeDto => ({
 	_id: discountCode._id,

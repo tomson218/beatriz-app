@@ -29,6 +29,27 @@
 	position: relative;
 }
 
+.hall-page {
+	min-height: 94.4dvh;
+	background-image: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+}
+
+.title {
+	font-size: 3rem;
+	color: #000;
+	text-align: center;
+	padding: 1rem 1rem 0;
+}
+
+.hall-nav {
+	padding: 0 1rem 1rem;
+}
+
+.hall-button {
+	background-color: black !important;
+	color: white !important;
+}
+
 .hala {
 	grid-column: 2 / span 5;
 	grid-row: 2 / span 5;

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
+import { queryKeys } from '@/api/queryKeys';
 
 const useGetFavouriteEventsQuery = () => {
 	const getFavouriteEvents = async () => {
@@ -8,7 +9,7 @@ const useGetFavouriteEventsQuery = () => {
 	};
 
 	return useQuery({
-		queryKey: ['favourite-events'],
+		queryKey: queryKeys.favourites.list(),
 		queryFn: getFavouriteEvents,
 	});
 };

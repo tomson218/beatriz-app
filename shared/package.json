@@ -4,9 +4,18 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./types/index.ts"
+		"./auth": "./types/auth.ts",
+		"./common": "./types/common.ts",
+		"./constants": "./constants/constants.ts",
+		"./discountCodes": "./types/discountCodes.ts",
+		"./events": "./types/events.ts",
+		"./forums": "./types/forums.ts",
+		"./orders": "./types/orders.ts",
+		"./payments": "./types/payments.ts",
+		"./tickets": "./types/tickets.ts",
+		"./users": "./types/users.ts",
+		"./webhooks": "./types/webhooks.ts"
 	},
-	"types": "./types/index.ts",
 	"scripts": {
 		"typecheck": "tsc --noEmit"
 	}

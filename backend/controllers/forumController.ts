@@ -5,7 +5,7 @@ import type {
 	ForumPostDto,
 	GetAllForumPostsResponse,
 	GetPostsByEventIdResponse,
-} from '@beatriz/shared';
+} from '@beatriz/shared/forums';
 import { toForumDto } from '../mappers/forumMapper.ts';
 import type { User } from '../models/userModel.ts';
 

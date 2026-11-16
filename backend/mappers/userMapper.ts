@@ -1,4 +1,4 @@
-import type { UserDto } from '@beatriz/shared';
+import type { UserDto } from '@beatriz/shared/users';
 
 export const toUserDto = (user: any): UserDto => ({
 	_id: user._id.toString(),

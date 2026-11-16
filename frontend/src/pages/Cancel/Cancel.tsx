@@ -1,11 +1,11 @@
-import StatusResult from '../../components/libs/StatusResult';
+import StatusResult from '@/components/libs/StatusResult';
 
 const Cancel = () => {
 	return (
 		<StatusResult
 			status='error'
-			title='Submission Failed'
-			subTitle='Please check and modify the following information before resubmitting.'
+			title='Wysyłanie nieudane'
+			subTitle='Sprawdź i popraw poniższe informacje przed ponownym przesłaniem.'
 		/>
 	);
 };

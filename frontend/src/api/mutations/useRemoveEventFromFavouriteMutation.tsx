@@ -1,12 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
-import type { FavouriteEventRequest, GetUserFavoriteEventsResponse } from '@beatriz/shared';
+import type { Event, EventIdParams } from '@beatriz/shared/events';
+import type { GetUserFavoriteEventsResponse } from '@beatriz/shared/users';
 
 const useRemoveEventFromFavouriteMutation = (refetch: () => void) => {
-	const removeEventFromFavourite = async (eventId: string): Promise<GetUserFavoriteEventsResponse> => {
+	const removeEventFromFavourite = async (eventId: Event["_id"]): Promise<GetUserFavoriteEventsResponse> => {
 		const uri = '/users/removeFavourite';
-		const payload: FavouriteEventRequest = { eventId };
+		const payload: EventIdParams = { eventId };
 		const response = await instance.delete<GetUserFavoriteEventsResponse>(uri, { data: payload });
 		return response.data;
 	};

@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
-import Users from '../../components/Users/Users';
-import AddEvent from '../../components/AddEvent/AddEvent';
+import Users from '@/components/Users/Users';
+import AddEvent from '@/components/AddEvent/AddEvent';
 import { useState } from 'react';
-import AddDiscountCode from '../../components/AddDiscountCode/AddDiscountCode';
+import AddDiscountCode from '@/components/AddDiscountCode/AddDiscountCode';
 import classes from './AdminPanel.module.css';
 
 const AdminPanel = () => {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import StatusResult from '../../components/libs/StatusResult';
+import StatusResult from '@/components/libs/StatusResult';
 import { Button } from '@/components/ui/button';
 import classes from './Success.module.css';
 

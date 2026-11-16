@@ -1,7 +1,9 @@
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@/api/queryKeys';
+import type { User } from '@beatriz/shared/users';
 
-const useGetUserOrdersQuery = (id: string) => {
+const useGetUserOrdersQuery = (id: User['_id']) => {
 	const getUserOrders = async () => {
 		console.log(id);
 		const uri = `/orders/${id}`;
@@ -10,7 +12,7 @@ const useGetUserOrdersQuery = (id: string) => {
 	};
 
 	return useQuery({
-		queryKey: [`userorders-${id}`],
+		queryKey: queryKeys.orders.byUser(id),
 		queryFn: getUserOrders,
 	});
 };

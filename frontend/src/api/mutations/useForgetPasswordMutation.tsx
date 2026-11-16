@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { API_URL } from '@/api/apiConfig';
 import toast from 'react-hot-toast';
-import type { ForgetPasswordRequest, ForgetPasswordResponse } from '@beatriz/shared';
+import type { ForgetPasswordRequest, ForgetPasswordResponse } from '@beatriz/shared/auth';
 
 const useForgetPasswordMutation = () => {
 	const forgetPassword = async (email: string): Promise<ForgetPasswordResponse> => {

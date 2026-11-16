@@ -5,8 +5,9 @@ import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import QRCode from 'react-qr-code';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { getNameBlock, getNameTypeTicket } from '@/utils/namingTicket';
-import type { Ticket as ITicket } from '@beatriz/shared';
+import { getNameBlock, getNameTypeTicket, getBlockBadgeClass } from '@/utils/namingTicket';
+import type { Ticket as ITicket } from '@beatriz/shared/tickets';
+import { ASSET_BASE_URL } from '@/api/apiConfig';
 
 interface TicketProps {
 	ticket: ITicket;
@@ -19,7 +20,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 
 	const { sector, block, seat } = ticket.seating;
 
-	const [isShow, setIsShow] = useState(false);
+	const [isShow, setIsShow] = useState<boolean>(false);
 
 	const qrValue = JSON.stringify({
 		id: ticket._id,
@@ -40,7 +41,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 					<figure>
 						<img
 							className={classes['event-image']}
-							src={`http://localhost:3000/images/events/${ticket.event.image}`}
+							src={`${ASSET_BASE_URL}/images/events/${ticket.event.image}`}
 							alt={ticket.event.image}
 						/>
 					</figure>
@@ -55,24 +56,10 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 						</div>
 
 						<div className={classes['event-seating']}>
-							<img src={chairIcon} alt='Calendar Icon' />
-							<div style={{ display: 'flex', aligntickets: 'center', flex: 1 }}>
+							<img src={chairIcon} alt='Chair Icon' />
+							<div className={classes['seating-row']}>
 								<span className={classes.section}>{sector}</span>
-								<span
-									style={{
-										backgroundColor:
-											block === 'blue'
-												? 'blue'
-												: block === 'green'
-													? 'green'
-													: block === 'yellow'
-														? 'yellow'
-														: 'black',
-										padding: '10px',
-										border: '1px solid black',
-										color: 'white',
-										marginLeft: '5px',
-									}}>
+								<span className={getBlockBadgeClass(block, classes)}>
 									{getNameBlock(block)}
 								</span>
 
@@ -80,7 +67,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 							</div>
 						</div>
 
-						<section style={{ padding: '2rem .5rem 0' }}>
+						<section className={classes['details-section']}>
 							<Button
 								onClick={() => {
 									setTimeout(
@@ -93,75 +80,41 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 						</section>
 
 						{isShow && (
-							<div
-								style={{
-									position: 'fixed',
-									top: '50%',
-									left: '50%',
-									transform: 'translate(-50%, -50%)',
-									backgroundColor: '#ffffff',
-									border: '1px solid orange',
-									width: '400px',
-									maxWidth: '90%',
-									padding: '2rem',
-									borderRadius: '16px',
-									boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
-									zIndex: 1000,
-									fontFamily: 'Roboto',
-								}}
-								onClick={() => setIsShow(false)}>
-								<button
-									style={{
-										position: 'absolute',
-										top: '15px',
-										right: '15px',
-										backgroundColor: 'transparent',
-										border: 'none',
-										fontSize: '2rem',
-										color: '#ff6347',
-										cursor: 'pointer',
-										transition: 'color 0.3s ease',
-									}}
-									onClick={() => setIsShow(false)}
-									onMouseEnter={e => (e.target.style.color = '#d32f2f')}
-									onMouseLeave={e => (e.target.style.color = '#ff6347')}>
-									&times;
-								</button>
+							<div className={classes['modal-overlay']} onClick={() => setIsShow(false)}>
+ 							<Button
+ 								variant='ghost'
+ 								size='icon'
+ 								className={classes['modal-close']}
+ 								onClick={() => setIsShow(false)}
+ 								aria-label='Zamknij'>
+ 								&times;
+ 							</Button>
 
-								<h3
-									style={{
-										textAlign: 'center',
-										marginBottom: '1rem',
-										color: '#333',
-										fontSize: '1.5rem',
-										fontWeight: 600,
-										textTransform: 'uppercase',
-										letterSpacing: '1px',
-									}}>
+								<h3 className={classes['modal-title']}>
 									Szczegóły Biletu
 								</h3>
 
-								<div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-									<p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: '#555' }}>
+								<div className={classes['modal-content']}>
+									<p className={classes['modal-row']}>
 										<strong>Sektor:</strong> <span>{sector}</span>
 									</p>
-									<p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: '#555' }}>
+									<p className={classes['modal-row']}>
 										<strong>Strefa:</strong> <span>{getNameBlock(block)}</span>
 									</p>
 
 									{seat && (
-										<p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: '#555' }}>
+										<p className={classes['modal-row']}>
 											<strong>Miejsce:</strong> <span>{seat}</span>
 										</p>
 									)}
 
-									<p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: '#555' }}>
+									<p className={classes['modal-row']}>
 										<strong>Typ biletu:</strong> <span>{getNameTypeTicket(ticket.type)}</span>
 									</p>
-									<p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: '#555' }}>
+									<p className={classes['modal-row']}>
 										<strong>Cena biletu:</strong> <span>{ticket.price} PLN</span>
 									</p>
-									<p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: '#555' }}>
+									<p className={classes['modal-row']}>
 										<strong>Zakupiono: </strong>
 										<span>
 											{formattedDate(purchasedDate)} {formattedTime(purchasedDate)}
@@ -172,12 +125,6 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 								<div className={classes['qr-code']}>
 									<QRCode
 										size={256}
-										style={{
-											width: '100%',
-											maxWidth: '300px',
-											margin: '0 auto',
-											borderRadius: '8px',
-										}}
 										value={qrValue}
 										viewBox={`0 0 256 256`}
 										onClick={() => console.log(qrValue)}

@@ -1,24 +1,38 @@
 import useAddNewEventMutation from '@/api/mutations/useAddNewEventMutation';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import classes from './AddEvent.module.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Sector from '../../components/Sector/Sector';
-import { EVENT_TYPE_OPTIONS, INITIAL_SECTORS } from '@/constants/constants';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import Sector from '@/components/Sector/Sector';
+import { EVENT_TYPE_OPTIONS, INITIAL_SECTORS } from '@beatriz/shared/constants';
 
 const AddEvent = () => {
 	const { mutate: newEvent } = useAddNewEventMutation();
 
 	const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
+	const [selectedType, setSelectedType] = useState<string>('concert');
+
+	const descriptionRef = useRef<HTMLInputElement>(null);
+	const dateRef = useRef<HTMLInputElement>(null);
+	const starsRef = useRef<HTMLInputElement>(null);
+	const imageRef = useRef<HTMLInputElement>(null);
+	const seatRequiredRef = useRef<HTMLInputElement>(null);
+	const normalRef = useRef<HTMLInputElement>(null);
+	const vipRef = useRef<HTMLInputElement>(null);
+	const childRef = useRef<HTMLInputElement>(null);
+	const nameRef = useRef<HTMLInputElement>(null);
+
+	const isSectorSelected = (sector: string) => selectedSectors.includes(sector);
 
 	const handleSelectSector = (sector: string) => {
-		if (selectedSectors.includes(sector)) {
-			setSelectedSectors((prevSelectedSectors: any) =>
-				prevSelectedSectors.filter((selectedSector: any) => selectedSector !== sector).sort(),
+		if (isSectorSelected(sector)) {
+			setSelectedSectors(prev =>
+				prev.filter(selectedSector => selectedSector !== sector).sort(),
 			);
 		} else {
-			setSelectedSectors((prevSelectedSectors: any) => [...prevSelectedSectors, sector].sort());
+			setSelectedSectors(prev => [...prev, sector].sort());
 		}
 	};
 
@@ -26,207 +40,174 @@ const AddEvent = () => {
 		e.preventDefault();
 
 		const formData = new FormData();
-		formData.append('description', e.target.description.value);
-		formData.append('date', e.target.date.value);
-		formData.append('star', e.target.stars.value);
-		formData.append('image', e.target.image.files[0]);
-		formData.append('seatRequired', e.target.seatRequired.checked);
-		formData.append('normal', Number(e.target.normal.value));
-		formData.append('vip', Number(e.target.vip.value));
-		formData.append('child', Number(e.target.child.value));
-		formData.append('name', e.target.name.value);
+		formData.append('description', descriptionRef.current?.value ?? '');
+		formData.append('date', dateRef.current?.value ?? '');
+		formData.append('star', starsRef.current?.value ?? '');
+		if (imageRef.current?.files?.[0]) {
+			formData.append('image', imageRef.current.files[0]);
+		}
+		formData.append('seatRequired', seatRequiredRef.current?.checked ?? false);
+		formData.append('normal', String(normalRef.current?.value ?? '0'));
+		formData.append('vip', String(vipRef.current?.value ?? '0'));
+		formData.append('child', String(childRef.current?.value ?? '0'));
+		formData.append('name', nameRef.current?.value ?? '');
 		formData.append('sectors', selectedSectors);
-		formData.append('type', e.target.type.value);
+		formData.append('type', selectedType);
 
 		newEvent(formData);
 	};
 
 	return (
 		<>
-			<h1
-				style={{
-					textAlign: 'center',
-					letterSpacing: '1px',
-					paddingTop: '3rem',
-					textTransform: 'uppercase',
-					fontWeight: '600',
-					fontSize: '1.5rem',
-				}}>
+			<h1 className={classes.heading}>
 				Dodawanie nowego wydarzenia
 			</h1>
 			<form
 				action='/api/events'
 				method='post'
-				className={`${classes.form} ${classes.formContainer}`}
+				className={`${classes.form} ${classes['form-container']}`}
 				encType='multipart/form-data'
 				onSubmit={handleAddEvent}>
-				<div className={classes.gridContainer}>
-					<section className={classes['input-group']}>
-						<div>
-							<Label htmlFor='description' className={classes.label}>
-								Opis
-							</Label>
+ 			<fieldset className={classes['grid-container']}>
+ 				<section className={classes['input-group']}>
+ 					<article>
+ 						<Label htmlFor='description' className={classes.label}>
+ 							Opis
+ 						</Label>
 
-							<textarea id='description' name='description' className={classes.input} required></textarea>
-						</div>
+ 						<textarea id='description' name='description' className={classes.input} ref={descriptionRef} required></textarea>
+ 					</article>
 
-						<div>
-							<Label htmlFor='date' className={classes.label}>
-								Data
-							</Label>
-							<Input type='datetime-local' id='date' name='date' className={classes.input} required />
-						</div>
-					</section>
+ 					<article>
+ 						<Label htmlFor='date' className={classes.label}>
+ 							Data
+ 						</Label>
+ 						<Input type='datetime-local' id='date' name='date' className={classes.input} ref={dateRef} required />
+ 					</article>
+ 				</section>
 
-					<section className={classes['input-group']}>
-						<div className={classes.block}>
-							<Label htmlFor='stars' className={classes.label}>
-								Gwiazdy
-							</Label>
-							<Input type='text' id='stars' name='stars' className={classes.input} required />
-						</div>
+ 				<section className={classes['input-group']}>
+ 					<article className={classes.block}>
+ 						<Label htmlFor='stars' className={classes.label}>
+ 							Gwiazdy
+ 						</Label>
+						<Input type='text' id='stars' name='stars' className={classes.input} ref={starsRef} required />
+ 					</article>
 
-						<div className={classes.block}>
-							<Label htmlFor='name' className={classes.label}>
-								Nazwa
-							</Label>
-							<Input type='text' id='name' name='name' className={classes.input} required />
-						</div>
-					</section>
+ 					<article className={classes.block}>
+ 						<Label htmlFor='name' className={classes.label}>
+ 							Nazwa
+ 						</Label>
+						<Input type='text' id='name' name='name' className={classes.input} ref={nameRef} required />
+ 					</article>
+ 				</section>
 
-					<section className={classes['input-group']}>
-						<div className={classes.block}>
-							<label htmlFor='stars' className={classes.label}>
-								Typ
-							</label>
-							<select
-								id='type'
-								name='type'
-								style={{
-									border: '1px solid black',
-									padding: '0.5rem 1rem',
-									width: '100%',
-								}}>
-								{EVENT_TYPE_OPTIONS.map(({ value, label }) => (
-									<option key={value} value={value}>
-										{label}
-									</option>
-								))}
-							</select>
-						</div>
+ 				<section className={classes['input-group']}>
+ 					<article className={classes.block}>
+ 						<Label htmlFor='type'>Typ</Label>
+ 						<Select value={selectedType} onValueChange={setSelectedType}>
+ 							<SelectTrigger id='type' className={classes['select-input']}>
+ 								<SelectValue />
+ 							</SelectTrigger>
+ 							<SelectContent>
+ 								{EVENT_TYPE_OPTIONS.map(({ value, label }) => (
+ 									<SelectItem key={value} value={value}>
+ 										{label}
+ 									</SelectItem>
+ 								))}
+ 							</SelectContent>
+ 						</Select>
+ 					</article>
 
-						<div className={classes.block}>
-							<Label htmlFor='image' className={classes.label}>
-								Zdjęcie
-							</Label>
-							<Input type='file' id='image' name='image' className={classes.input} required />
-						</div>
-					</section>
+ 					<article className={classes.block}>
+ 						<Label htmlFor='image' className={classes.label}>
+ 							Zdjęcie
+ 						</Label>
+						<Input type='file' id='image' name='image' className={classes.input} ref={imageRef} required />
+ 					</article>
+ 				</section>
 
-					<div
-						style={{
-							marginBottom: '15px',
-							margin: '10px',
-							fontWeight: 600,
-							textAlign: 'center',
-							textTransform: 'uppercase',
-						}}>
-						Wybierz sektory
-					</div>
+ 			<p className={classes['image-section']}>
+ 				Wybierz sektory
+ 			</p>
 
-					<div className={classes.container}>
-						<div className={classes['hala-container']}>
-							<div className={classes['hala-grid']}>
-								{INITIAL_SECTORS.map((sectorName, index) => (
-									<Sector
-										key={sectorName}
-										sectorName={sectorName}
-										isSelected={selectedSectors.includes(sectorName)}
-										isDisabled={false}
-										index={index}
-										onClick={handleSelectSector}
-									/>
-								))}
-								<div className={classes.hala}></div>
-							</div>
-						</div>
-					</div>
+ 				<section className={classes.container}>
+ 					<figure className={classes['hala-container']}>
+ 						<div className={classes['hala-grid']}>
+ 							{INITIAL_SECTORS.map((sectorName, index) => (
+ 								<Sector
+ 									key={sectorName}
+ 									sectorName={sectorName}
+ 									isSelected={isSectorSelected(sectorName)}
+ 									isDisabled={false}
+ 									index={index}
+ 									onClick={handleSelectSector}
+ 								/>
+ 							))}
+ 							<div className={classes.hala}></div>
+ 						</div>
+ 					</figure>
+ 				</section>
 
-					<div className={classes.block}>
-						<label htmlFor='normalny' className={classes.label} style={{ paddingRight: '1rem' }}>
-							Miejsce siedzące wymagane:
-						</label>
-						<input type='checkbox' id={`seatRequired`} name='seatRequired' />
-					</div>
+ 			<aside className={classes.block}>
+ 				<Label htmlFor='seatRequired' className={classes['seat-required-label']}>
+ 					Miejsce siedzące wymagane:
+ 				</Label>
+ 				<Input type='checkbox' id='seatRequired' name='seatRequired' ref={seatRequiredRef} />
+ 			</aside>
 
-					<h1
-						style={{
-							marginBottom: '15px',
-							textAlign: 'center',
-							textTransform: 'uppercase',
-							fontWeight: '600',
-							letterSpacing: '1px',
-						}}>
-						Ceny biletów
-					</h1>
+ 			<h1 className={classes['prices-heading']}>
+ 				Ceny biletów
+ 			</h1>
 
-					<section className={classes['tickets-prices']}>
-						<div>
-							<label
-								htmlFor='normal'
-								className={classes.label}
-								style={{ display: 'flex', justifyContent: 'center' }}>
-								Normalny
-							</label>
-							<input
-								type='number'
-								id='normal'
-								name='normal'
-								className={classes.input}
-								required
-								style={{ display: 'flex', justifyContent: 'center' }}
-							/>
-						</div>
+ 			<section className={classes['tickets-prices']}>
+ 				<article>
+ 					<Label htmlFor='normal' className={classes['price-label']}>
+ 						Normalny
+ 					</Label>
+ 						<Input
+							type='number'
+							id='normal'
+							name='normal'
+							className={classes['price-input']}
+							ref={normalRef}
+							required
+						/>
+ 				</article>
 
-						<div>
-							<label
-								htmlFor='vip'
-								className={classes.label}
-								style={{ display: 'flex', justifyContent: 'center' }}>
-								VIP
-							</label>
-							<input
-								type='number'
-								id='vip'
-								name='vip'
-								className={classes.input}
-								required
-								style={{ width: '100%' }}
-							/>
-						</div>
+ 				<article>
+ 					<Label htmlFor='vip' className={classes['price-label']}>
+ 						VIP
+ 					</Label>
+ 						<Input
+							type='number'
+							id='vip'
+							name='vip'
+							className={classes['price-input']}
+							ref={vipRef}
+							required
+						/>
+ 				</article>
 
-						<div>
-							<label
-								htmlFor='child'
-								className={classes.label}
-								style={{ display: 'flex', justifyContent: 'center' }}>
-								Dziecięcy
-							</label>
-							<input
-								type='number'
-								id='child'
-								name='child'
-								className={classes.input}
-								required
-								style={{ width: '100%' }}
-							/>
-						</div>
-					</section>
-				</div>
+ 				<article>
+ 					<Label htmlFor='child' className={classes['price-label']}>
+ 						Dziecięcy
+ 					</Label>
+ 						<Input
+							type='number'
+							id='child'
+							name='child'
+							className={classes['price-input']}
+							ref={childRef}
+							required
+						/>
+ 				</article>
+ 			</section>
+ 			</fieldset>
 
-				<div className={classes.submitButtonContainer}>
-					<Button className={classes.submitButton}>Dodaj</Button>
-				</div>
+ 			<footer className={classes['submit-button-container']}>
+ 				<Button className={classes['submit-button']}>Dodaj</Button>
+ 			</footer>
 			</form>
 		</>
 	);

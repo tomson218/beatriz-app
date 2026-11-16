@@ -1,96 +1,85 @@
-import { formattedDate, formattedTime } from '../../utils/formatting-date';
+import { formattedDate, formattedTime } from '@/utils/formatting-date';
+import { parseEventDate } from '@/utils/eventDate';
 import { getNameTypeTicket, getNameBlock } from '@/utils/namingTicket';
+import type { Event } from '@beatriz/shared/events';
+import type { CartTicket } from '@beatriz/shared/orders';
+import type { TicketType } from '@beatriz/shared/tickets';
+import { Label } from '@/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import classes from './Order.module.css';
+import { ASSET_BASE_URL } from '@/api/apiConfig';
 
 interface OrderProps {
-	obj: {};
-	eventDetails: { name: string; date: string; image: string; prices: { [key: string]: number } };
-	onChangePrice: (price: number) => void;
+	ticket: CartTicket;
+	eventDetails: Event;
+	onChangePrice?: (price: number) => void;
 	price: number;
-	isChoice: boolean;
-	isSummary: boolean;
-	type: string;
+	isChoice?: boolean;
+	isSummary?: boolean;
+	type: TicketType;
 }
 
-const Order = ({ obj, eventDetails, onChangePrice, price, isChoice, isSummary, type }: OrderProps) => {
-	if (!eventDetails || !eventDetails.prices) {
-		return <p>Loading order details...</p>;
+const Order = ({ ticket, eventDetails, onChangePrice, price, isChoice, isSummary, type }: OrderProps) => {
+	const isEventDetailsMissing = !eventDetails || !eventDetails.prices;
+	if (isEventDetailsMissing) {
+		return <p>Ładowanie szczegółów zamówienia...</p>;
 	}
 
-	const eventDate = new Date(eventDetails.date);
-
+	const eventDate = parseEventDate(eventDetails.date);
 	const typeTicket = getNameTypeTicket(type);
 
 	return (
-		<div
-			className='order-item'
-			style={{
-				margin: '3rem auto',
-				padding: '3rem',
-				border: '5px solid black',
-				borderRadius: '1rem',
-				backgroundColor: 'white',
-				display: 'inline-flex',
-				flexDirection: 'column',
-				gap: '1rem',
-				width: '100%',
-				maxWidth: '600px',
-			}}>
-			<h3 style={{ fontWeight: 600 }}>{eventDetails.name}</h3>
+		<article className={classes['order-item']}>
+			<header>
+				<h3>{eventDetails.name}</h3>
+			</header>
 			<p>
 				Data: {formattedDate(eventDate)} o {formattedTime(eventDate)}
 			</p>
-			<img
-				src={`http://localhost:3000/images/events/${eventDetails.image}`}
-				alt={eventDetails.name}
-				style={{
-					borderRadius: '1rem',
-					width: '100%',
-					height: '100%',
-					objectFit: 'cover',
-				}}
-			/>
-			<div>
-				<p>
-					<strong>Sektor:</strong> {obj.sector}
-				</p>
-				<p>
-					<strong>Strefa:</strong> {getNameBlock(obj.block)}
-				</p>
-				{obj.seat && (
-					<p>
-						<strong>Miejsce:</strong> {obj.seat}
-					</p>
-				)}
+			<figure>
+				<img
+					src={`${ASSET_BASE_URL}/images/events/${eventDetails.image}`}
+					alt={eventDetails.name}
+				/>
+			</figure>
+			<section>
+ 			<p>
+ 				<strong>Sektor:</strong> {ticket.sector}
+ 			</p>
+ 			<p>
+ 				<strong>Strefa:</strong> {getNameBlock(ticket.block)}
+ 			</p>
+ 			{ticket.seat && (
+ 				<p>
+ 					<strong>Miejsce:</strong> {ticket.seat}
+ 				</p>
+ 			)}
 				{isSummary && (
 					<p>
 						<strong>Rodzaj biletu:</strong> {typeTicket}
-						<br></br>
+						<br />
 						<strong>Cena:</strong> {price.toFixed(2)} PLN
 					</p>
 				)}
-			</div>
-			{isChoice && (
-				<label style={{ display: 'flex', alignItems: 'center' }}>
-					Wybierz rodzaj biletu:
-					<select
-						value={price}
-						onChange={onChangePrice}
-						style={{
-							backgroundColor: 'black',
-							color: 'white',
-							padding: '.5rem',
-							marginLeft: '.5rem',
-							borderRadius: '0.5rem',
-						}}>
-						{Object.entries(eventDetails.prices).map(([k, v]) => (
-							<option key={k} value={v}>
-								{getNameTypeTicket(k)}: {v.toFixed(2)} PLN
-							</option>
-						))}
-					</select>
-				</label>
-			)}
-		</div>
+			</section>
+  	{isChoice && onChangePrice && (
+			<Label className={classes['ticket-type-label']}>Wybierz rodzaj biletu:</Label>
+			<Select
+				value={price.toString()}
+				onValueChange={value => onChangePrice(parseFloat(value))}>
+				<SelectTrigger className={classes['ticket-type-select']}>
+					<SelectValue />
+				</SelectTrigger>
+				<SelectContent>
+					{Object.entries(eventDetails.prices).map(([k, v]) => (
+						<SelectItem key={k} value={v.toString()}>
+							{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
+						</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+		)}
+		</article>
 	);
 };
 

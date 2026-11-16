@@ -61,3 +61,45 @@
 		margin: 0 auto;
 	}
 }
+
+/* Filter styles */
+.filter-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.filter-label {
+	margin-bottom: 0.5rem;
+	color: #555;
+}
+
+.filter-checkbox-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.filter-checkbox-row {
+	display: flex;
+	gap: 1rem;
+}
+
+.filter-input {
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.filter-range {
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.filter-value {
+	font-weight: 600;
+}
+
+.events {
+	width: 70%;
+}

@@ -1,44 +1,47 @@
-import { Card, CardContent, CardFooter } from '@/components/UI/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import classes from './EventCard.module.css';
 import { Link } from 'react-router-dom';
 import calendarIcon from '@/assets/svg/calendar-icon.svg';
 import { checkEventIsNew } from '@/utils/checkEventIsNew';
+import { parseEventDate } from '@/utils/eventDate';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import OutlineHeartIcon from '@/assets/icons/OutlineHeartIcon';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import type { Event } from '@beatriz/shared';
+import type { Event } from '@beatriz/shared/events';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
 
 interface EventProps {
 	event: Event;
 	isFavourite: boolean;
-	addToFavourites: (id: string) => void;
-	removeFromFavourites: (id: string) => void;
+	onAddToFavourite: (id: Event['_id']) => void;
+	onRemoveFromFavourite: (id: Event['_id']) => void;
 }
 
-const EventCard = ({ event, isFavourite, addToFavourites, removeFromFavourites }: EventProps) => {
-	const eventDate = new Date(event.date);
+const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite }: EventProps) => {
+	const eventDate = parseEventDate(event.date);
 	const [isEventFavourite, setIsEventFavourite] = useState<boolean>(isFavourite);
 	const isNewEvent = checkEventIsNew(eventDate);
 
-	const handleClickFavourite = (id: string): void => {
+	const handleClickFavourite = (id: Event['_id']): void => {
 		const nextValue = !isEventFavourite;
 		setIsEventFavourite(nextValue);
 
 		if (nextValue) {
-			addToFavourites(id);
+			onAddToFavourite(id);
 			return;
 		}
 
-		removeFromFavourites(id);
+		onRemoveFromFavourite(id);
 	};
+
+	const favouriteIconClass = `${classes.icon} ${isEventFavourite ? classes.favourite : ''}`;
 
 	return (
 		<Card className={classes.container}>
 			<CardContent className='p-0'>
 				<article className={classes['clickable-card']} aria-label={`Wydarzenie ${event.name}`}>
-					<div className={classes['article-wrapper']} style={{ position: 'relative' }}>
+					<div className={classes['article-wrapper']}>
 						{isNewEvent && <span className={classes.label}>NOWE</span>}
 
 						<figure>
@@ -86,7 +89,7 @@ const EventCard = ({ event, isFavourite, addToFavourites, removeFromFavourites }
 									onClick={() => handleClickFavourite(event._id)}
 									className={classes.iconButton}>
 									<OutlineHeartIcon
-										className={`${classes.icon} ${isEventFavourite ? classes.favourite : ''}`}
+										className={favouriteIconClass}
 									/>
 								</Button>
 							</CardFooter>

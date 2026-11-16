@@ -1,13 +1,14 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import useAddPostToForumMutation from '@/api/mutations/useAddPostToForumMutation';
+import classes from './AddPost.module.css';
 
 interface AddPostProps {
 	refetch: () => void;
 }
 
-const AddPost = (refetch: AddPostProps) => {
-	const [isShown, setIsShown] = useState(false);
+const AddPost = ({ refetch }: AddPostProps) => {
+	const [isShown, setIsShown] = useState<boolean>(false);
 
 	const { mutate: addPost } = useAddPostToForumMutation(refetch);
 
@@ -15,7 +16,6 @@ const AddPost = (refetch: AddPostProps) => {
 
 	const handleClickNewPost = () => {
 		setIsShown(false);
-
 		addPost(postRef.current?.value);
 	};
 
@@ -24,29 +24,21 @@ const AddPost = (refetch: AddPostProps) => {
 	};
 
 	return (
-		<div
-			style={{
-				display: 'flex',
-				justifyContent: 'flex-end',
-				marginRight: '2rem',
-				alignItems: 'center',
-				gap: '1rem',
-				marginTop: '5rem',
-			}}>
+		<section className={classes.container}>
 			{!isShown && (
-				<Button style={{ padding: '1.5rem 3rem', borderRadius: '1rem' }} onClick={handleShowForm}>
+				<Button className={classes.button} onClick={handleShowForm}>
 					Dodaj nowy post
 				</Button>
 			)}
 			{isShown && (
-				<>
-					<textarea ref={postRef} rows='5' cols='33' style={{ borderRadius: '1rem' }} />
-					<Button style={{ padding: '1.5rem 3rem', borderRadius: '1rem' }} onClick={handleClickNewPost}>
+				<article>
+					<textarea ref={postRef} rows='5' cols='33' className={classes.textarea} />
+					<Button className={classes.button} onClick={handleClickNewPost}>
 						Dodaj
 					</Button>
-				</>
+				</article>
 			)}
-		</div>
+		</section>
 	);
 };
 

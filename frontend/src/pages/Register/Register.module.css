@@ -42,7 +42,7 @@
 	text-transform: uppercase;
 }
 
-.formGroup {
+.form-group {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
@@ -50,7 +50,7 @@
 	width: 100%;
 }
 
-.btnLogin {
+.btn-login {
 	margin: 1.5rem auto 0;
 	width: 400px;
 	display: block;
@@ -64,18 +64,18 @@
 	transition: background-color 0.3s ease;
 }
 
-.btnLogin:hover {
+.btn-login:hover {
 	background-color: #0056b3;
 }
 
-.forgetPassword {
+.forget-password {
 	margin-top: 1rem;
 	color: #007bff;
 	text-decoration: underline;
 	cursor: pointer;
 }
 
-.dividerSpan {
+.divider-span {
 	background: var(--primary-color);
 	padding: 0 10px;
 	color: #333;
@@ -107,14 +107,14 @@
 	border-radius: 10px;
 }
 
-.googleLogin,
-.facebookLogin {
+.google-login,
+.facebook-login {
 	margin: 1rem auto 0;
 	width: 400px;
 	text-align: center;
 }
 
-.facebookLogin {
+.facebook-login {
 	background-color: #4267b2;
 	color: #fff;
 	padding: 10px;
@@ -123,16 +123,16 @@
 	transition: background-color 0.3s ease;
 }
 
-.facebookLogin:hover {
+.facebook-login:hover {
 	background-color: #365899;
 }
 
-.noAccount {
+.no-account {
 	margin-top: 1.5rem;
 	text-align: center;
 }
 
-.noAccount p {
+.no-account p {
 	font-size: 14px;
 }
 

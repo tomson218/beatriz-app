@@ -28,6 +28,17 @@
 	color: #ffa500;
 }
 
+.user-profile-page {
+	min-height: 94.4dvh;
+	background-color: white;
+	padding: 1rem 2rem;
+}
+
+.button-group {
+	display: flex;
+	gap: 1rem;
+}
+
 .user-photo {
 	width: 120px;
 	height: 120px;

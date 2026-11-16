@@ -1,8 +1,9 @@
-import useLogoutUserMutation from '../../api/mutations/useLogoutUserMutation';
+import useLogoutUserMutation from '@/api/mutations/useLogoutUserMutation';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { getItemLocalStorage } from '@/utils/localStorage';
 
 const Navbar = () => {
@@ -19,16 +20,16 @@ const Navbar = () => {
 	};
 
 	if (isUserDetailsLoading) {
-		return <div>Loading...</div>;
+		return <div>Ładowanie...</div>;
 	}
 
 	return (
 		<section className='top-nav'>
 			<span className='logo'>Beatriz App</span>
 			<input id='menu-toggle' type='checkbox' />
-			<label className='menu-button-container' htmlFor='menu-toggle'>
+			<Label className='menu-button-container' htmlFor='menu-toggle'>
 				<div className='menu-button'></div>
-			</label>
+			</Label>
 
 			<ul className='menu'>
 				<Link to='/home'>

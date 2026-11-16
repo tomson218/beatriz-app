@@ -1,8 +1,10 @@
-import { API_URL } from '../apiConfig';
+import { API_URL } from '@/api/apiConfig';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import type { Event } from '@beatriz/shared/events';
+import { queryKeys } from '@/api/queryKeys';
 
-const useGetPostsByEventIdQuery = (eventId: string) => {
+const useGetPostsByEventIdQuery = (eventId: Event["_id"]) => {
 	const getPostsByEventId = async () => {
 		const uri = `${API_URL}/forum/${eventId}`;
 		const response = await axios.get(uri);
@@ -10,7 +12,7 @@ const useGetPostsByEventIdQuery = (eventId: string) => {
 	};
 
 	return useQuery({
-		queryKey: [`posts-by-${eventId}`],
+		queryKey: queryKeys.posts.byEvent(eventId),
 		queryFn: getPostsByEventId,
 	});
 };

@@ -1,4 +1,6 @@
-export const getNameBlock = (name: string) => {
+import type { BlockType } from '@beatriz/shared/tickets';
+
+export const getNameBlock = (name: BlockType) => {
 	if (name === 'blue') return 'niebieska';
 	else if (name === 'green') return 'zielona';
 	else if (name === 'yellow') return 'żółta';
@@ -14,5 +16,13 @@ export const getNameTypeTicket = (type: string) => {
 		return 'Dziecinny';
 	} else return 'Unknown';
 };
+
+/**
+ * Buduje klasę CSS dla odznaki strefy (block badge).
+ */
+export function getBlockBadgeClass(block: BlockType, classes: Record<string, string>): string {
+	const blockClass = `block-badge--${block}`;
+	return `${classes['block-badge']} ${classes[blockClass]}`;
+}
 
 

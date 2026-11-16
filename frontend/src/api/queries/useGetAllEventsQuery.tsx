@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
+import { queryKeys } from '@/api/queryKeys';
 
 const useGetAllEventsQuery = () => {
 	const getAllEvents = async () => {
@@ -8,7 +9,7 @@ const useGetAllEventsQuery = () => {
 	};
 
 	return useQuery({
-		queryKey: ['events'],
+		queryKey: queryKeys.events.list(),
 		queryFn: getAllEvents,
 	});
 };

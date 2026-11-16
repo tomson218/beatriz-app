@@ -1,26 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import useSignUpUserMutation from '../../api/mutations/useSignUpUserMutation';
+import useSignUpUserMutation from '@/api/mutations/useSignUpUserMutation';
 import classes from './Register.module.css';
 import { Button } from '@/components/ui/button';
 import Divider from '@mui/material/Divider';
-import Form from './../../components/Form/Form';
+import Form from '@/components/Form/Form';
 import { Toaster } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import useFacebookLoginMutation from '@/api/mutations/useFacebookLoginMutation';
-import SocialMediaLogin from '../../components/SocialMediaLogin/SocialMediaLogin';
+import SocialMediaLogin from '@/components/SocialMediaLogin/SocialMediaLogin';
+import type { SignUpInputs, FacebookLoginData } from '@beatriz/shared/auth';
+import { isFacebookDataReady } from '@/utils/auth';
 
 const Register = () => {
-	type Inputs = {
-		username: string;
-		firstName: string;
-		lastName: string;
-		email: string;
-		password: string;
-		passwordConfirm: string;
-		validate: () => void;
-	};
-
 	const { mutate: newUser } = useSignUpUserMutation();
 
 	const {
@@ -28,18 +20,18 @@ const Register = () => {
 		handleSubmit,
 		watch,
 		formState: { errors },
-	} = useForm<Inputs>();
+	} = useForm<SignUpInputs>();
 
-	const onSubmit: SubmitHandler<Inputs> = data => {
+	const onSubmit: SubmitHandler<SignUpInputs> = data => {
 		newUser(data);
 	};
 
 	const { mutate: facebookLogin } = useFacebookLoginMutation();
 
-	const [facebookData, setFacebookData] = useState({ tokens: null, userProfile: null });
+	const [facebookData, setFacebookData] = useState<FacebookLoginData>({ tokens: null, userProfile: null });
 
 	useEffect(() => {
-		if (facebookData.tokens && facebookData.userProfile) {
+		if (isFacebookDataReady(facebookData)) {
 			facebookLogin(facebookData);
 		}
 	}, [facebookData]);
@@ -54,7 +46,7 @@ const Register = () => {
 						<Form.Input
 							labelText='Nazwa użytkownika'
 							inputId='username'
-							placeholder='Username'
+ 						placeholder='Nazwa użytkownika'
 							register={register}
 							errorMessage={errors.username && errors.username.message}
 							{...register('username')}
@@ -70,7 +62,7 @@ const Register = () => {
 						<Form.Input
 							labelText='Imię'
 							inputId='firstName'
-							placeholder='First Name'
+ 						placeholder='Imię'
 							register={register}
 							errorMessage={errors.firstName && errors.firstName.message}
 							{...register('firstName')}
@@ -86,7 +78,7 @@ const Register = () => {
 						<Form.Input
 							labelText='Nazwisko'
 							inputId='lastName'
-							placeholder='Last Name'
+ 						placeholder='Nazwisko'
 							register={register}
 							errorMessage={errors.lastName && errors.lastName.message}
 							{...register('lastName')}
@@ -146,21 +138,21 @@ const Register = () => {
 							{...register('passwordConfirm')}
 						/>
 
-						<Form.Button content='Utwórz konto' variant='default' className={classes.btnLogin} />
+						<Form.Button content='Utwórz konto' variant='default' className={classes['btn-login']} />
 					</Form>
 
 					<Divider
 						sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
-						<span className={classes.dividerSpan}>LUB</span>
+						<span className={classes['divider-span']}>LUB</span>
 					</Divider>
 					<SocialMediaLogin />
 
-					<div className={classes.noAccount}>
+					<footer className={classes['no-account']}>
 						<p>Masz już konto?</p>
 						<Button className={classes['create-account']} variant='link' asChild>
 							<Link to='/'>Zaloguj się</Link>
 						</Button>
-					</div>
+					</footer>
 				</section>
 				<Toaster position='bottom-right' reverseOrder={false} />
 			</main>

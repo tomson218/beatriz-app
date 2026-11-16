@@ -1,28 +1,24 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import useLoginUserMutation from '../../api/mutations/useLoginUserMutation';
+import useLoginUserMutation from '@/api/mutations/useLoginUserMutation';
 import { Link } from 'react-router-dom';
 import classes from './Login.module.css';
 import { Button } from '@/components/ui/button';
 import Divider from '@mui/material/Divider';
-import Form from './../../components/Form/Form';
+import Form from '@/components/Form/Form';
 import { Toaster } from 'react-hot-toast';
-import SocialMediaLogin from '../../components/SocialMediaLogin/SocialMediaLogin';
+import SocialMediaLogin from '@/components/SocialMediaLogin/SocialMediaLogin';
+import type { LoginRequest } from '@beatriz/shared/auth';
 
 const Login = () => {
-	type Inputs = {
-		email: string;
-		password: string;
-	};
-
 	const { mutate: loginUser } = useLoginUserMutation();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<Inputs>();
+	} = useForm<LoginRequest>();
 
-	const onSubmit: SubmitHandler<Inputs> = data => {
+	const onSubmit: SubmitHandler<LoginRequest> = data => {
 		loginUser(data);
 	};
 
@@ -64,18 +60,18 @@ const Login = () => {
 							},
 						}}
 					/>
-					<Form.Button content='Zaloguj się' variant='default' className={classes.btnLogin} />
+					<Form.Button content='Zaloguj się' variant='default' className={classes['btn-login']} />
 				</Form>
-				<Button variant='link' className={classes.forgetPassword}>
+				<Button variant='link' className={classes['forget-password']}>
 					<Link to='/forget-password'>Nie pamiętasz hasła?</Link>
 				</Button>
 				<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
-					<span className={classes.dividerSpan}>LUB</span>
+					<span className={classes['divider-span']}>LUB</span>
 				</Divider>
 
 				<SocialMediaLogin />
 
-				<div className={classes.noAccount}>
+				<footer className={classes['no-account']}>
 					<p>Nie masz jeszcze konta?</p>
 
 					<Button className={classes['create-account']} variant='link' asChild>

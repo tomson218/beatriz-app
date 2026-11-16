@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import useCreateCheckoutSessionMutation from '../../api/mutations/useCreateCheckoutSessionMutation';
-import useGetEventByIdQuery from '../../api/queries/useGetEventByIdQuery';
+import useCreateCheckoutSessionMutation from '@/api/mutations/useCreateCheckoutSessionMutation';
+import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -12,41 +12,45 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import classes from './TicketChoice.module.css';
-import Order from '../../components/Order/Order';
+import Order from '@/components/Order/Order';
 import useAddUserCartMutation from '@/api/mutations/useAddUserCartMutation';
-import OrderContext from '@/context/OrderContext';
-import OrderWithOutSeats from '../../components/OrderWithoutSeats/OrderWithoutSeats';
-import TotalAmount from '../../components/TotalAmount/TotalAmount';
+import OrderContext, { type OrderContextType } from '@/context/OrderContext';
+import OrderWithOutSeats from '@/components/OrderWithoutSeats/OrderWithoutSeats';
+import TotalAmount from '@/components/TotalAmount/TotalAmount';
+import type { Prices, Event } from '@beatriz/shared/events';
+import type { TicketType } from '@beatriz/shared/tickets';
+import type { CartTicket } from '@beatriz/shared/orders';
+import { ASSET_BASE_URL } from '@/api/apiConfig';
 
-const getTicketTypeByPrice = (object, value) => {
-	return Object.keys(object).find(key => object[key] === value);
+const getTicketTypeByPrice = (prices: Prices, value: number): TicketType | undefined => {
+	return Object.keys(prices).find(key => prices[key as TicketType] === value) as TicketType | undefined;
 };
 
 const TicketChoice = () => {
 	const params = Object.fromEntries(new URLSearchParams(window.location.search));
 	const { eventId, sector, seats, block } = params;
 
-	const [isError, setIsError] = useState(false);
-	const [isOpen, setIsOpen] = useState(false);
+	const [isError, setIsError] = useState<boolean>(false);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-	const handleIsErrorChange = error => {
+	const handleIsErrorChange = (error: boolean) => {
 		setIsError(error);
 	};
 
-	const { setTotalPrice } = useContext(OrderContext);
+	const { setTotalPrice } = useContext<OrderContextType>(OrderContext);
 
-	const { order, setOrder } = useContext(OrderContext);
+	const { order, setOrder } = useContext<OrderContextType>(OrderContext);
 
 	const { mutate: createCheckoutSession } = useCreateCheckoutSessionMutation();
 
 	const {
 		data: eventDetails,
-		loading: isEventDetailsLoading,
+		isLoading: isEventDetailsLoading,
 		error: eventDetailsError,
 	} = useGetEventByIdQuery(eventId);
 	const { mutate: addCart } = useAddUserCartMutation();
 
-	const [ticketsPrice, setTicketsPrice] = useState({});
+	const [ticketsPrice, setTicketsPrice] = useState<Record<string, number>>({});
 
 	const hasSeats = seats && seats.trim() !== '';
 
@@ -60,7 +64,7 @@ const TicketChoice = () => {
 	useEffect(() => {
 		if (eventDetails) {
 			const prices = eventDetails.prices || {};
-			const pricesObj = seatsArray.reduce((acc, seat) => {
+			const pricesObj = seatsArray.reduce<Record<string, number>>((acc, seat) => {
 				acc[seat] = prices.normal;
 				return acc;
 			}, {});
@@ -77,7 +81,7 @@ const TicketChoice = () => {
 					block,
 					name: eventDetails.name,
 					date: eventDetails.date,
-					images: [`http://localhost:3000/images/events/${eventDetails.image}`],
+					images: [`${ASSET_BASE_URL}/images/events/${eventDetails.image}`],
 					seating: seat !== 'no-seat' ? seat : undefined,
 					price: ticketsPrice[seat],
 					type: getTicketTypeByPrice(eventDetails.prices, ticketsPrice[seat]),
@@ -97,7 +101,7 @@ const TicketChoice = () => {
 		localStorage.setItem('totalPrice', JSON.stringify(totalAmount));
 	}, [order, ticketsPrice, hasSeats, setTotalPrice]);
 
-	const handleChangePrice = (e, seat) => {
+	const handleChangePrice = (e: React.ChangeEvent<HTMLSelectElement>, seat: string) => {
 		const price = parseFloat(e.target.value);
 
 		const ticketType = getTicketTypeByPrice(eventDetails.prices, price);
@@ -107,7 +111,7 @@ const TicketChoice = () => {
 			[seat]: price,
 		}));
 		setOrder(prevOrder => {
-			return prevOrder.map(item => {
+			return prevOrder.map((item: CartTicket) => {
 				if (item?.seating === seat || (!item?.seating && seat === 'no-seat')) {
 					return {
 						...item,
@@ -130,31 +134,25 @@ const TicketChoice = () => {
 	};
 
 	if (isEventDetailsLoading) {
-		return <p>Loading...</p>;
+		return <p>Ładowanie...</p>;
 	}
 
-	if (eventDetailsError) {
-		return <p>Error loading event details.</p>;
+	const isEventDetailsMissing = !eventDetails || !eventDetails.prices;
+	if (eventDetailsError || isEventDetailsMissing) {
+		return <p>Nie udało się załadować szczegółów wydarzenia.</p>;
 	}
 
 	return (
-		<div style={{ minHeight: '94.4dvh', backgroundColor: '#f5f5dc' }}>
-			<h2
-				style={{
-					fontWeight: 600,
-					textTransform: 'uppercase',
-					letterSpacing: '1px',
-					fontSize: '2rem',
-					padding: '2rem .5rem',
-				}}>
+		<main className={classes['ticket-choice-page']}>
+			<h2 className={classes['page-title']}>
 				Wybór typu biletów
 			</h2>
-			<div className={classes['grid-container']}>
+			<section className={classes['grid-container']}>
 				{seats !== undefined &&
 					order.map((orderItem, index) => (
 						<Order
 							key={`${orderItem.seating || 'no-seat'}-${orderItem.price}`}
-							obj={{
+							ticket={{
 								eventId: orderItem.eventId,
 								sector: orderItem.sector,
 								seat: orderItem.seating,
@@ -167,7 +165,7 @@ const TicketChoice = () => {
 							isChoice
 						/>
 					))}
-			</div>
+			</section>
 
 			{seats === undefined && (
 				<OrderWithOutSeats
@@ -180,9 +178,7 @@ const TicketChoice = () => {
 
 			<TotalAmount />
 
-			<div
-				className={classes.buttons}
-				style={{ display: 'flex', gap: '1rem', padding: '0 1rem 1rem', borderRadius: '1rem' }}>
+			<footer className={classes.buttons}>
 				<Link to={!isError ? `/summary?eventId=${eventId}` : currentUrl}>
 					<Button
 						onClick={() => {
@@ -193,7 +189,7 @@ const TicketChoice = () => {
 						Przejdź do podsumowania
 					</Button>
 				</Link>
-			</div>
+			</footer>
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogContent className='sm:max-w-md'>
 					<DialogHeader>
@@ -209,7 +205,7 @@ const TicketChoice = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</main>
 	);
 };
 

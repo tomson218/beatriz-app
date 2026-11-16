@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { API_URL } from '../apiConfig';
+import { API_URL } from '@/api/apiConfig';
+import { queryKeys } from '@/api/queryKeys';
 
 const useGetAllUsersQuery = () => {
 	const getAllUsers = async () => {
@@ -10,7 +11,7 @@ const useGetAllUsersQuery = () => {
 	};
 
 	return useQuery({
-		queryKey: ['users'],
+		queryKey: queryKeys.users.list(),
 		queryFn: getAllUsers,
 	});
 };

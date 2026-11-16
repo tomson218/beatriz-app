@@ -3,20 +3,6 @@ import { TICKET_TYPES } from '../capacityHall.ts';
 
 export const facebookDataSchema = ''; // TO__DO
 
-/* 
-
-
-id
-"1556226018361397"
-picture
-"https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1556226…"
-firstName
-"Tomasz"
-lastName
-"Pstrowski"
-
-*/
-
 export const cartScheama = ''; // TO__DO
 
 export const appliedDiscountCodesSchema = ''; // TO__DO

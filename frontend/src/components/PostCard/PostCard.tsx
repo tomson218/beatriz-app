@@ -1,35 +1,33 @@
 import { Divider } from '@nextui-org/divider';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
-import type { ForumPostDto, UserDto } from '@beatriz/shared';
+import type { ForumPostDto } from '@beatriz/shared/forums';
+import type { UserDto } from '@beatriz/shared/users';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
-import { Card, CardContent, CardHeader } from '@/components/UI/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import classes from './PostCard.module.css';
 
 type PostUser = Pick<UserDto, '_id' | 'email' | 'photo' | 'username'>;
 
 interface PostProps {
 	post: ForumPostDto & { user: PostUser };
-	isMyPost?: boolean;
+	isAuthorPost?: boolean;
 }
 
-const PostCard = ({ post, isMyPost }: PostProps) => {
+const PostCard = ({ post, isAuthorPost }: PostProps) => {
 	const postDate = `${formattedDate(new Date(post.date))} ${formattedTime(new Date(post.date))}`;
 	const userAvatar = post.user.photo
 		? `${ASSET_BASE_URL}/images/users/${post.user.photo}`
 		: `${ASSET_BASE_URL}/images/users/defaultUser.jpg`;
+	const avatarAlt = `${post.user.username ?? post.user.email} avatar`;
 
 	return (
 		<Card
 			key={post._id}
-			className='m-4 max-w-2xl rounded-2xl border border-border bg-white shadow-lg'
-			style={{
-				margin: isMyPost ? '1rem 2rem 1rem auto' : '1rem auto 1rem 2rem',
-				borderLeft: isMyPost ? '5px solid orange' : '5px solid black',
-				alignSelf: isMyPost ? 'flex-end' : 'flex-start',
-			}}>
+			className={`${classes.card} ${isAuthorPost ? classes['card--my'] : classes['card--other']}`}>
 			<CardHeader className='flex items-center gap-4 pb-3'>
 				<img
 					src={userAvatar}
-					alt={`${post.user.username ?? post.user.email} avatar`}
+					alt={avatarAlt}
 					className='h-10 w-10 rounded-xl object-cover'
 				/>
 
