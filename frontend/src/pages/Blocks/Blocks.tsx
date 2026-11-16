@@ -4,8 +4,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
 import Block from '../../components/Block/Block';
-
-import Modal from '../../components/UI/Modal/Modal';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Params {
 	eventId: string;
@@ -60,13 +66,19 @@ const Blocks = () => {
 				{isSeatRequired ? 'Wybierz konkretne miejsce' : 'Przejdź do wyboru biletów'}
 			</Button>
 
-			{isOpen && (
-				<Modal
-					title='Brak wybranej strefy!!!'
-					content='Żeby przejść dalej, musisz najpierw wybrać daną strefę.'
-					onClick={() => setIsOpen(false)}
-				/>
-			)}
+			<Dialog open={isOpen} onOpenChange={setIsOpen}>
+				<DialogContent className='sm:max-w-md'>
+					<DialogHeader>
+						<DialogTitle>Brak wybranej strefy!!!</DialogTitle>
+						<DialogDescription>Żeby przejść dalej, musisz najpierw wybrać daną strefę.</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+							OK
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };

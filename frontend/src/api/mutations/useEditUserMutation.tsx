@@ -1,32 +1,30 @@
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
 import toast from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
-import { User } from '../../interfaces/User';
+import type { UpdateUserRequest, UpdateUserResponse } from '@beatriz/shared';
 
-interface useEditUserMutationProps {
+interface UseEditUserMutationProps {
 	id: string;
-	updatedUser: User;
+	updatedUser: UpdateUserRequest;
 }
 
 const useEditUserMutation = () => {
-	const editUser = async ({ id, updatedUser }: useEditUserMutationProps) => {
+	const editUser = async ({ id, updatedUser }: UseEditUserMutationProps): Promise<UpdateUserResponse> => {
 		const uri = `/users/editUser/${id}`;
-
-		const response = await instance.patch(uri, updatedUser);
-
+		const response = await instance.patch<UpdateUserResponse>(uri, updatedUser);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: editUser,
 
-		onSuccess: data => {
+		onSuccess: (data: UpdateUserResponse) => {
 			console.log(data);
 			toast.success('Successfully updated user details');
 		},
 
-		onError: error => {
-			console.log(`${error}`);
+		onError: (error: unknown) => {
+			console.log(error);
 			toast.error('Failed to update user details');
 		},
 	});

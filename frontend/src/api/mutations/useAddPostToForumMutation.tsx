@@ -1,23 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import instance from '../apiConfig';
+import instance from '@/api/apiConfig';
+import type { AddNewPostToForumRequest, AddNewPostToForumResponse } from '@beatriz/shared';
 
-const useAddPostToForumMutation = refetch => {
-	const addPostToForum = async postDetails => {
-		const uri = `/forum`;
-		const response = await instance.post(uri, postDetails);
+const useAddPostToForumMutation = (refetch: () => void) => {
+	const addPostToForum = async (postDetails: AddNewPostToForumRequest): Promise<AddNewPostToForumResponse> => {
+		const uri = '/forum';
+		const response = await instance.post<AddNewPostToForumResponse>(uri, postDetails);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: addPostToForum,
-		onSuccess: data => {
+		onSuccess: (data: AddNewPostToForumResponse) => {
 			refetch();
+			console.log(data);
 			toast.success('Pomyślnie dodano post na forum');
 		},
 
-		onError: error => {
-			console.log(`${error}`);
+		onError: (error: unknown) => {
+			console.log(error);
 			toast.error('Nie udało się dodać posta na forum');
 		},
 	});

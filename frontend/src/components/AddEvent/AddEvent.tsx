@@ -2,8 +2,10 @@ import useAddNewEventMutation from '@/api/mutations/useAddNewEventMutation';
 import { useState } from 'react';
 import classes from './AddEvent.module.css';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Sector from '../../components/Sector/Sector';
-import { INITIAL_SECTORS } from '@/constants/constants';
+import { EVENT_TYPE_OPTIONS, INITIAL_SECTORS } from '@/constants/constants';
 
 const AddEvent = () => {
 	const { mutate: newEvent } = useAddNewEventMutation();
@@ -12,11 +14,11 @@ const AddEvent = () => {
 
 	const handleSelectSector = (sector: string) => {
 		if (selectedSectors.includes(sector)) {
-			setSelectedSectors(prevSelectedSectors =>
-				prevSelectedSectors.filter(selectedSector => selectedSector !== sector).sort()
+			setSelectedSectors((prevSelectedSectors: any) =>
+				prevSelectedSectors.filter((selectedSector: any) => selectedSector !== sector).sort(),
 			);
 		} else {
-			setSelectedSectors(prevSelectedSectors => [...prevSelectedSectors, sector].sort());
+			setSelectedSectors((prevSelectedSectors: any) => [...prevSelectedSectors, sector].sort());
 		}
 	};
 
@@ -29,9 +31,9 @@ const AddEvent = () => {
 		formData.append('star', e.target.stars.value);
 		formData.append('image', e.target.image.files[0]);
 		formData.append('seatRequired', e.target.seatRequired.checked);
-		formData.append('normal', +e.target.normal.value);
-		formData.append('vip', +e.target.vip.value);
-		formData.append('child', +e.target.child.value);
+		formData.append('normal', Number(e.target.normal.value));
+		formData.append('vip', Number(e.target.vip.value));
+		formData.append('child', Number(e.target.child.value));
 		formData.append('name', e.target.name.value);
 		formData.append('sectors', selectedSectors);
 		formData.append('type', e.target.type.value);
@@ -61,34 +63,34 @@ const AddEvent = () => {
 				<div className={classes.gridContainer}>
 					<section className={classes['input-group']}>
 						<div>
-							<label htmlFor='description' className={classes.label}>
+							<Label htmlFor='description' className={classes.label}>
 								Opis
-							</label>
+							</Label>
 
 							<textarea id='description' name='description' className={classes.input} required></textarea>
 						</div>
 
 						<div>
-							<label htmlFor='date' className={classes.label}>
+							<Label htmlFor='date' className={classes.label}>
 								Data
-							</label>
-							<input type='datetime-local' id='date' name='date' className={classes.input} required />
+							</Label>
+							<Input type='datetime-local' id='date' name='date' className={classes.input} required />
 						</div>
 					</section>
 
 					<section className={classes['input-group']}>
 						<div className={classes.block}>
-							<label htmlFor='stars' className={classes.label}>
+							<Label htmlFor='stars' className={classes.label}>
 								Gwiazdy
-							</label>
-							<input type='text' id='stars' name='stars' className={classes.input} required />
+							</Label>
+							<Input type='text' id='stars' name='stars' className={classes.input} required />
 						</div>
 
 						<div className={classes.block}>
-							<label htmlFor='stars' className={classes.label}>
+							<Label htmlFor='name' className={classes.label}>
 								Nazwa
-							</label>
-							<input type='text' id='name' name='name' className={classes.input} required />
+							</Label>
+							<Input type='text' id='name' name='name' className={classes.input} required />
 						</div>
 					</section>
 
@@ -105,18 +107,19 @@ const AddEvent = () => {
 									padding: '0.5rem 1rem',
 									width: '100%',
 								}}>
-								<option value='concert'>Koncert</option>
-								<option value='workshop'>Warsztat</option>
-								<option value='conference'>Konferencja</option>
-								<option value='festival'>Festiwal</option>
+								{EVENT_TYPE_OPTIONS.map(({ value, label }) => (
+									<option key={value} value={value}>
+										{label}
+									</option>
+								))}
 							</select>
 						</div>
 
 						<div className={classes.block}>
-							<label htmlFor='image' className={classes.label}>
+							<Label htmlFor='image' className={classes.label}>
 								Zdjęcie
-							</label>
-							<input type='file' id='image' name='image' className={classes.input} required />
+							</Label>
+							<Input type='file' id='image' name='image' className={classes.input} required />
 						</div>
 					</section>
 

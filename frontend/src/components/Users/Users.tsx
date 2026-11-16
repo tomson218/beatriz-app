@@ -1,10 +1,10 @@
-import useGetAllUsersQuery from '../../api/queries/useGetAllUsersQuery';
+import useGetAllUsersQuery from '@/api/queries/useGetAllUsersQuery';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import VisibilityIcon from '@/assets/icons/VisibilityIcon';
 import { useRef } from 'react';
-import DeleteIcon from '../../assets/icons/DeleteIcon';
+import DeleteIcon from '@/assets/icons/DeleteIcon';
 
 import {
 	Dialog,
@@ -17,9 +17,10 @@ import {
 } from '@/components/ui/dialog';
 
 import classes from './Users.module.css';
-import EditIcon from '../../assets/icons/EditIcon';
+import EditIcon from '@/assets/icons/EditIcon';
 import useEditUserMutation from '@/api/mutations/useEditUserMutation';
 import useDeleteUserMutation from '@/api/mutations/useDeleteUserMutation';
+import type { UserDto } from '@beatriz/shared';
 
 const Users = () => {
 	const { data: users, isLoading: isUsersLoading } = useGetAllUsersQuery();
@@ -37,7 +38,7 @@ const Users = () => {
 		return <div>Loading</div>;
 	}
 
-	const VIewUser = ({ user }) => {
+	const VIewUser = ({ user }: { user: UserDto }) => {
 		return (
 			<Dialog>
 				<DialogTrigger asChild>

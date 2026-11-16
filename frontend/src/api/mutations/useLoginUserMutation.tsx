@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
-import { User } from '../../interfaces/User';
-import { API_URL } from '../apiConfig';
+import type { LoginResponse, LoginRequest } from '@beatriz/shared';
+import { API_URL } from '@/api/apiConfig';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { setItemLocalStorage } from '@/utils/localStorage';
@@ -9,27 +9,30 @@ import { setItemLocalStorage } from '@/utils/localStorage';
 const useLoginUserMutation = () => {
 	const navigate = useNavigate();
 
-	const loginUser = async (user: User) => {
-		const uri = `${API_URL}/users/login`;
-		const response = await axios.post(uri, user);
+	const loginUser = async (user: LoginRequest): Promise<LoginResponse> => {
+		const uri = `${API_URL}/auth/login`;
+		const response = await axios.post<LoginResponse>(uri, user);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: loginUser,
 
-		onSuccess: data => {
+		onSuccess: (data: LoginResponse) => {
+			if (data.status !== 'success') {
+				throw new Error(data.message);
+			}
 			console.log(data);
-			setItemLocalStorage('token', data.token);
-			document.cookie = 'token=' + data.token;
-			setItemLocalStorage('user-id', data.user._id);
+			setItemLocalStorage('token', data.data.accessToken);
+			document.cookie = 'token=' + data.data.accessToken;
+			setItemLocalStorage('user-id', data.data.user._id);
 			toast.success('Pomyślnie zalogowano się');
 			setTimeout(() => {
 				navigate('/home');
 			}, 2000);
 		},
 
-		onError: error => {
+		onError: (error: any) => {
 			console.log(`${error}`);
 			toast.error('Logowanie nie powiodło się');
 		},

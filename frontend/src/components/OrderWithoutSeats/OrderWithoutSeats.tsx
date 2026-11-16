@@ -2,18 +2,40 @@ import { Button } from '@/components/ui/button';
 import { useState, useEffect, useContext } from 'react';
 import classes from './OrderWithoutSeats.module.css';
 import OrderContext from '@/context/OrderContext';
-import { getNameTypeTicket } from '../../utils/namingTicket';
-import { Event } from '@/interfaces/Event';
+import { getNameTypeTicket } from '@/utils/namingTicket';
+import { ASSET_BASE_URL } from '@/api/apiConfig';
+import type { Event } from '@beatriz/shared';
+
+type TicketType = keyof Event['prices'];
+type TicketCounts = Record<TicketType, number>;
+
+type OrderTicket = {
+	id: number;
+	date?: Date | string;
+	eventId?: string;
+	images: string[];
+	name?: string;
+	price?: number;
+	seating?: number | string;
+	sector?: string;
+	block?: string;
+	type?: string;
+};
 
 interface OrderWithoutSeatsProps {
 	eventDetails: Event;
 	block: string;
 	sector: string;
+	onChangeIsError: (value: boolean) => void;
 }
 
+const shouldMoveTicketFromNormal = (prevCounts: TicketCounts, type: TicketType) => {
+	return prevCounts.normal > 0 && type !== 'normal';
+};
+
 const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: OrderWithoutSeatsProps) => {
-	const [totalTickets, setTotalTickets] = useState(1);
-	const [countTickets, setCountTickets] = useState({
+	const [totalTickets, setTotalTickets] = useState<number>(1);
+	const [countTickets, setCountTickets] = useState<TicketCounts>({
 		normal: 1,
 		child: 0,
 		VIP: 0,
@@ -49,7 +71,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 		});
 	};
 
-	const handleIncrement = type => {
+	const handleIncrement = (type: keyof typeof countTickets) => {
 		setCountTickets(prevCounts => {
 			const totalAllocated = Object.values(prevCounts).reduce((sum, count) => sum + count, 0);
 
@@ -58,7 +80,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 					...prevCounts,
 					[type]: prevCounts[type] + 1,
 				};
-			} else if (prevCounts.normal > 0 && type !== 'normal') {
+			} else if (shouldMoveTicketFromNormal(prevCounts, type)) {
 				return {
 					...prevCounts,
 					normal: prevCounts.normal - 1,
@@ -70,7 +92,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 		});
 	};
 
-	const handleDecrement = type => {
+	const handleDecrement = (type: keyof typeof countTickets) => {
 		setCountTickets(prevCounts => {
 			const newCount = Math.max(prevCounts[type] - 1, 0);
 			return {
@@ -81,42 +103,42 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 	};
 
 	useEffect(() => {
-		const newTotalPrice = Object.entries(countTickets).reduce(
-			(total, [key, count]) => total + count * (eventDetails?.prices[key] || 0),
-			0
+		const newTotalPrice = (Object.entries(countTickets) as [TicketType, number][]).reduce(
+			(total, [key, count]) => total + count * (eventDetails.prices[key] || 0),
+			0,
 		);
 		setTotalPrice(newTotalPrice);
 		localStorage.setItem('totalPrice', JSON.stringify(newTotalPrice));
-	}, [countTickets, totalPrice]);
+	}, [countTickets, eventDetails.prices, setTotalPrice]);
 
 	useEffect(() => {
-		const newOrder = [];
+		const newOrder: OrderTicket[] = [];
 		let idCounter = 0;
 
-		Object.entries(countTickets).forEach(([type, count]) => {
+		(Object.entries(countTickets) as [TicketType, number][]).forEach(([type, count]) => {
 			for (let i = 0; i < count; i++) {
 				newOrder.push({
 					id: idCounter++,
 					date: eventDetails?.date,
 					eventId: eventDetails?._id,
-					images: [`http://localhost:3000/images/events/${eventDetails?.image}`],
+					images: [`${ASSET_BASE_URL}/images/events/${eventDetails?.image}`],
 					name: eventDetails?.name,
-					price: eventDetails?.prices[type],
+					price: eventDetails.prices[type],
 					seating: undefined,
 					sector: sector,
 					block: block,
-					type: type,
+					type,
 				});
 			}
 		});
 
-		const totalAmount = newOrder?.reduce((total, item) => total + +item.price, 0);
+		const totalAmount = newOrder.reduce((total, item) => total + (item.price ?? 0), 0);
 
 		setOrder(newOrder);
 
 		setTotalPrice(totalAmount);
 		localStorage.setItem('ORDERS', JSON.stringify(newOrder));
-	}, [countTickets, eventDetails]);
+	}, [countTickets, eventDetails, setOrder, setTotalPrice, block, sector]);
 
 	if (!eventDetails) {
 		return <div>Loading...</div>;
@@ -143,7 +165,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 				Wybierz liczbę danych typów biletów
 			</h3>
 
-			{Object.entries(eventDetails.prices).map(([key, price]) => {
+			{(Object.entries(eventDetails.prices) as [TicketType, number][]).map(([key, price]) => {
 				const typeTicket = getNameTypeTicket(key);
 
 				return (

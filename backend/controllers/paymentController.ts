@@ -1,0 +1,60 @@
+import dotenv from 'dotenv';
+import Stripe from 'stripe';
+import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
+import UserModel from '../models/userModel.ts';
+import { type Request, type Response, type NextFunction } from 'express';
+import type { User } from '../models/userModel.ts';
+
+dotenv.config({ path: './.env.local' });
+
+const stripe = new Stripe(process.env.STRIPE_SK);
+
+export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+	try {
+		const { products } = req.body;
+
+		const user: User | null = await UserModel.findById(req.user.id);
+
+		if (user.cart.length > 0) {
+			user.cart = [];
+			await user.save();
+		}
+
+		user.cart = products;
+
+		await user.save();
+
+		// otypowac to
+		const productsList = products.map(({ id, name, images, price, seating, sector, date, block }: any) => {
+			const eventDate = new Date(date);
+
+			return {
+				price_data: {
+					currency: 'pln',
+					product_data: {
+						name: `${name} - ${formattedDate(eventDate)} ${formattedTime(eventDate)}`,
+						images: images,
+						description: `sektor: ${sector} strefa: ${block} ${seating ? `miejsce: ${seating}` : ''}`,
+					},
+					unit_amount: price * 100,
+				},
+				quantity: 1,
+			};
+		});
+
+		const session = await stripe.checkout.sessions.create({
+			line_items: productsList,
+			mode: 'payment',
+			success_url: `${process.env.CLIENT_URL}/success`,
+			cancel_url: `${process.env.CLIENT_URL}/cancel`,
+			metadata: {
+				userId: JSON.stringify(req.user.id),
+				discountCode: JSON.stringify(req.body.discountCode),
+			},
+		});
+
+		res.send({ url: session.url });
+	} catch (err) {
+		next(err);
+	}
+};

@@ -1,3 +1,4 @@
+import { type Event } from '@beatriz/shared';
 import useGetFavouriteEventsQuery from '../../api/queries/useGetFavoriteEventsQuery';
 import useRemoveEventFromFavouriteMutation from '../../api/mutations/useRemoveEventFromFavouriteMutation';
 import EventCard from '../../components/EventCard/EventCard';
@@ -8,38 +9,36 @@ const FavouriteEvents = () => {
 
 	const { mutate: removeEventFromFavourite } = useRemoveEventFromFavouriteMutation(refetch);
 
-	const handleRemoveFavouriteEvent = (id: string) => {
+	const handleRemoveFavouriteEvent = (id: Event['_id']) => {
 		removeEventFromFavourite(id);
 	};
 
 	if (isFavouriteEventsLoading) {
-		return <div>Loading</div>;
+		return <section className={classes.loading}>Loading</section>;
 	}
 
 	return (
-		<div style={{ backgroundColor: '#ddd', minHeight: '94.4dvh', padding: '2rem 0 0' }}>
-			<h1
-				style={{
-					textAlign: 'center',
-					padding: '0 1rem 1rem',
-					fontSize: '2rem',
-					fontWeight: '600',
-					textTransform: 'uppercase',
-				}}>
-				Oto Twoje ulubione wydarzenia
-			</h1>
-			<div className={classes.container}>
+		<section className={classes.page} aria-labelledby='favourite-events-title'>
+			<header className={classes.header}>
+				<h1 id='favourite-events-title' className={classes.title}>
+					Oto Twoje ulubione wydarzenia
+				</h1>
+			</header>
+
+			<ul className={classes.list}>
 				{favouriteEvents &&
-					favouriteEvents.map(favouriteEvent => (
-						<EventCard
-							key={favouriteEvent._id}
-							event={favouriteEvent}
-							onClick={() => handleRemoveFavouriteEvent(favouriteEvent._id)}
-							isFavourite
-						/>
+					(favouriteEvents as Event[]).map((favouriteEvent: Event) => (
+						<li key={favouriteEvent._id} className={classes.item}>
+							<EventCard
+								event={favouriteEvent}
+								isFavourite
+								addToFavourites={() => undefined}
+								removeFromFavourites={handleRemoveFavouriteEvent}
+							/>
+						</li>
 					))}
-			</div>
-		</div>
+			</ul>
+		</section>
 	);
 };
 

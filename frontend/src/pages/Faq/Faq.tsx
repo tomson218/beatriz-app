@@ -1,46 +1,33 @@
-import Accordion from '../../components/Accordion/Accordion';
-import classes from './Faq.module.css';
-
-const DUMMY_FAQ = [
-	{
-		id: 1,
-		question: 'Na jakie rodzaje wydarzeń można kupić bilety w tej aplikacji?',
-		answer: 'W naszej aplikacji możesz zakupić bilety na różnorodne rodzaje wydarzeń, takie jak koncerty, festiwale, konferencje, targi branżowe, warsztaty i spektakle teatralne. Dzięki temu na pewno znajdziesz coś dla siebie ciekawego',
-	},
-	{
-		id: 2,
-		question: 'Jakie rodzaje biletów są dostępne?',
-		answer: 'Beatriz App oferuje różne rodzaje biletów dostosowane do potrzeb klientów. Wśród biletów znajdują się bilety normalne, dla dzieci, VIP.',
-	},
-	{
-		id: 3,
-		question: 'Gdzie mogę sprawdzić swoje kupione bilety?',
-		answer: 'Kupione bilety na wydarzenia można sprawdzić w zakładce "Bilety", w której masz dostęp do biletów nadchodzących wydarzeń, jak i dla tych, które już się odbyły.',
-	},
-	{
-		id: 4,
-		question: 'Czy wszystkie bilety są przypisane do konkretnych miejsc?',
-		answer: 'Nie, to zależy od konkretnego wydarzenia, czy bilety będą przypisane do konkretnych miejsc, czy nie.',
-	},
-	{
-		id: 5,
-		question: 'Jak sprawdzić, czy mój bilet jest przypisany do konkretnego miejsca?',
-		answer: 'Należy przejść do sekcji "Bilety". Na zakupionych biletach obok informacji o nazwie sektora i strefy powinien widnieć numer od 1 do 100. Jeśli jest on widoczny, to znaczy, że Twój bilet jest przypisany do konkretnego miejsca.',
-	},
-];
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/UI/accordion';
+import { FAQ_ITEMS } from '@/constants/constants';
 
 const Faq = () => {
 	return (
-		<div className={classes.container}>
-			<h1 className={classes.heading}>Sekcja FAQ</h1>
+		<section className='mx-auto max-w-4xl space-y-6 px-4 py-10'>
+			<header className='space-y-2'>
+				<p className='text-sm font-medium uppercase tracking-[0.2em] text-amber-600'>Pomoc</p>
+				<h1 className='text-3xl font-bold text-slate-900'>Sekcja FAQ</h1>
+			</header>
 
-			{DUMMY_FAQ.map(({ id, question, answer }) => (
-				<Accordion key={id} className={classes.accordion}>
-					<Accordion.Title className={classes['accordion-summary']} title={question} />
-					<Accordion.Content content={answer} />
-				</Accordion>
-			))}
-		</div>
+			<Accordion
+				type='single'
+				collapsible
+				className='w-full rounded-xl border border-slate-200 bg-white shadow-sm'>
+				{FAQ_ITEMS.map(({ id, question, answer }) => (
+					<AccordionItem
+						key={id}
+						value={`item-${id}`}
+						className='border-b border-slate-200 px-4 last:border-b-0'>
+						<AccordionTrigger className='text-left text-base font-semibold text-slate-900 hover:no-underline'>
+							{question}
+						</AccordionTrigger>
+						<AccordionContent className='pb-4 pt-0 text-sm leading-6 text-slate-600'>
+							{answer}
+						</AccordionContent>
+					</AccordionItem>
+				))}
+			</Accordion>
+		</section>
 	);
 };
 
