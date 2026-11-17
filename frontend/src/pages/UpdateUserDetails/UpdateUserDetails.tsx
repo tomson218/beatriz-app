@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import useUpdateUserDetailsMutation from '@/api/mutations/useUpdateUserDetailsMutation';
+import { getItemLocalStorage } from '@/utils/localStorage';
 import classes from './UpdateUserDetails.module.css';
 import type { UpdateMeRequest } from '@beatriz/shared/users';
 
@@ -14,14 +15,14 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { FormField } from '@/components/ui/formField';
+} from '@/components/ui/Dialog/Dialog';
+import { Input } from '@/components/ui/Input/Input';
+import { Button } from '@/components/ui/Button/Button';
+import { FormField } from '@/components/ui/FormField/FormField';
 import Form from '@/components/Form/Form';
 
 const UpdateUserDetails = () => {
-	const userId: string | null = localStorage.getItem('userId');
+	const userId: string | null = getItemLocalStorage<string>('user-id');
 
 	const { data: userDetails, isUserDetailsLoading } = useGetUserByIdQuery(userId ?? '');
 
@@ -50,7 +51,7 @@ const UpdateUserDetails = () => {
 	};
 
 	if (isUserDetailsLoading) {
-		return <div>Ładowanie...</div>;
+		return <p>Ładowanie...</p>;
 	}
 
 	return (

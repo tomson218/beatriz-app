@@ -1,5 +1,4 @@
-import type { OrderDto } from '@beatriz/shared/orders';
-import type { Order } from '../models/orderModel.ts';
+import type { Order, OrderDto } from '@beatriz/shared/orders';
 
 export const toOrderDto = (order: Order): OrderDto => ({
 	_id: order._id,

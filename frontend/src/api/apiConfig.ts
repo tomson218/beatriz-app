@@ -1,5 +1,5 @@
 import { getItemLocalStorage, setItemLocalStorage } from '@/utils/localStorage';
-import axios from 'axios';
+import axios, { type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
 
 export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api/v2';
 export const ASSET_BASE_URL = import.meta.env.VITE_ASSET_URL ?? 'http://localhost:3000';
@@ -22,7 +22,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 };
 
 instance.interceptors.request.use(
-	function (config: any) {
+	function (config: AxiosRequestConfig) {
 		if (config.url?.includes('/auth/refresh-token')) {
 			return config;
 		}
@@ -34,16 +34,16 @@ instance.interceptors.request.use(
 		}
 		return config;
 	},
-	function (error: any) {
+	function (error: AxiosError) {
 		return Promise.reject(error);
 	},
 );
 
 instance.interceptors.response.use(
-	function (response: any) {
+	function (response: AxiosResponse) {
 		return response;
 	},
-	async function (error: any) {
+	async function (error: AxiosError) {
 		const originalRequest = error.config;
 
 		if (error.response?.status === 401 && !originalRequest?._retry) {

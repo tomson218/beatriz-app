@@ -1,11 +1,11 @@
 import TicketModel from '../models/ticketModel.ts';
 import EventModel from '../models/eventModel.ts';
-import { COUNT_BLOCKS, COUNT_SEAT } from '../capacityHall.ts';
+import { COUNT_BLOCKS, COUNT_SEAT } from '@beatriz/shared/constants/hallCapacity';
 import { type Request, type Response, type NextFunction } from 'express';
 import type { TicketsResponse, TicketDto } from '@beatriz/shared/tickets';
 import { toTicketDto } from '../mappers/ticketMapper.ts';
-import type { Ticket } from '../models/ticketModel.ts';
-import type { User } from '../models/userModel.ts';
+import type { Ticket } from '@beatriz/shared/tickets';
+import type { User } from '@beatriz/shared/users';
 
 export const getAllTickets = async (
 	req: Request,

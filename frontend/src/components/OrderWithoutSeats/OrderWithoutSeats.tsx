@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/Button/Button';
+import { Label } from '@/components/ui/Label/Label';
 import { useState, useEffect, useContext } from 'react';
 import classes from './OrderWithoutSeats.module.css';
 import OrderContext, { type OrderContextType } from '@/context/OrderContext';
@@ -144,7 +144,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 
 				return (
 				<article key={key} className={classes['tickets-type']}>
-					<Label className={classes['ticket-label']}>
+					<Label>
 						{typeTicket}: {price} PLN
 					</Label>
 						<p className={classes['ticket-count']}>Liczba biletów: {countTickets[key]}</p>

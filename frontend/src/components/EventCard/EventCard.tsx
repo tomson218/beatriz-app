@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/Card/Card';
 import classes from './EventCard.module.css';
 import { Link } from 'react-router-dom';
 import calendarIcon from '@/assets/svg/calendar-icon.svg';
@@ -7,7 +7,7 @@ import { parseEventDate } from '@/utils/eventDate';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import OutlineHeartIcon from '@/assets/icons/OutlineHeartIcon';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import type { Event } from '@beatriz/shared/events';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
 
@@ -41,7 +41,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 		<Card className={classes.container}>
 			<CardContent className='p-0'>
 				<article className={classes['clickable-card']} aria-label={`Wydarzenie ${event.name}`}>
-					<div className={classes['article-wrapper']}>
+					<section className={classes['article-wrapper']}>
 						{isNewEvent && <span className={classes.label}>NOWE</span>}
 
 						<figure>
@@ -65,12 +65,12 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 								))}
 							</ul>
 
-							<p className={classes['event-date-time']}>
+							<time className={classes['event-date-time']}>
 								<img src={calendarIcon} alt='' aria-hidden='true' />
 								<span>
 									{formattedDate(eventDate)} {formattedTime(eventDate)}
 								</span>
-							</p>
+							</time>
 
 							<CardFooter className={`${classes['event-actions']} p-0`}>
 								<Button asChild type='button'>
@@ -94,7 +94,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 								</Button>
 							</CardFooter>
 						</section>
-					</div>
+					</section>
 				</article>
 			</CardContent>
 		</Card>

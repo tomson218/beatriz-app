@@ -3,18 +3,46 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
+	"dependencies": {
+		"axios": "^1.7.7",
+		"bcryptjs": "^2.4.3",
+		"mongoose": "^8.7.2",
+		"validator": "^13.12.0"
+	},
+	"devDependencies": {
+		"@types/bcryptjs": "^2.4.6",
+		"@types/express": "^5.0.6",
+		"@types/validator": "^13.15.10",
+		"typescript": "^5.2.2"
+	},
 	"exports": {
 		"./auth": "./types/auth.ts",
 		"./common": "./types/common.ts",
-		"./constants": "./constants/constants.ts",
+		"./constants/eventTypes": "./constants/eventTypes.ts",
+		"./constants/faq": "./constants/faq.ts",
+		"./constants/hallCapacity": "./constants/hallCapacity.ts",
+		"./constants/misc": "./constants/misc.ts",
 		"./discountCodes": "./types/discountCodes.ts",
+		"./enums/blockTypes": "./enums/blockTypes.ts",
+		"./enums/currencies": "./enums/currencies.ts",
+		"./enums/eventTypes": "./enums/eventTypes.ts",
+		"./enums/sectors": "./enums/sectors.ts",
+		"./enums/ticketTypes": "./enums/ticketTypes.ts",
+		"./enums/userRoles": "./enums/userRoles.ts",
 		"./events": "./types/events.ts",
 		"./forums": "./types/forums.ts",
 		"./orders": "./types/orders.ts",
 		"./payments": "./types/payments.ts",
 		"./tickets": "./types/tickets.ts",
 		"./users": "./types/users.ts",
-		"./webhooks": "./types/webhooks.ts"
+		"./webhooks": "./types/webhooks.ts",
+		"./schemas/discountCodeSchema": "./schemas/discountCodeSchema.ts",
+		"./schemas/eventSchema": "./schemas/eventSchema.ts",
+		"./schemas/forumSchema": "./schemas/forumSchema.ts",
+		"./schemas/orderSchema": "./schemas/orderSchema.ts",
+		"./schemas/ticketSchema": "./schemas/ticketSchema.ts",
+		"./schemas/userSchema": "./schemas/userSchema.ts",
+		"./schemas/utils": "./schemas/utils.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit"

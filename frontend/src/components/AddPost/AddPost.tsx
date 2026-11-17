@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import useAddPostToForumMutation from '@/api/mutations/useAddPostToForumMutation';
 import classes from './AddPost.module.css';
 
@@ -26,14 +26,14 @@ const AddPost = ({ refetch }: AddPostProps) => {
 	return (
 		<section className={classes.container}>
 			{!isShown && (
-				<Button className={classes.button} onClick={handleShowForm}>
+				<Button onClick={handleShowForm}>
 					Dodaj nowy post
 				</Button>
 			)}
 			{isShown && (
 				<article>
 					<textarea ref={postRef} rows='5' cols='33' className={classes.textarea} />
-					<Button className={classes.button} onClick={handleClickNewPost}>
+					<Button onClick={handleClickNewPost}>
 						Dodaj
 					</Button>
 				</article>

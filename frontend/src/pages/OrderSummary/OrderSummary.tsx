@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import useCreateCheckoutSessionMutation from '@/api/mutations/useCreateCheckoutSessionMutation';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import classes from './OrderSummary.module.css';
 import Order from '@/components/Order/Order';
 import useAddUserCartMutation from '@/api/mutations/useAddUserCartMutation';
@@ -55,11 +55,11 @@ const OrderSummary = () => {
 
 			<TotalAmount />
 
-			<section className={classes.buttons}>
-				<Button className={classes.button} onClick={sendData}>
-					Zapłać teraz
-				</Button>
-			</section>
+ 			<section className={classes.buttons}>
+ 				<Button onClick={sendData}>
+ 					Zapłać teraz
+ 				</Button>
+ 			</section>
 		</main>
 	);
 };

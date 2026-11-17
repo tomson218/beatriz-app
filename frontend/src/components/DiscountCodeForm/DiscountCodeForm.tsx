@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/Button/Button';
+import { Input } from '@/components/ui/Input/Input';
+import { Label } from '@/components/ui/Label/Label';
 import { useState, useRef } from 'react';
 import useApplyDiscountCodeMutation from '@/api/mutations/useApplyDiscountCodeMutation';
 import { useContext } from 'react';
@@ -78,7 +78,7 @@ const DiscountCodeForm = () => {
 		}
 	};
 
- return (
+	return (
 		<form onSubmit={handleSubmitDiscount} className={classes.form}>
 			<Label htmlFor='discountCode'>
 				Podaj kod zniżkowy:
@@ -90,14 +90,14 @@ const DiscountCodeForm = () => {
 				required
 				minLength={5}
 			/>
-			<Button className={classes.button}>
+			<Button>
 				Użyj kodu
 			</Button>
 			{discountError.visible && (
 				<p className={classes.error}>{discountError.message}</p>
 			)}
-	</form>
-);
+		</form>
+	);
 };
 
 export default DiscountCodeForm;

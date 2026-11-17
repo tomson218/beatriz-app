@@ -5,7 +5,7 @@ import useRemoveEventFromFavouriteMutation from '@/api/mutations/useRemoveEventF
 import useGetFavouriteEventsQuery from '@/api/queries/useGetFavoriteEventsQuery';
 import useAddEventToFavouriteMutation from '@/api/mutations/useAddEventToFavouriteMutation';
 import classes from './EventDetails.module.css';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import { parseEventDate } from '@/utils/eventDate';
@@ -50,7 +50,7 @@ const EventDetails = () => {
 
 	const eventDate = parseEventDate(eventDetails?.date);
 	const favouriteBtnText = isAddedToFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych';
-	const favouriteBtnClass = isAddedToFavourite ? classes['btn-danger'] : classes['btn-success'];
+	const favouriteBtnVariant = isAddedToFavourite ? 'destructive' : 'default';
 
 	return (
 		<>
@@ -81,10 +81,10 @@ const EventDetails = () => {
 							<span className={classes['discount-price']}>{eventDetails.prices.normal} PLN</span>
 						</p>
 						<nav className={classes['action-buttons']}>
-							<Button onClick={handleToggleFavourite} className={favouriteBtnClass}>
+							<Button variant={favouriteBtnVariant} onClick={handleToggleFavourite}>
 								{favouriteBtnText}
 							</Button>
-							<Button className={classes['btn-primary']} asChild>
+							<Button variant='secondary' asChild>
 								<Link to={`/forum/${eventId}`}>Przejdź na forum</Link>
 							</Button>
 							<Button asChild>

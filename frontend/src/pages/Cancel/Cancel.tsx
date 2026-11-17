@@ -1,4 +1,4 @@
-import StatusResult from '@/components/libs/StatusResult';
+import StatusResult from '@/components/libs/StatusResult/StatusResult';
 
 const Cancel = () => {
 	return (

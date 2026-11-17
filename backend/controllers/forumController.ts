@@ -1,13 +1,13 @@
-import ForumModel, { type Forum } from '../models/forumModel.ts';
+import ForumModel from '../models/forumModel.ts';
+import type { ForumPost } from '@beatriz/shared/forums';
 import { type Request, type Response, type NextFunction } from 'express';
 import type {
 	AddNewPostToForumResponse,
 	ForumPostDto,
 	GetAllForumPostsResponse,
-	GetPostsByEventIdResponse,
 } from '@beatriz/shared/forums';
 import { toForumDto } from '../mappers/forumMapper.ts';
-import type { User } from '../models/userModel.ts';
+import type { User } from '@beatriz/shared/users';
 
 export const getAllForumPosts = async (
 	req: Request,
@@ -15,9 +15,9 @@ export const getAllForumPosts = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const forumPosts: Forum[] = await ForumModel.find().select('-__v');
+		const forumPosts: ForumPost[] = await ForumModel.find().select('-__v');
 
-		const forumPostsDto: ForumPostDto[] = forumPosts.map((f: Forum) => toForumDto(f));
+		const forumPostsDto: ForumPostDto[] = forumPosts.map(f => toForumDto(f));
 
 		res.status(200).json({
 			status: 'success',
@@ -33,18 +33,18 @@ export const getAllForumPosts = async (
 
 export const getPostsByEventId = async (
 	req: Request<{ eventId: Event['_id'] }>,
-	res: Response<GetPostsByEventIdResponse>,
+	res: Response<GetAllForumPostsResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
 		const { eventId } = req.params;
 
-		const forumPosts: Forum[] = await ForumModel.find({ event: eventId })
+		const forumPosts: ForumPost[] = await ForumModel.find({ event: eventId })
 			.populate('user')
 			.select('-__v')
 			.sort({ date: 1 });
 
-		const forumPostsDto: ForumPostDto[] = forumPosts.map((f: Forum) => toForumDto(f));
+		const forumPostsDto: ForumPostDto[] = forumPosts.map(f => toForumDto(f));
 
 		res.status(200).json({
 			status: 'success',
@@ -64,7 +64,7 @@ export const addNewPostToForum = async (req: Request, res: Response<AddNewPostTo
 
 		const { message, eventId } = req.body;
 
-		const newPost: Forum = await ForumModel.create({
+		const newPost: ForumPost = await ForumModel.create({
 			user: userId,
 			message: message,
 			event: eventId,

@@ -27,3 +27,16 @@ export function isSeatSelected(seat: number, selectedSeats: number[]): boolean {
 export function hasNoSelectedSeats(selectedSeats: number[]): boolean {
 	return selectedSeats.length === 0;
 }
+
+/**
+ * Buduje URL z parametrami miejsca (eventId, sector, block, seats).
+ */
+export function buildSeatsUrl(
+	pathname: string,
+	eventId: string,
+	sector: string,
+	block: string,
+	seats: number[]
+): string {
+	return `${pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${seats.join(',')}`;
+}

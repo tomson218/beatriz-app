@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import useGetTicketsByUserQuery from '@/api/queries/useGetTicketsByUserQuery';
 import Ticket from '@/components/Ticket/Ticket';
 import classes from './Tickets.module.css';
-import Loader from '@/components/libs/Loader';
+import Loader from '@/components/libs/Loader/Loader';
 import UserContext, { type UserContextType } from '@/context/UserContext';
 import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
 import type { Ticket as ITicket } from '@beatriz/shared/tickets';

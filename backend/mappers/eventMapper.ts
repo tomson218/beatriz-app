@@ -1,5 +1,4 @@
-import type { Event } from '../models/eventModel.ts';
-import type { EventDto } from '@beatriz/shared/events';
+import type { Event, EventDto } from '@beatriz/shared/events';
 
 export const toEventDto = (event: Event): EventDto => ({
 	_id: event._id,

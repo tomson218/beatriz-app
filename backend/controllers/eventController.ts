@@ -1,14 +1,14 @@
-import EventModel, { type Event } from '../models/eventModel.ts';
+import EventModel from '../models/eventModel.ts';
+import type { Event } from '@beatriz/shared/events';
 import AppError from '../utils/appError.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 import { calcDiscountPrice, calcPricesAfterDiscount } from '../utils/discounts.ts';
 import { toEventDto } from '../mappers/eventMapper.ts';
+import { validatePositiveNumber } from '../utils/validateNumbers.ts';
 import type {
-	CreateEventResponse,
 	EventDto,
+	EventResponse,
 	GetAllEventsResponse,
-	GetEventResponse,
-	UpdateEventResponse,
 } from '@beatriz/shared/events';
 
 export const getAllEvents = async (req: Request, res: Response<GetAllEventsResponse>): Promise<void> => {
@@ -38,7 +38,7 @@ export const getAllEvents = async (req: Request, res: Response<GetAllEventsRespo
 	}
 };
 
-export const getEvent = async (req: Request, res: Response<GetEventResponse>, next: NextFunction): Promise<void> => {
+export const getEvent = async (req: Request, res: Response<EventResponse>, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.params as { id: string };
 
@@ -69,13 +69,21 @@ export const getEvent = async (req: Request, res: Response<GetEventResponse>, ne
 
 export const createEvent = async (
 	req: Request,
-	res: Response<CreateEventResponse>,
+	res: Response<EventResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
 		console.log(req.body);
 
 		const { date, description, child, normal, seatRequired, sectors, star, vip, name, type } = req.body;
+
+		const childPrice = Number(child);
+		const normalPrice = Number(normal);
+		const vipPrice = Number(vip);
+
+		validatePositiveNumber(childPrice, 'Cena biletu dziecięcego');
+		validatePositiveNumber(normalPrice, 'Cena biletu normalnego');
+		validatePositiveNumber(vipPrice, 'Cena biletu VIP');
 
 		const formattedStar = star.split(',').map((item: any) => item.trim());
 
@@ -85,9 +93,9 @@ export const createEvent = async (
 			date,
 			description,
 			prices: {
-				child: Number(child),
-				normal: Number(normal),
-				VIP: Number(vip),
+				child: childPrice,
+				normal: normalPrice,
+				VIP: vipPrice,
 			},
 			image: req?.file?.filename,
 			name,
@@ -130,7 +138,7 @@ export const deleteEvent = async (req: Request, res: Response, next: NextFunctio
 
 export const updateEvent = async (
 	req: Request,
-	res: Response<UpdateEventResponse>,
+	res: Response<EventResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {

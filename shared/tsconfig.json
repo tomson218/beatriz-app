@@ -13,8 +13,10 @@
 		"jsx": "react-jsx",
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["types/*"]
+			"@/types/*": ["types/*"],
+			"@/enums/*": ["enums/*"],
+			"@/schemas/*": ["schemas/*"]
 		}
 	},
-	"include": ["types/**/*.ts"]
+	"include": ["types/**/*.ts", "enums/**/*.ts", "schemas/**/*.ts", "constants/**/*.ts"]
 }

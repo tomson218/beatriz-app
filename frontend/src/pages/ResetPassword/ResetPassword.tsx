@@ -2,7 +2,7 @@ import useResetPasswordMutation from '@/api/mutations/useResetPasswordMutation';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import Form from '@/components/Form/Form';
 import { useParams } from 'react-router-dom';
 import classes from './ResetPassword.module.css';
@@ -52,8 +52,8 @@ const ResetPassword = () => {
 					}}
 					className={classes['input-group']}
 				/>
-				<Button type='submit' className={classes['submit-button']}>
-					Change
+				<Button type='submit'>
+					Zmień
 				</Button>
 			</form>
 			<Toaster position='bottom-right' reverseOrder={false} />

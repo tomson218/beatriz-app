@@ -1,5 +1,5 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { FAQ_ITEMS } from '@beatriz/shared/constants';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/Accordion/Accordion';
+import { FAQ_ITEMS } from '@beatriz/shared/constants/faq';
 
 const Faq = () => {
 	return (

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useCreateCheckoutSessionMutation from '@/api/mutations/useCreateCheckoutSessionMutation';
 import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import {
 	Dialog,
 	DialogContent,
@@ -10,7 +10,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/Dialog/Dialog';
 import classes from './TicketChoice.module.css';
 import Order from '@/components/Order/Order';
 import useAddUserCartMutation from '@/api/mutations/useAddUserCartMutation';

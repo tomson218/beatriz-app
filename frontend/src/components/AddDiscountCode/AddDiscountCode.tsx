@@ -1,6 +1,6 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/Input/Input';
+import { Label } from '@/components/ui/Label/Label';
+import { Button } from '@/components/ui/Button/Button';
 import { useRef } from 'react';
 import useAddDiscountCodeMutation from '@/api/mutations/useAddDiscountCodeMutation';
 import classes from './AddDiscountCode.module.css';
@@ -34,16 +34,15 @@ const AddDiscountCode = () => {
 		addDiscountCode(discountCode);
 	};
 
-	return (
+ 	return (
 		<form onSubmit={handleSubmit} className={`${classes.form} ${classes['form-container']}`}>
 			<fieldset className={classes['grid-container']}>
 				<section className={classes['grid-row']}>
-					<Label htmlFor='code' className={classes.label}>
+					<Label htmlFor='code'>
 						Kod rabatowy
 					</Label>
 					<Input
 						id='code'
-						className={classes.input}
 						ref={codeRef}
 						required
 						placeholder='Wprowadź kod rabatowy'
@@ -51,7 +50,7 @@ const AddDiscountCode = () => {
 				</section>
 
 				<section className={classes['grid-row']}>
-					<Label htmlFor='discountValue' className={classes.label}>
+					<Label htmlFor='discountValue'>
 						Wartość kodu rabatowego (w %)
 					</Label>
 					<Input
@@ -61,7 +60,6 @@ const AddDiscountCode = () => {
 						max='0.99'
 						defaultValue='0.1'
 						step={0.01}
-						className={classes.input}
 						ref={valueRef}
 						required
 						placeholder='Podaj wartość (np. 0.1)'
@@ -69,27 +67,25 @@ const AddDiscountCode = () => {
 				</section>
 
 				<section className={classes['grid-row']}>
-					<Label htmlFor='expirationDate' className={classes.label}>
+					<Label htmlFor='expirationDate'>
 						Data wygaśnięcia
 					</Label>
 					<Input
 						type='datetime-local'
 						id='expirationDate'
-						className={classes.input}
 						ref={expirationDateRef}
 						required
 					/>
 				</section>
 
 				<section className={classes['grid-row']}>
-					<Label htmlFor='usageLimit' className={classes.label}>
+					<Label htmlFor='usageLimit'>
 						Liczba limit do wykorzystania
 					</Label>
 					<Input
 						type='number'
 						defaultValue='500'
 						id='usageLimit'
-						className={classes.input}
 						ref={usageLimitRef}
 						required
 						placeholder='Podaj limit wykorzystania'
@@ -97,14 +93,13 @@ const AddDiscountCode = () => {
 				</section>
 
 				<section className={classes['grid-row']}>
-					<Label htmlFor='minOrderValue' className={classes.label}>
+					<Label htmlFor='minOrderValue'>
 						Minimalna wartość zamówienia
 					</Label>
 					<Input
 						type='number'
 						defaultValue='300'
 						id='minOrderValue'
-						className={classes.input}
 						ref={minAmountOrderRef}
 						required
 						placeholder='Podaj minimalną wartość zamówienia'
@@ -113,7 +108,7 @@ const AddDiscountCode = () => {
 			</fieldset>
 
 			<footer className={classes['submit-button-container']}>
-				<Button className={classes['submit-button']}>Dodaj</Button>
+				<Button>Dodaj</Button>
 			</footer>
 		</form>
 	);

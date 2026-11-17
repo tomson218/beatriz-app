@@ -1,8 +1,10 @@
-import DiscountCodeModel, { type DiscountCode } from '../models/discountCodeModel.ts';
+import DiscountCodeModel from '../models/discountCodeModel.ts';
+import type { DiscountCode } from '@beatriz/shared/discountCodes';
 import UserModel from '../models/userModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 import type { DiscountCodeDto } from '@beatriz/shared/discountCodes';
 import { toDiscountCodeDto } from '../mappers/discountCodeMapper.ts';
+import { validateNonNegativeNumber } from '../utils/validateNumbers.ts';
 
 export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
@@ -26,6 +28,8 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 	try {
 		const currentDate = Date.now();
 		const { enteredCode, totalAmount } = req.body;
+
+		validateNonNegativeNumber(totalAmount, 'Kwota zamówienia');
 
 		const user = await UserModel.findById(req.user.id);
 
@@ -97,6 +101,10 @@ export const addDiscountCode = async (req: Request, res: Response, next: NextFun
 		console.log(req.body);
 
 		const enteredDiscountCode: DiscountCodeDto = req.body;
+
+		validateNonNegativeNumber(enteredDiscountCode.value, 'Wartość rabatu');
+		validateNonNegativeNumber(enteredDiscountCode.usageLimit, 'Limit użycia');
+		validateNonNegativeNumber(enteredDiscountCode.usageConditions, 'Warunki użycia');
 
 		const newDiscountCode: DiscountCode = await DiscountCodeModel.create({
 			code: enteredDiscountCode.code,

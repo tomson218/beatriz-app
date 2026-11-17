@@ -1,4 +1,4 @@
-import Event from '../models/eventModel.ts';
+import Event from '../models/eventModel.ts'; // Model import needed for findById Mongoose method
 import { formattedDate, formattedTime } from './formattingDate.ts';
 
 export const ticketsTemplate = async (tickets: any[], order: any): Promise<string> => {

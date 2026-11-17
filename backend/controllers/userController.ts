@@ -1,4 +1,5 @@
-import UserModel, { type User } from '../models/userModel.ts';
+import UserModel from '../models/userModel.ts';
+import type { User } from '@beatriz/shared/users';
 import AppError from '../utils/appError.ts';
 import mongoose from 'mongoose';
 import { type Request, type Response, type NextFunction } from 'express';
@@ -6,14 +7,13 @@ import type {
 	UserDto,
 	GetUserResponse,
 	GetAllUsersResponse,
-	GetUserFavoriteEventsResponse,
 	DeleteUserResponse,
-	AddCartResponse,
 	UpdateMeRequest,
 	UpdateUserRequest,
 	UserIdParams,
 	AddCartRequest,
 } from '@beatriz/shared/users';
+import type { SuccessList } from '@beatriz/shared/common';
 import type { EventIdParams } from '@beatriz/shared/events';
 import { toUserDto } from '../mappers/userMapper.ts';
 
@@ -121,7 +121,7 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction):
 
 export const getUserFavoriteEvents = async (
 	req: Request,
-	res: Response<GetUserFavoriteEventsResponse>,
+	res: Response<SuccessList<unknown>>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
@@ -203,7 +203,7 @@ export const removeEventFromFavourite = async (
 
 export const addCart = async (
 	req: Request<{}, {}, AddCartRequest>,
-	res: Response<AddCartResponse>,
+	res: Response<SuccessList<unknown>>,
 	next: NextFunction,
 ): Promise<void> => {
 	const userId: User['_id'] = req.user.id; // do poprawy

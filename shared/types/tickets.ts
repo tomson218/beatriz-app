@@ -1,29 +1,14 @@
-import type { SuccessList } from '@/common';
-import type { Event, EventIdParams } from '@/events';
-import type { User } from '@/users';
+import type { SuccessList } from '@/types/common';
+import type { Event } from '@/types/events';
+import type { User } from '@/types/users';
+import { Types, type InferSchemaType } from 'mongoose';
+import { ticketSchemaDef } from '@/schemas/ticketSchema';
+import { TICKET_TYPES } from '@/enums/ticketTypes';
+import { BLOCK_TYPES } from '@/enums/blockTypes';
 
-export type TicketType = 'normal' | 'VIP' | 'child';
-
-export type BlockType = 'blue' | 'green' | 'yellow' | 'black';
-
-export interface TicketSeating {
-	sector: string;
-	block: BlockType;
-	seat: number;
-}
-
-export interface Ticket {
-	_id: string;
-	event: Event | Event["_id"];
-	seating: TicketSeating;
-	user: User["_id"];
-	quantity: number;
-	price: number;
-	type: TicketType;
-	date: string | Date;
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type Ticket = InferSchemaType<typeof ticketSchemaDef> & { _id: Types.ObjectId };
+export type TicketType = (typeof TICKET_TYPES)[number];
+export type BlockType = (typeof BLOCK_TYPES)[number];
 
 export interface TicketDto extends Omit<Ticket, '_id'> {
 	_id: string;
@@ -33,7 +18,10 @@ export interface TicketIdParams {
 	ticketId: Ticket["_id"];
 }
 
-export type EventTicketsParams = EventIdParams;
+export type TicketRequest = Pick<Ticket, 'event' | 'type' | 'date' | 'price'> & {
+	user: User["_id"];
+	seating: { sector: string; block: BlockType; seat: number };
+};
 
 export interface OccupiedSeatsParams {
 	eventId: Event["_id"];
@@ -42,8 +30,6 @@ export interface OccupiedSeatsParams {
 }
 
 export type TicketsResponse = SuccessList<TicketDto>;
-
-export type GroupAvailableSectorsRequest = EventIdParams;
 
 export type GroupAvailableSectorsResponse = SuccessList<string>;
 

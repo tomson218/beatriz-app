@@ -1,7 +1,7 @@
 import useForgetPasswordMutation from '@/api/mutations/useForgetPasswordMutation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import classes from './ForgetPassword.module.css';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import Form from '@/components/Form/Form';
 import { Toaster } from 'react-hot-toast';
 import type { ForgetPasswordRequest } from '@beatriz/shared/auth';
@@ -20,11 +20,11 @@ const ForgetPassword = () => {
 	};
 
 	return (
-		<div className={classes.container}>
+		<main className={classes.container}>
 			<form onSubmit={handleSubmit(onSubmit)} className={classes['login-form']}>
 				<h2 className={classes['form-title']}>Zapomnienie hasła</h2>
 				<Form.Input
-					labelText='Email'
+					labelText='E-mail'
 					inputId='email'
 					placeholder='Wprowadź swój e-mail'
 					type='email'
@@ -36,12 +36,12 @@ const ForgetPassword = () => {
 					}}
 					className={classes['input-form']}
 				/>
-				<Button type='submit' className={classes['submit-button']}>
-					Change
+				<Button type='submit'>
+					Wyślij
 				</Button>
 			</form>
 			<Toaster position='bottom-right' reverseOrder={false} />
-		</div>
+		</main>
 	);
 };
 

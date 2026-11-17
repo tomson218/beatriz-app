@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import Form from '@/components/Form/Form';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import useChangeUserPasswordMutation from '@/api/mutations/useChangeUserPasswordMutation';

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import classes from './Block.module.css';
 import type { BlockType } from '@beatriz/shared/tickets';
 

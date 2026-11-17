@@ -1,6 +1,6 @@
-import FormInput from './FormInput';
-import FormButton from './FormButton';
-import PolishFormInput from './PolishFormInput';
+import FormInput from '@/components/FormInput/FormInput';
+import FormButton from '@/components/FormButton/FormButton';
+import PolishFormInput from '@/components/PolishFormInput/PolishFormInput';
 import type { FormHTMLAttributes, ReactNode } from 'react';
 
 interface FormProps extends FormHTMLAttributes<HTMLFormElement> {

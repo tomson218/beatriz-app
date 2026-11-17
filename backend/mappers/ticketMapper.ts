@@ -1,5 +1,4 @@
-import type { TicketDto } from '@beatriz/shared/tickets';
-import type { Ticket } from '../models/ticketModel.ts';
+import type { Ticket, TicketDto } from '@beatriz/shared/tickets';
 
 export const toTicketDto = (ticket: Ticket): TicketDto => ({
 	_id: ticket._id,

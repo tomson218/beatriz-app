@@ -1,9 +1,13 @@
-import type { SuccessItem, SuccessList } from '@/common';
-import type { Event } from '@/events';
-import type { BlockType, TicketType } from '@/tickets';
-import type { User, UserIdParams } from '@/users';
+import type { SuccessItem, SuccessList } from '@/types/common';
+import type { Event } from '@/types/events';
+import type { BlockType, TicketType } from '@/types/tickets';
+import type { User } from '@/types/users';
+import { Types, type InferSchemaType } from 'mongoose';
+import { orderSchema } from '@/schemas/orderSchema';
+import { CURRENCIES } from '@/enums/currencies';
 
-export type Currency = 'USD' | 'EUR' | 'PLN';
+export type Order = InferSchemaType<typeof orderSchema> & { _id: Types.ObjectId };
+export type Currency = (typeof CURRENCIES)[number];
 
 export interface Seating {
 	sector: string;
@@ -30,19 +34,6 @@ export interface CartTicket {
 	images?: string[];
 }
 
-export interface Order {
-	_id: string;
-	totalAmount: number;
-	date: string | Date;
-	user: User["_id"];
-	currency: Currency;
-	tickets: OrderTicket[];
-	event: Event | Event["_id"];
-	countOfTickets: number;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
 export interface OrderDto extends Omit<Order, '_id'> {
 	_id: string;
 }
@@ -53,17 +44,11 @@ export interface OrderIdParams {
 
 export type GetAllOrdersResponse = SuccessList<OrderDto>;
 
-export type GetUserOrdersResponse = GetAllOrdersResponse;
-
-export type GetUserOrderParams = UserIdParams;
-
-export interface CreateOrderRequest {
-	totalAmount: number;
+export type OrderRequest = Pick<Order, 'totalAmount' | 'currency'> & {
 	user: User["_id"];
-	currency: Currency;
 	tickets: OrderTicket[];
 	event: Event["_id"];
 	countOfTickets: number;
-}
+};
 
 export type CreateOrderResponse = SuccessItem<OrderDto>;

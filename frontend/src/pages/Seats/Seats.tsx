@@ -3,7 +3,7 @@ import classes from './Seats.module.css';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useGetOccupiedSeatsQuery from '@/api/queries/useGetOccupiedSeatsQuery';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import {
 	Dialog,
 	DialogContent,
@@ -11,13 +11,14 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/Dialog/Dialog';
 import Seat from '@/components/Seat/Seat';
 import {
 	parseInitialSelectedSeats,
 	isSeatOccupied,
 	isSeatSelected,
 	hasNoSelectedSeats,
+	buildSeatsUrl,
 } from '@/utils/seats';
 
 const Seats = () => {
@@ -41,21 +42,12 @@ const Seats = () => {
 			return;
 		}
 
-		if (isSeatSelected(seat, selectedSeats)) {
-			setSelectedSeats(prevSelectedSeats => {
-				const updatedSeats = prevSelectedSeats.filter(element => element !== seat);
-				const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${updatedSeats.join(',')}`;
-				navigate(newUrl, { replace: true });
-				return updatedSeats;
-			});
-		} else {
-			setSelectedSeats(prevSelectedSeats => {
-				const updatedSeats = [...prevSelectedSeats, seat];
-				const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${updatedSeats.join(',')}`;
-				navigate(newUrl, { replace: true });
-				return updatedSeats;
-			});
-		}
+		const updatedSeats = isSeatSelected(seat, selectedSeats)
+			? selectedSeats.filter(element => element !== seat)
+			: [...selectedSeats, seat];
+
+		setSelectedSeats(updatedSeats);
+		navigate(buildSeatsUrl(location.pathname, eventId, sector, block, updatedSeats), { replace: true });
 	};
 
 	localStorage.setItem('selected-seats', JSON.stringify(selectedSeats));
@@ -64,7 +56,10 @@ const Seats = () => {
 		return <p>Ładowanie...</p>;
 	}
 
-	const sortedSelectedSeats = [...selectedSeats].sort((a, b) => a - b);
+	const sortedSelectedSeats = selectedSeats.toSorted((a, b) => a - b);
+	const ticketChoiceUrl = hasNoSelectedSeats(selectedSeats)
+		? getCurrentUrl()
+		: `/ticket-choice?eventId=${eventId}&sector=${sector}&block=${block}&seats=${sortedSelectedSeats.join(',')}`;
 
 	return (
 		<section className={classes['seats-page']}>
@@ -109,12 +104,7 @@ const Seats = () => {
 			</aside>
 
 			<nav className={classes['seats-nav']}>
-				<Link
-					to={
-						!hasNoSelectedSeats(selectedSeats)
-							? `/ticket-choice?eventId=${eventId}&sector=${sector}&block=${block}&seats=${sortedSelectedSeats.join(',')}`
-							: getCurrentUrl()
-						}>
+				<Link to={ticketChoiceUrl}>
 					<Button
 						onClick={() => {
 							localStorage.setItem('seats', JSON.stringify(selectedSeats));

@@ -1,12 +1,13 @@
 import useAddNewEventMutation from '@/api/mutations/useAddNewEventMutation';
 import { useState, useRef } from 'react';
 import classes from './AddEvent.module.css';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Button } from '@/components/ui/Button/Button';
+import { Input } from '@/components/ui/Input/Input';
+import { Label } from '@/components/ui/Label/Label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select/Select';
 import Sector from '@/components/Sector/Sector';
-import { EVENT_TYPE_OPTIONS, INITIAL_SECTORS } from '@beatriz/shared/constants';
+import { EVENT_TYPE_OPTIONS } from '@beatriz/shared/constants/eventTypes';
+import { SECTORS } from '@beatriz/shared/enums/sectors';
 
 const AddEvent = () => {
 	const { mutate: newEvent } = useAddNewEventMutation();
@@ -71,7 +72,7 @@ const AddEvent = () => {
  			<fieldset className={classes['grid-container']}>
  				<section className={classes['input-group']}>
  					<article>
- 						<Label htmlFor='description' className={classes.label}>
+ 						<Label htmlFor='description'>
  							Opis
  						</Label>
 
@@ -79,26 +80,26 @@ const AddEvent = () => {
  					</article>
 
  					<article>
- 						<Label htmlFor='date' className={classes.label}>
+ 						<Label htmlFor='date'>
  							Data
  						</Label>
- 						<Input type='datetime-local' id='date' name='date' className={classes.input} ref={dateRef} required />
+ 						<Input type='datetime-local' id='date' name='date' ref={dateRef} required />
  					</article>
  				</section>
 
  				<section className={classes['input-group']}>
  					<article className={classes.block}>
- 						<Label htmlFor='stars' className={classes.label}>
+ 						<Label htmlFor='stars'>
  							Gwiazdy
  						</Label>
-						<Input type='text' id='stars' name='stars' className={classes.input} ref={starsRef} required />
+ 						<Input type='text' id='stars' name='stars' ref={starsRef} required />
  					</article>
 
  					<article className={classes.block}>
- 						<Label htmlFor='name' className={classes.label}>
+ 						<Label htmlFor='name'>
  							Nazwa
  						</Label>
-						<Input type='text' id='name' name='name' className={classes.input} ref={nameRef} required />
+ 						<Input type='text' id='name' name='name' ref={nameRef} required />
  					</article>
  				</section>
 
@@ -106,7 +107,7 @@ const AddEvent = () => {
  					<article className={classes.block}>
  						<Label htmlFor='type'>Typ</Label>
  						<Select value={selectedType} onValueChange={setSelectedType}>
- 							<SelectTrigger id='type' className={classes['select-input']}>
+ 							<SelectTrigger id='type'>
  								<SelectValue />
  							</SelectTrigger>
  							<SelectContent>
@@ -120,10 +121,10 @@ const AddEvent = () => {
  					</article>
 
  					<article className={classes.block}>
- 						<Label htmlFor='image' className={classes.label}>
+ 						<Label htmlFor='image'>
  							Zdjęcie
  						</Label>
-						<Input type='file' id='image' name='image' className={classes.input} ref={imageRef} required />
+ 						<Input type='file' id='image' name='image' ref={imageRef} required />
  					</article>
  				</section>
 
@@ -134,7 +135,7 @@ const AddEvent = () => {
  				<section className={classes.container}>
  					<figure className={classes['hala-container']}>
  						<div className={classes['hala-grid']}>
- 							{INITIAL_SECTORS.map((sectorName, index) => (
+  						{SECTORS.map((sectorName, index) => (
  								<Sector
  									key={sectorName}
  									sectorName={sectorName}
@@ -150,7 +151,7 @@ const AddEvent = () => {
  				</section>
 
  			<aside className={classes.block}>
- 				<Label htmlFor='seatRequired' className={classes['seat-required-label']}>
+ 				<Label htmlFor='seatRequired'>
  					Miejsce siedzące wymagane:
  				</Label>
  				<Input type='checkbox' id='seatRequired' name='seatRequired' ref={seatRequiredRef} />
@@ -162,51 +163,48 @@ const AddEvent = () => {
 
  			<section className={classes['tickets-prices']}>
  				<article>
- 					<Label htmlFor='normal' className={classes['price-label']}>
+ 					<Label htmlFor='normal'>
  						Normalny
  					</Label>
  						<Input
-							type='number'
-							id='normal'
-							name='normal'
-							className={classes['price-input']}
-							ref={normalRef}
-							required
-						/>
+ 							type='number'
+ 							id='normal'
+ 							name='normal'
+ 							ref={normalRef}
+ 							required
+ 						/>
  				</article>
 
  				<article>
- 					<Label htmlFor='vip' className={classes['price-label']}>
+ 					<Label htmlFor='vip'>
  						VIP
  					</Label>
  						<Input
-							type='number'
-							id='vip'
-							name='vip'
-							className={classes['price-input']}
-							ref={vipRef}
-							required
-						/>
+ 							type='number'
+ 							id='vip'
+ 							name='vip'
+ 							ref={vipRef}
+ 							required
+ 						/>
  				</article>
 
  				<article>
- 					<Label htmlFor='child' className={classes['price-label']}>
+ 					<Label htmlFor='child'>
  						Dziecięcy
  					</Label>
  						<Input
-							type='number'
-							id='child'
-							name='child'
-							className={classes['price-input']}
-							ref={childRef}
-							required
-						/>
+ 							type='number'
+ 							id='child'
+ 							name='child'
+ 							ref={childRef}
+ 							required
+ 						/>
  				</article>
  			</section>
  			</fieldset>
 
  			<footer className={classes['submit-button-container']}>
- 				<Button className={classes['submit-button']}>Dodaj</Button>
+ 				<Button>Dodaj</Button>
  			</footer>
 			</form>
 		</>

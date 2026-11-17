@@ -1,5 +1,5 @@
-import type { Event } from '../models/eventModel.ts';
-import type { Ticket } from '../models/ticketModel.ts';
+import type { Event } from '@beatriz/shared/events';
+import type { Ticket } from '@beatriz/shared/tickets';
 
 export const getNameBlock = (name: Event['block']): string => {
 	if (name === 'blue') return 'niebieska';

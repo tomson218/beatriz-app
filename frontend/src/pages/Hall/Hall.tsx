@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import classes from './Hall.module.css';
 import { useEffect, useState } from 'react';
 import useGetEventByIdQuery from '@/api/queries/useGetEventByIdQuery';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import {
 	Dialog,
 	DialogContent,
@@ -10,9 +10,9 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/Dialog/Dialog';
 import Sector from '@/components/Sector/Sector';
-import { INITIAL_SECTORS } from '@beatriz/shared/constants';
+import { SECTORS } from '@beatriz/shared/enums/sectors';
 import { isSectorAvailable, buildBlocksUrl } from '@/utils/sector';
 
 const Hall = () => {
@@ -41,11 +41,11 @@ const Hall = () => {
 		const newUrl = `${location.pathname}?eventId=${eventId}&sector=${sector}`;
 		navigate(newUrl, { replace: true });
 
-		localStorage.setItem('sector', selectedSector);
+		localStorage.setItem('sector', sector);
 	};
 
 	if (isEventLoading) {
-		return <p>Łaadowanie danych...</p>;
+		return <p>Ładowanie danych...</p>;
 	}
 
 	const blocksUrl = buildBlocksUrl(eventId, selectedSector);
@@ -59,7 +59,7 @@ const Hall = () => {
 			<section className={classes.container}>
 				<figure className={classes['hala-container']}>
 					<div className={classes['hala-grid']}>
-						{INITIAL_SECTORS.map((sectorName, index) => (
+						{SECTORS.map((sectorName, index) => (
 							<Sector
 								key={sectorName}
 								sectorName={sectorName}

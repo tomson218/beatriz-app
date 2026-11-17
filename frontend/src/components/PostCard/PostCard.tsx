@@ -3,7 +3,7 @@ import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import type { ForumPostDto } from '@beatriz/shared/forums';
 import type { UserDto } from '@beatriz/shared/users';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card/Card';
 import classes from './PostCard.module.css';
 
 type PostUser = Pick<UserDto, '_id' | 'email' | 'photo' | 'username'>;

@@ -4,8 +4,8 @@ import { getNameTypeTicket, getNameBlock } from '@/utils/namingTicket';
 import type { Event } from '@beatriz/shared/events';
 import type { CartTicket } from '@beatriz/shared/orders';
 import type { TicketType } from '@beatriz/shared/tickets';
-import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Label } from '@/components/ui/Label/Label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select/Select';
 import classes from './Order.module.css';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
 
@@ -62,23 +62,25 @@ const Order = ({ ticket, eventDetails, onChangePrice, price, isChoice, isSummary
 					</p>
 				)}
 			</section>
-  	{isChoice && onChangePrice && (
-			<Label className={classes['ticket-type-label']}>Wybierz rodzaj biletu:</Label>
-			<Select
-				value={price.toString()}
-				onValueChange={value => onChangePrice(parseFloat(value))}>
-				<SelectTrigger className={classes['ticket-type-select']}>
-					<SelectValue />
-				</SelectTrigger>
-				<SelectContent>
-					{Object.entries(eventDetails.prices).map(([k, v]) => (
-						<SelectItem key={k} value={v.toString()}>
-							{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
-						</SelectItem>
-					))}
-				</SelectContent>
-			</Select>
-		)}
+ 	{isChoice && onChangePrice && (
+ 		<>
+ 			<Label>Wybierz rodzaj biletu:</Label>
+ 			<Select
+ 				value={price.toString()}
+ 				onValueChange={value => onChangePrice(parseFloat(value))}>
+ 				<SelectTrigger>
+ 					<SelectValue />
+ 				</SelectTrigger>
+ 				<SelectContent>
+ 					{Object.entries(eventDetails.prices).map(([k, v]) => (
+ 						<SelectItem key={k} value={v.toString()}>
+ 							{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
+ 						</SelectItem>
+ 					))}
+ 				</SelectContent>
+ 			</Select>
+ 		</>
+ 	)}
 		</article>
 	);
 };

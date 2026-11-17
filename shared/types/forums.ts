@@ -1,16 +1,10 @@
-import type { SuccessItem, SuccessList } from '@/common';
-import type { Event } from '@/events';
-import type { User } from '@/users';
+import type { SuccessItem, SuccessList } from '@/types/common';
+import type { Event } from '@/types/events';
+import type { User } from '@/types/users';
+import { Types, type InferSchemaType } from 'mongoose';
+import { forumSchema } from '@/schemas/forumSchema';
 
-export interface ForumPost {
-	_id: string;
-	date: string | Date;
-	user: User | User["_id"];
-	event: Event | Event["_id"];
-	message: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type ForumPost = InferSchemaType<typeof forumSchema> & { _id: Types.ObjectId };
 
 export interface ForumPostDto extends Omit<ForumPost, '_id'> {
 	_id: string;
@@ -18,12 +12,11 @@ export interface ForumPostDto extends Omit<ForumPost, '_id'> {
 
 export type GetAllForumPostsResponse = SuccessList<ForumPostDto>;
 
-export type GetPostsByEventIdResponse = GetAllForumPostsResponse;
-
-export interface AddNewPostToForumRequest {
-	message: string;
+export type ForumPostRequest = Pick<ForumPost, 'message'> & {
 	eventId: Event["_id"];
-}
+};
+
+export type AddNewPostToForumRequest = ForumPostRequest;
 
 export type AddNewPostToForumResponse = SuccessItem<ForumPostDto>;
 

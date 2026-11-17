@@ -7,10 +7,10 @@ import { sendEmail } from '../utils/email.ts';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { type Request, type Response, type NextFunction } from 'express';
-import { type User } from '../models/userModel.ts';
+import type { User } from '@beatriz/shared/users';
 import type {
 	LoginRequest,
-	SignUpRequest,
+	AuthUserRequest,
 	ForgetPasswordRequest,
 	ResetPasswordParams,
 	ResetPasswordRequest,
@@ -133,7 +133,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
 */
 
 export const signup = async (
-	req: Request<{}, {}, SignUpRequest>,
+	req: Request<{}, {}, AuthUserRequest>,
 	res: Response,
 	next: NextFunction,
 ): Promise<void | string> => {

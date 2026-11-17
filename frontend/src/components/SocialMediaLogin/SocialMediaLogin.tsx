@@ -22,7 +22,7 @@ const SocialMediaLogin = () => {
 	}, [facebookData]);
 
 	return (
-		<div>
+		<section>
 			<section className={classes.googleLogin}>
 				<GoogleLogin
 					width={'400px'}
@@ -39,7 +39,7 @@ const SocialMediaLogin = () => {
 					useOneTap
 				/>
 			</section>
- 		<div className={classes['facebook-login-container']}>
+			<aside className={classes['facebook-login-container']}>
 				<FacebookLogin
 					appId={FACEBOOK_APP_ID}
 					onSuccess={response => {
@@ -49,7 +49,7 @@ const SocialMediaLogin = () => {
 						}));
 					}}
 					onFail={error => {
-						console.log('Login Failed!', error);
+						console.log('Logowanie nieudane!', error);
 					}}
 					onProfileSuccess={response => {
 						setFacebookData(prevData => ({
@@ -59,8 +59,8 @@ const SocialMediaLogin = () => {
 					}}
 					className={classes['facebook-button']}
 				/>
-			</div>
-		</div>
+			</aside>
+		</section>
 	);
 };
 

@@ -4,8 +4,8 @@ import classes from './Home.module.css';
 import useGetFavouriteEventsQuery from '@/api/queries/useGetFavoriteEventsQuery';
 import useAddEventToFavouriteMutation from '@/api/mutations/useAddEventToFavouriteMutation';
 import useRemoveEventFromFavouriteMutation from '@/api/mutations/useRemoveEventFromFavouriteMutation';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/Input/Input';
+import { Label } from '@/components/ui/Label/Label';
 import { useState } from 'react';
 import { calcDatePost } from '@/utils/calcDatePost';
 import { parseEventDate } from '@/utils/eventDate';
@@ -147,7 +147,7 @@ const Home = () => {
 				</fieldset>
 
 				<fieldset className={classes['filter-group']}>
-					<Label htmlFor='star' className={classes['filter-label']}>
+					<Label htmlFor='star'>
 						Gwiazda wydarzenia
 					</Label>
 					<Input
@@ -156,12 +156,11 @@ const Home = () => {
 						value={filter.star}
 						onChange={handleFilterChange}
 						placeholder='Wprowadź gwiazdę'
-						className={classes['filter-input']}
 					/>
 				</fieldset>
 
 				<fieldset className={classes['filter-group']}>
-					<Label htmlFor='minPrice' className={classes['filter-label']}>
+					<Label htmlFor='minPrice'>
 						Minimalna cena dla biletu normalnego{' '}
 						<span className={classes['filter-value']}>{filter.minPrice} PLN</span>
 					</Label>
@@ -172,12 +171,11 @@ const Home = () => {
 						onChange={handleFilterChange}
 						min='0'
 						max='1000'
-						className={classes['filter-range']}
 					/>
 				</fieldset>
 
 				<fieldset className={classes['filter-group']}>
-					<Label htmlFor='maxPrice' className={classes['filter-label']}>
+					<Label htmlFor='maxPrice'>
 						Maksymalna cena dla biletu normalnego{' '}
 						<span className={classes['filter-value']}>{filter.maxPrice} PLN</span>
 					</Label>
@@ -188,7 +186,6 @@ const Home = () => {
 						onChange={handleFilterChange}
 						min='0'
 						max='1000'
-						className={classes['filter-range']}
 					/>
 				</fieldset>
 

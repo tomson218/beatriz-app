@@ -2,7 +2,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import useLoginUserMutation from '@/api/mutations/useLoginUserMutation';
 import { Link } from 'react-router-dom';
 import classes from './Login.module.css';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import Divider from '@mui/material/Divider';
 import Form from '@/components/Form/Form';
 import { Toaster } from 'react-hot-toast';
@@ -60,24 +60,24 @@ const Login = () => {
 							},
 						}}
 					/>
-					<Form.Button content='Zaloguj się' variant='default' className={classes['btn-login']} />
-				</Form>
-				<Button variant='link' className={classes['forget-password']}>
-					<Link to='/forget-password'>Nie pamiętasz hasła?</Link>
-				</Button>
-				<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
-					<span className={classes['divider-span']}>LUB</span>
-				</Divider>
+ 				<Form.Button content='Zaloguj się' />
+ 			</Form>
+ 			<Button variant='link'>
+ 				<Link to='/forget-password'>Nie pamiętasz hasła?</Link>
+ 			</Button>
+ 			<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
+ 				<span className={classes['divider-span']}>LUB</span>
+ 			</Divider>
 
-				<SocialMediaLogin />
+ 			<SocialMediaLogin />
 
-				<footer className={classes['no-account']}>
-					<p>Nie masz jeszcze konta?</p>
+ 			<footer className={classes['no-account']}>
+ 				<p>Nie masz jeszcze konta?</p>
 
-					<Button className={classes['create-account']} variant='link' asChild>
-						<Link to='/register'>Utwórz swoje konto</Link>
-					</Button>
-				</div>
+ 				<Button variant='link' asChild>
+ 					<Link to='/register'>Utwórz swoje konto</Link>
+ 				</Button>
+ 			</footer>
 			</section>
 			<Toaster position='bottom-right' reverseOrder={false} />
 		</main>

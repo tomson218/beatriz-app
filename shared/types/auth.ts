@@ -1,34 +1,22 @@
-import type { User, UserPassword } from '@/users';
-import type { SuccessItem, SuccessList } from '@/common';
+import type { User, UserPassword, UserRole } from '@/types/users';
+import type { SuccessItem, SuccessList } from '@/types/common';
+
+export interface AuthUser {
+	_id: string;
+	email: string;
+	role: UserRole;
+}
 
 export interface AuthResponse {
 	token: string;
-	user: {
-		_id: string;
-		email: string;
-		role: string;
-	};
+	user: AuthUser;
 }
 
-export type AuthSuccessResponse = AuthResponse;
-export type SignUpResponse = AuthResponse;
-export type LoginResponse = AuthResponse;
-export type GoogleLoginResponse = AuthResponse;
-export type FacebookLoginResponse = AuthResponse;
-
-export type AuthSuccessList = SuccessList<AuthResponse>;
-export type AuthSuccessItem = SuccessItem<AuthResponse>;
-
-export interface SignUpRequest {
-	username: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	password: UserPassword;
+export type AuthUserRequest = Pick<User, 'username' | 'firstName' | 'lastName' | 'email' | 'password'> & {
 	passwordConfirm: UserPassword;
-}
+};
 
-export type SignUpInputs = SignUpRequest & { validate: () => void };
+export type SignUpInputs = AuthUserRequest & { validate: () => void };
 
 export interface ChangePasswordInputs {
 	passwordCurrent: UserPassword;
@@ -40,44 +28,39 @@ export interface ResetPasswordInputs {
 	password: UserPassword;
 	passwordConfirm: UserPassword;
 }
-export interface LoginRequest {
-	email: string;
-	password: string;
-}
+export type LoginUserRequest = Pick<User, 'email' | 'password'>;
 
-export interface ForgetPasswordRequest {
-	email: User["email"];
-}
+export type LoginRequest = LoginUserRequest;
+
+export type ForgetPasswordUserRequest = Pick<User, 'email'>;
+
+export type ForgetPasswordRequest = ForgetPasswordUserRequest;
 
 export interface MessageResponse {
 	message: string;
 }
 
-export type ForgetPasswordResponse = MessageResponse;
-
 export interface ResetPasswordParams {
 	token: string;
 }
 
-export interface ResetPasswordRequest {
+export type ResetPasswordUserRequest = {
 	token: string;
-	password: string;
-}
+	password: UserPassword;
+};
 
-export type ResetPasswordResponse = MessageResponse;
+export type ResetPasswordRequest = ResetPasswordUserRequest;
 
 export interface RefreshTokenResponse {
 	token: string;
 }
 
-export type LogoutResponse = MessageResponse;
-
-export interface UpdatePasswordRequest {
+export type UpdatePasswordUserRequest = {
 	oldPassword: UserPassword;
 	newPassword: UserPassword;
-}
+};
 
-export type UpdatePasswordResponse = MessageResponse;
+export type UpdatePasswordRequest = UpdatePasswordUserRequest;
 
 export interface GoogleLoginRequest {
 	authCode: string;

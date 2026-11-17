@@ -4,7 +4,7 @@ import chairIcon from '@/assets/svg/chair-icon.svg';
 import { formattedDate, formattedTime } from '@/utils/formatting-date';
 import QRCode from 'react-qr-code';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import { getNameBlock, getNameTypeTicket, getBlockBadgeClass } from '@/utils/namingTicket';
 import type { Ticket as ITicket } from '@beatriz/shared/tickets';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
@@ -37,7 +37,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 	return (
 		<section className={classes['clickable-card']}>
 			<article>
-				<div className={classes['article-wrapper']}>
+				<header className={classes['article-wrapper']}>
 					<figure>
 						<img
 							className={classes['event-image']}
@@ -45,95 +45,95 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 							alt={ticket.event.image}
 						/>
 					</figure>
-					<div className={classes['article-body']}>
-						<h2>{ticket.event.name}</h2>
+				</header>
+				<section className={classes['article-body']}>
+					<h2>{ticket.event.name}</h2>
 
-						<div className={classes['event-date-time']}>
-							<img src={calendarIcon} alt='Calendar Icon' />
-							<span>
-								{formattedDate(eventDate)} {formattedTime(eventDate)}
+					<time className={classes['event-date-time']}>
+						<img src={calendarIcon} alt='Ikona kalendarza' />
+						<span>
+							{formattedDate(eventDate)} {formattedTime(eventDate)}
+						</span>
+					</time>
+
+					<section className={classes['event-seating']}>
+						<img src={chairIcon} alt='Ikona krzesła' />
+						<p className={classes['seating-row']}>
+							<span className={classes.section}>{sector}</span>
+							<span className={getBlockBadgeClass(block, classes)}>
+								{getNameBlock(block)}
 							</span>
-						</div>
 
-						<div className={classes['event-seating']}>
-							<img src={chairIcon} alt='Chair Icon' />
-							<div className={classes['seating-row']}>
-								<span className={classes.section}>{sector}</span>
-								<span className={getBlockBadgeClass(block, classes)}>
-									{getNameBlock(block)}
-								</span>
+							{seat && <span className={classes.seat}>{seat}</span>}
+						</p>
+					</section>
 
-								{seat && <span className={classes.seat}>{seat}</span>}
-							</div>
-						</div>
+					<section className={classes['details-section']}>
+						<Button
+							onClick={() => {
+								setTimeout(
+									setIsShow(prevState => !prevState),
+									5000,
+								);
+							}}>
+							{isShow ? 'Ukryj' : 'Pokaż'} szczegóły biletu
+						</Button>
+					</section>
 
-						<section className={classes['details-section']}>
+					{isShow && (
+						<aside className={classes['modal-overlay']} onClick={() => setIsShow(false)}>
 							<Button
-								onClick={() => {
-									setTimeout(
-										setIsShow(prevState => !prevState),
-										5000,
-									);
-								}}>
-								{isShow ? 'Ukryj' : 'Pokaż'} szczegóły biletu
+								variant='ghost'
+								size='icon'
+								className={classes['modal-close']}
+								onClick={() => setIsShow(false)}
+								aria-label='Zamknij'>
+								&times;
 							</Button>
-						</section>
 
-						{isShow && (
-							<div className={classes['modal-overlay']} onClick={() => setIsShow(false)}>
- 							<Button
- 								variant='ghost'
- 								size='icon'
- 								className={classes['modal-close']}
- 								onClick={() => setIsShow(false)}
- 								aria-label='Zamknij'>
- 								&times;
- 							</Button>
+							<h3 className={classes['modal-title']}>
+								Szczegóły Biletu
+							</h3>
 
-								<h3 className={classes['modal-title']}>
-									Szczegóły Biletu
-								</h3>
-
-								<div className={classes['modal-content']}>
-									<p className={classes['modal-row']}>
-										<strong>Sektor:</strong> <span>{sector}</span>
-									</p>
-									<p className={classes['modal-row']}>
-										<strong>Strefa:</strong> <span>{getNameBlock(block)}</span>
-									</p>
-
-									{seat && (
-										<p className={classes['modal-row']}>
-											<strong>Miejsce:</strong> <span>{seat}</span>
-										</p>
-									)}
-
-									<p className={classes['modal-row']}>
-										<strong>Typ biletu:</strong> <span>{getNameTypeTicket(ticket.type)}</span>
-									</p>
-									<p className={classes['modal-row']}>
-										<strong>Cena biletu:</strong> <span>{ticket.price} PLN</span>
-									</p>
-									<p className={classes['modal-row']}>
-										<strong>Zakupiono: </strong>
-										<span>
-											{formattedDate(purchasedDate)} {formattedTime(purchasedDate)}
-										</span>
-									</p>
+							<dl className={classes['modal-content']}>
+								<div className={classes['modal-row']}>
+									<strong>Sektor:</strong> <span>{sector}</span>
+								</div>
+								<div className={classes['modal-row']}>
+									<strong>Strefa:</strong> <span>{getNameBlock(block)}</span>
 								</div>
 
-								<div className={classes['qr-code']}>
-									<QRCode
-										size={256}
-										value={qrValue}
-										viewBox={`0 0 256 256`}
-										onClick={() => console.log(qrValue)}
-									/>
+								{seat && (
+									<div className={classes['modal-row']}>
+										<strong>Miejsce:</strong> <span>{seat}</span>
+									</div>
+								)}
+
+								<div className={classes['modal-row']}>
+									<strong>Typ biletu:</strong> <span>{getNameTypeTicket(ticket.type)}</span>
 								</div>
-							</div>
-						)}
-					</div>
-				</div>
+								<div className={classes['modal-row']}>
+									<strong>Cena biletu:</strong> <span>{ticket.price} PLN</span>
+								</div>
+								<div className={classes['modal-row']}>
+									<strong>Zakupiono: </strong>
+									<span>
+										{formattedDate(purchasedDate)} {formattedTime(purchasedDate)}
+									</span>
+								</div>
+							</dl>
+
+							<figure className={classes['qr-code']}>
+								<QRCode
+									size={256}
+									value={qrValue}
+									viewBox={`0 0 256 256`}
+									onClick={() => console.log(qrValue)}
+								/>
+							</figure>
+						</aside>
+					)}
+				</section>
 			</article>
 		</section>
 	);

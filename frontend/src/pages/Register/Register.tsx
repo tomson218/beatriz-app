@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import useSignUpUserMutation from '@/api/mutations/useSignUpUserMutation';
 import classes from './Register.module.css';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button/Button';
 import Divider from '@mui/material/Divider';
 import Form from '@/components/Form/Form';
 import { Toaster } from 'react-hot-toast';
@@ -138,21 +138,21 @@ const Register = () => {
 							{...register('passwordConfirm')}
 						/>
 
-						<Form.Button content='Utwórz konto' variant='default' className={classes['btn-login']} />
-					</Form>
+ 					<Form.Button content='Utwórz konto' />
+ 				</Form>
 
-					<Divider
-						sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
-						<span className={classes['divider-span']}>LUB</span>
-					</Divider>
-					<SocialMediaLogin />
+ 				<Divider
+ 					sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
+ 					<span className={classes['divider-span']}>LUB</span>
+ 				</Divider>
+ 				<SocialMediaLogin />
 
-					<footer className={classes['no-account']}>
-						<p>Masz już konto?</p>
-						<Button className={classes['create-account']} variant='link' asChild>
-							<Link to='/'>Zaloguj się</Link>
-						</Button>
-					</footer>
+ 				<footer className={classes['no-account']}>
+ 					<p>Masz już konto?</p>
+ 					<Button variant='link' asChild>
+ 						<Link to='/'>Zaloguj się</Link>
+ 					</Button>
+ 				</footer>
 				</section>
 				<Toaster position='bottom-right' reverseOrder={false} />
 			</main>

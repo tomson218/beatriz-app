@@ -1,1 +1,1 @@
-export const NEW_EVENT = 7;
+export const NEW_EVENT: number = 7;

@@ -1,8 +1,8 @@
 import OrderModel from '../models/orderModel.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { GetAllOrdersResponse, GetUserOrdersResponse, OrderDto } from '@beatriz/shared/orders';
+import type { GetAllOrdersResponse, OrderDto } from '@beatriz/shared/orders';
 import { toOrderDto } from '../mappers/orderMapper.ts';
-import type { Order } from '../models/orderModel.ts';
+import type { Order } from '@beatriz/shared/orders';
 
 export const getAllOrders = async (
 	req: Request,
@@ -28,7 +28,7 @@ export const getAllOrders = async (
 
 export const getUserOrders = async (
 	req: Request<{ id: Order['_id'] }>,
-	res: Response<GetUserOrdersResponse>,
+	res: Response<GetAllOrdersResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {

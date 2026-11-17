@@ -1,15 +1,8 @@
-import type { SuccessItem, SuccessList } from '@/common';
+import type { SuccessItem, SuccessList } from '@/types/common';
+import { Types, type InferSchemaType } from 'mongoose';
+import { discountCodeSchema } from '@/schemas/discountCodeSchema';
 
-export interface DiscountCode {
-	_id: string;
-	code: string;
-	value: number;
-	expiration: string | Date;
-	usageLimit: number;
-	usageConditions: number;
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type DiscountCode = InferSchemaType<typeof discountCodeSchema> & { _id: Types.ObjectId };
 
 export interface DiscountCodeDto extends Omit<DiscountCode, '_id'> {
 	_id: string;
@@ -17,7 +10,7 @@ export interface DiscountCodeDto extends Omit<DiscountCode, '_id'> {
 
 export type GetAllDiscountCodesResponse = SuccessList<DiscountCodeDto>;
 
-export type AddDiscountCodeRequest = Pick<DiscountCode, 'code' | 'value' | 'usageLimit' | 'usageConditions' | 'expiration'>;
+export type DiscountCodeRequest = Pick<DiscountCode, 'code' | 'value' | 'usageLimit' | 'usageConditions' | 'expiration'>;
 
 export type AddDiscountCodeResponse = SuccessItem<DiscountCodeDto>;
 

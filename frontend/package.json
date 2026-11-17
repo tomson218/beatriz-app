@@ -36,11 +36,8 @@
 		"@react-oauth/google": "^0.12.1",
 		"@tanstack/react-query": "^5.45.1",
 		"antd": "^5.18.3",
-		"axios": "^1.7.2",
-		"chart.js": "^4.4.6",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
-		"jwt-decode": "^4.0.0",
 		"lucide-react": "^0.452.0",
 		"npkill": "^0.12.2",
 		"postcss-modules": "^6.0.0",
@@ -80,7 +77,6 @@
 		"postcss-preset-mantine": "^1.17.0",
 		"postcss-simple-vars": "^7.0.1",
 		"tailwindcss": "^3.4.4",
-		"typescript": "^5.2.2",
 		"vite": "^5.2.0",
 		"vitest": "^2.1.6"
 	}
