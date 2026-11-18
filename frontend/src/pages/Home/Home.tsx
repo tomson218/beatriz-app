@@ -11,6 +11,7 @@ import { calcDatePost } from '@/utils/calcDatePost';
 import { parseEventDate } from '@/utils/eventDate';
 import { matchesEventFilter } from '@/utils/eventFilter';
 import type { EventFilter } from '@beatriz/shared/events';
+import { EVENT_TYPE_OPTIONS } from '@beatriz/shared/constants/eventTypes';
 
 const Home = () => {
 	const { data: events, isLoading: isEventsLoading } = useGetAllEventsQuery();
@@ -100,46 +101,19 @@ const Home = () => {
 				<fieldset className={classes['filter-group']}>
 					<legend className={classes['filter-label']}>Kategoria wydarzenia</legend>
 					<section className={classes['filter-checkbox-group']}>
-						<Label>
-							<Input
-								type='checkbox'
-								name='type'
-								value='concert'
-								checked={filter.type.includes('concert')}
-								onChange={handleCategoryChange}
-							/>
-							Koncert
-						</Label>
-						<Label>
-							<Input
-								type='checkbox'
-								name='type'
-								value='workshop'
-								checked={filter.type.includes('workshop')}
-								onChange={handleCategoryChange}
-							/>
-							Warsztat
-						</Label>
-						<Label>
-							<Input
-								type='checkbox'
-								name='type'
-								value='conference'
-								checked={filter.type.includes('conference')}
-								onChange={handleCategoryChange}
-							/>
-							Konferencja
-						</Label>
-						<Label>
-							<Input
-								type='checkbox'
-								name='type'
-								value='festival'
-								checked={filter.type.includes('festival')}
-								onChange={handleCategoryChange}
-							/>
-							Festiwal
-						</Label>
+						{EVENT_TYPE_OPTIONS.map(({ value, label }) => (
+							<Label key={value} className={classes['filter-option']}>
+								<Input
+									type='checkbox'
+									name='type'
+									value={value}
+									className={classes['filter-checkbox']}
+									checked={filter.type.includes(value)}
+									onChange={handleCategoryChange}
+								/>
+								{label}
+							</Label>
+						))}
 					</section>
 				</fieldset>
 
@@ -163,6 +137,7 @@ const Home = () => {
 					</Label>
 					<Input
 						type='range'
+						className={classes['filter-range']}
 						name='minPrice'
 						value={filter.minPrice}
 						onChange={handleFilterChange}
@@ -178,6 +153,7 @@ const Home = () => {
 					</Label>
 					<Input
 						type='range'
+						className={classes['filter-range']}
 						name='maxPrice'
 						value={filter.maxPrice}
 						onChange={handleFilterChange}
@@ -189,21 +165,23 @@ const Home = () => {
 				<fieldset className={classes['filter-group']}>
 					<legend className={classes['filter-label']}>Wymagane miejsce numerowane</legend>
 					<section className={classes['filter-checkbox-row']}>
-						<Label>
+						<Label className={classes['filter-option']}>
 							<Input
 								type='checkbox'
 								name='seatRequired'
 								value='true'
+								className={classes['filter-checkbox']}
 								checked={filter.seatRequired.includes(true)}
 								onChange={handleSeatRequiredChange}
 							/>
 							Tak
 						</Label>
-						<Label>
+						<Label className={classes['filter-option']}>
 							<Input
 								type='checkbox'
 								name='seatRequired'
 								value='false'
+								className={classes['filter-checkbox']}
 								checked={filter.seatRequired.includes(false)}
 								onChange={handleSeatRequiredChange}
 							/>

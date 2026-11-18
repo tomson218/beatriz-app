@@ -59,6 +59,14 @@ app.use(
 	}),
 );
 
+// Zdjęcia wydarzeń i użytkowników (public/images). Helmet domyślnie ustawia `Cross-Origin-Resource-Policy: same-origin`,
+// co blokuje ładowanie obrazków przez frontend działający na innym originie, więc dla plików statycznych zezwalamy na `cross-origin`.
+app.use(
+	express.static(path.join(__dirname, 'public'), {
+		setHeaders: res => res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'),
+	}),
+);
+
 const authLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
 	max: 20,

@@ -44,7 +44,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 					<section className={classes['article-wrapper']}>
 						{isNewEvent && <span className={classes.label}>NOWE</span>}
 
-						<figure>
+						<figure className={classes['event-figure']}>
 							<img
 								className={classes['event-image']}
 								src={`${ASSET_BASE_URL}/images/events/${event.image}`}
