@@ -5,7 +5,7 @@ ADDING RELATIVE PATHS IN IMPORTS IN TYPESCRIPT 6.0.3 WITH NODENEXT MODULE SYSTEM
 */
 
 import express from 'express';
-import { protect } from '../controllers/authController.ts';
+import { protect, restrictTo, restrictToSelfOr } from '../middleware/authMiddleware.ts';
 
 import {
 	getAllTickets,
@@ -41,10 +41,10 @@ const getSeatsByQuery = (req: any, res: any, next: any): void => {
 	return getOccupiedSeats(seatsReq, res, next);
 };
 
-router.route('/').get(protect, getAllTickets);
+router.route('/').get(protect, restrictTo('admin', 'worker'), getAllTickets);
 
 router.get('/me', protect, getCurrentUserTickets);
-router.get('/users/:id', protect, getUserTickets);
+router.get('/users/:id', protect, restrictToSelfOr('admin', 'worker'), getUserTickets);
 
 router.get('/events/:eventId/available-sectors', protect, groupAvailableSectors);
 router.get('/events/:eventId/availability', protect, groupAvailableSectors);

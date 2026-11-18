@@ -3,7 +3,11 @@ import Navbar from '@/components/Navbar/Navbar';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-const LayoutWrapper = ({ children }: { children: ReactNode }) => {
+interface LayoutWrapperProps {
+	children: ReactNode;
+}
+
+const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
 	return (
 		<>
 			<Navbar />

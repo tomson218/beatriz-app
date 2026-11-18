@@ -1,7 +1,12 @@
-import type { CartTicket } from '@/orders';
+import type { CartTicket } from '#types/orders';
 
+/**
+ * Serwer traktuje `products` wyłącznie jako listę tego, co klient chce kupić:
+ * ceny z tego pola są ignorowane i wyliczane z bazy.
+ */
 export interface CreateCheckoutSessionRequest {
-	order: CartTicket[];
+	products: CartTicket[];
+	discountCode?: string;
 }
 
 export interface CreateCheckoutSessionResponse {

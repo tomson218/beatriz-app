@@ -1,94 +1,30 @@
-:root {
-	--primary-color: white;
-	--border-color: black;
-	--hover-border-color: green;
-	--error-color: #f00;
-	--accordion-bg: #ffaf1a;
-	--accordion-bg-open: #ffb833;
-	--accordion-content-bg: #ecf0f1;
-}
-
-.container {
-	display: flex;
-	align-content: center;
-	flex-direction: column;
-	padding: 0 2rem;
-	background-color: var(--primary-background);
-	min-height: 94.4dvh;
-}
-
-.heading {
-	font-size: 3rem;
-	color: #000;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	text-align: center;
-	padding-top: 2.5rem;
-}
-
-.accordion {
-	font: 1rem 'Open Sans', Calibri, sans-serif;
-	width: 80vw;
-	margin: 1.5rem auto;
-	border: 5px solid var(--border-color);
+.page {
 	display: flex;
 	flex-direction: column;
+	gap: 1.5rem;
+	max-width: 56rem;
+	margin: 0 auto;
+	padding: 2.5rem 1rem;
 }
 
-.accordion-summary {
-	padding: 1rem 3rem;
-	background-color: var(--accordion-bg);
-	border: none;
-	box-shadow: 3px 3px 4px black;
-	cursor: pointer;
-	list-style-type: none;
+.header {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	gap: 0.5rem;
-	font-size: 2rem;
 }
 
-.accordion-summary::before {
-	content: '+ ';
-	font-size: 32px;
-	transition: 0.2s;
-	color: white;
+.eyebrow {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 500;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: #d97706;
 }
 
-.accordion[open] .accordion-summary::before {
-	content: '- ';
-	color: white;
-	font-size: 32px;
-}
-
-.accordion p {
-	background-color: var(--accordion-content-bg);
-	padding: 1rem 3rem;
-	margin: 0;
-	box-shadow: 3px 3px 4px black;
-	border-top: 5px solid var(--border-color);
-	font-size: 1.25rem;
-}
-
-.accordion[open] .accordion-summary {
-	background-color: var(--accordion-bg-open);
-}
-
-@media (max-width: 1024px) {
-	.accordion-summary {
-		font-size: 1.7rem;
-	}
-
-	.accordion p {
-		font-size: 1.125em;
-	}
-}
-
-@media (max-width: 768px) {
-	.accordion-summary {
-		font-size: 1.5rem;
-	}
-	.accordion p {
-		font-size: 1rem;
-	}
+.title {
+	font-size: 1.875rem;
+	line-height: 2.25rem;
+	font-weight: 700;
+	color: #0f172a;
 }

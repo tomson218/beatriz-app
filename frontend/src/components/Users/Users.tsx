@@ -2,7 +2,7 @@ import useGetAllUsersQuery from '@/api/queries/useGetAllUsersQuery';
 import { Input } from '@/components/ui/Input/Input';
 import { Button } from '@/components/ui/Button/Button';
 import { FormField } from '@/components/ui/FormField/FormField';
-import { hasNoUsers } from '@/utils/users';
+import { hasAnyUsers, hasNoUsers } from '@/utils/users';
 import DeleteIcon from '@/assets/icons/DeleteIcon';
 import { useRef } from 'react';
 import ViewUser from '../ViewUser/ViewUser';
@@ -64,7 +64,7 @@ const Users = () => {
 			<main className={classes['users-page']}>
 				{hasNoUsers(users) && <p>Na razie nie ma żadnych użytkowników</p>}
 
-				{!hasNoUsers(users) && (
+				{hasAnyUsers(users) && (
 					<table className={classes.table}>
 						<thead className={classes.thead}>
 							<tr>
@@ -110,7 +110,7 @@ const Users = () => {
 													</DialogDescription>
 												</DialogHeader>
 												<form onSubmit={e => handleEditUser(e, user._id)}>
-													<div className='grid gap-4 py-4'>
+													<div className={classes['dialog-body']}>
 														<FormField label='Nazwa użytkownika' htmlFor='name'>
 															<Input
 																id='name'
@@ -168,7 +168,7 @@ const Users = () => {
 													</DialogTitle>
 												</DialogHeader>
 												<form onSubmit={e => handleDeleteUser(e, user._id)}>
-													<p className='grid gap-4 py-4'>
+													<p className={classes['dialog-body']}>
 														Czy na pewno chcesz usunąć tego użytkownika?
 													</p>
 

@@ -44,7 +44,9 @@ const EventDetails = () => {
 		}
 	};
 
-	if (isEventLoading || isFavouriteEventsLoading) {
+	const isAnyDataLoading = isEventLoading || isFavouriteEventsLoading;
+
+	if (isAnyDataLoading) {
 		return <div>Ładowanie...</div>;
 	}
 
@@ -54,7 +56,7 @@ const EventDetails = () => {
 
 	return (
 		<>
-			<main className={classes['event-details-page']}>
+			<main>
 				<h1 className={classes.heading}>Szczegóły wydarzenia</h1>
 
 				<section className={classes.card}>

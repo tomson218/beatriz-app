@@ -1,17 +1,5 @@
-body {
-	font-size: 'Roboto';
-}
-
-.ticket-choice-page {
-	min-height: 94.4dvh;
-	background-color: #f5f5dc;
-}
-
 .page-title {
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-size: 2rem;
+	composes: page-title from global;
 	padding: 2rem 0.5rem;
 }
 

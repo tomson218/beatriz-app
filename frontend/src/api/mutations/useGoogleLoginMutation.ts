@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
+import { isSuccessResponse } from '@/utils/response';
 import { API_URL } from '@/api/apiConfig';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -9,7 +10,7 @@ const useGoogleLoginMutation = () => {
 	const navigate = useNavigate();
 
 	const googleLogin = async (googleDataDetails: GoogleLoginRequest): Promise<AuthResponse> => {
-		const uri = `${API_URL}/users/googleLogin`;
+		const uri = `${API_URL}/auth/googleLogin`;
 		const response = await axios.post<AuthResponse>(uri, googleDataDetails);
 		return response.data;
 	};
@@ -20,7 +21,7 @@ const useGoogleLoginMutation = () => {
 		onSuccess: (data: AuthResponse) => {
 			console.log(data);
 
-			if (data.status === 'success') {
+			if (isSuccessResponse(data)) {
 				localStorage.setItem('user-id', data.data.user._id);
 				localStorage.setItem('token', data.data.accessToken);
 			}

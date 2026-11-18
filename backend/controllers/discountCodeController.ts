@@ -27,9 +27,9 @@ export const getAllDiscountCodes = async (req: Request, res: Response, next: Nex
 export const applyDiscountCode = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const currentDate = Date.now();
-		const { enteredCode, totalAmount } = req.body;
+		const { enteredCode, totalPrice } = req.body;
 
-		validateNonNegativeNumber(totalAmount, 'Kwota zamówienia');
+		validateNonNegativeNumber(totalPrice, 'Kwota zamówienia');
 
 		const user = await UserModel.findById(req.user.id);
 
@@ -53,7 +53,7 @@ export const applyDiscountCode = async (req: Request, res: Response, next: NextF
 				status: 'fail',
 				message: 'Discount code has expired.',
 			});
-		} else if (totalAmount < discountCode.usageConditions) {
+		} else if (totalPrice < discountCode.usageConditions) {
 			// jakas tam funkcja z tego warnuku
 			return res.status(400).json({
 				status: 'fail',

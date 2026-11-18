@@ -8,8 +8,10 @@ import classes from './PostCard.module.css';
 
 type PostUser = Pick<UserDto, '_id' | 'email' | 'photo' | 'username'>;
 
+type PostWithUser = ForumPostDto & { user: PostUser };
+
 interface PostProps {
-	post: ForumPostDto & { user: PostUser };
+	post: PostWithUser;
 	isAuthorPost?: boolean;
 }
 
@@ -28,19 +30,19 @@ const PostCard = ({ post, isAuthorPost }: PostProps) => {
 				<img
 					src={userAvatar}
 					alt={avatarAlt}
-					className='h-10 w-10 rounded-xl object-cover'
+					className={classes.avatar}
 				/>
 
-				<div className='flex flex-col gap-1'>
-					<h2 className='text-base font-semibold'>{post.user.email}</h2>
-					<time className='text-sm text-muted-foreground'>{postDate}</time>
+				<div className={classes.author}>
+					<h2 className={classes['author-email']}>{post.user.email}</h2>
+					<time className={classes['post-date']}>{postDate}</time>
 				</div>
 			</CardHeader>
 
 			<Divider />
 
 			<CardContent className='pt-4'>
-				<p className='leading-8 text-base'>{post.message}</p>
+				<p className={classes.message}>{post.message}</p>
 			</CardContent>
 		</Card>
 	);

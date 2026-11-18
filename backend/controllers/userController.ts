@@ -12,8 +12,10 @@ import type {
 	UpdateUserRequest,
 	UserIdParams,
 	AddCartRequest,
+	AddCartResponse,
+	FavouriteEventResponse,
 } from '@beatriz/shared/users';
-import type { SuccessList } from '@beatriz/shared/common';
+import type { ListResponse } from '@beatriz/shared/common';
 import type { EventIdParams } from '@beatriz/shared/events';
 import { toUserDto } from '../mappers/userMapper.ts';
 
@@ -121,7 +123,7 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction):
 
 export const getUserFavoriteEvents = async (
 	req: Request,
-	res: Response<SuccessList<unknown>>,
+	res: Response<ListResponse<'events', unknown>>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
@@ -147,7 +149,7 @@ export const getUserFavoriteEvents = async (
 
 export const addEventToFavourite = async (
 	req: Request<{}, {}, EventIdParams>,
-	res: Response,
+	res: Response<FavouriteEventResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
@@ -167,7 +169,7 @@ export const addEventToFavourite = async (
 
 		await user.save({ validateBeforeSave: false });
 
-		res.status(200).json({ message: 'Wydarzenie dodane do ulubionych' });
+		res.status(200).json({ status: 'success', message: 'Wydarzenie dodane do ulubionych' });
 	} catch (err) {
 		next(err);
 	}
@@ -175,7 +177,7 @@ export const addEventToFavourite = async (
 
 export const removeEventFromFavourite = async (
 	req: Request<{}, {}, EventIdParams>,
-	res: Response,
+	res: Response<FavouriteEventResponse>,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
@@ -203,23 +205,26 @@ export const removeEventFromFavourite = async (
 
 export const addCart = async (
 	req: Request<{}, {}, AddCartRequest>,
-	res: Response<SuccessList<unknown>>,
+	res: Response<AddCartResponse>,
 	next: NextFunction,
 ): Promise<void> => {
-	const userId: User['_id'] = req.user.id; // do poprawy
+	try {
+		const userId = String(req.user.id);
 
-	const { cart } = req.body;
+		const { cart } = req.body;
 
-	const user: User | null = await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
+		await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
 
-	res.status(200).json({
-		data: {
-			cart, // jaki ma to kształt tak w ogóle
-			userId,
-		},
-		status: 'error',
-		message: 'This route is not yet defined!',
-	});
+		res.status(200).json({
+			status: 'success',
+			data: {
+				cart,
+				userId,
+			},
+		});
+	} catch (err) {
+		next(err);
+	}
 };
 
 export const createUser = (req: Request, res: Response) => {
@@ -248,7 +253,7 @@ export const updateUser = async (
 			status: 'success',
 			message: `User ${id} updated!`,
 			data: {
-				updatedUser: updatedUserDto,
+				user: updatedUserDto,
 			},
 		});
 	} catch (err) {

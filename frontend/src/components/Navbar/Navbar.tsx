@@ -1,6 +1,6 @@
 import useLogoutUserMutation from '@/api/mutations/useLogoutUserMutation';
 import { Link } from 'react-router-dom';
-import './Navbar.css';
+import classes from './Navbar.module.css';
 import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
 import { Button } from '@/components/ui/Button/Button';
 import { Label } from '@/components/ui/Label/Label';
@@ -24,35 +24,35 @@ const Navbar = () => {
 	}
 
 	return (
-		<section className='top-nav'>
-			<span className='logo'>Beatriz App</span>
-			<input id='menu-toggle' type='checkbox' />
-			<Label className='menu-button-container' htmlFor='menu-toggle'>
-				<div className='menu-button'></div>
+		<section className={classes['top-nav']}>
+			<span className={classes.logo}>Beatriz App</span>
+			<input id='menu-toggle' className={classes['menu-toggle']} type='checkbox' />
+			<Label className={classes['menu-button-container']} htmlFor='menu-toggle'>
+				<div className={classes['menu-button']}></div>
 			</Label>
 
-			<ul className='menu'>
+			<ul className={classes.menu}>
 				<Link to='/home'>
-					<li className='list'>Strona główna</li>
+					<li>Strona główna</li>
 				</Link>
 				<Link to='/favourite'>
-					<li className='list'>Ulubione</li>
+					<li>Ulubione</li>
 				</Link>
 				<Link to='/tickets'>
-					<li className='list'>Bilety</li>
+					<li>Bilety</li>
 				</Link>
 				<Link to='/user-profile'>
-					<li className='list'>Profil</li>
+					<li>Profil</li>
 				</Link>
 
 				{isAdmin && (
 					<Link to='/admin-panel'>
-						<li className='list'>Panel admina</li>
+						<li>Panel admina</li>
 					</Link>
 				)}
 				<Link to='/'>
 					{token && (
-						<Button variant='ghost' className='logout' onClick={handleLogout}>
+						<Button variant='ghost' className={classes.logout} onClick={handleLogout}>
 							Wyloguj się
 						</Button>
 					)}

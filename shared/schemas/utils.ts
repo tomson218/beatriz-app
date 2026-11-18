@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
-import { SECTORS } from '@/enums/sectors';
-import { BLOCK_TYPES } from '@/enums/blockTypes';
-import { TICKET_TYPES } from '@/enums/ticketTypes';
+import { SECTORS } from '#enums/sectors';
+import { BLOCK_TYPES } from '#enums/blockTypes';
+import { TICKET_TYPES } from '#enums/ticketTypes';
 
 export const sectorSchema = {
 	type: String,

@@ -1,13 +1,5 @@
-body {
-	background-color: white;
-	font-size: 'Roboto';
-}
-
 .title {
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-size: 2rem;
+	composes: page-title from global;
 	padding: 1rem 0 0;
 }
 
@@ -29,11 +21,6 @@ body {
 
 .button {
 	color: red;
-}
-
-.order-summary-page {
-	min-height: 94.4dvh;
-	background-color: #f5f5dc;
 }
 
 .grid-container {

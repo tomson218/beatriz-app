@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
-import { TICKET_TYPES } from '@/enums/ticketTypes';
-import { seatingSchema } from './utils';
+import { TICKET_TYPES } from '#enums/ticketTypes';
+import { seatingSchema } from '#schemas/utils';
 
 export const ticketSchemaDef = new Schema({
 	event: {

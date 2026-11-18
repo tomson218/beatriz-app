@@ -3,7 +3,10 @@
  * Jeśli seats jest puste, null, lub '0', zwraca pustą tablicę.
  */
 export function parseInitialSelectedSeats(seats: string | undefined): number[] {
-	if (!seats || seats === '0') return [];
+	const hasNoSeatsParam = !seats;
+	const isEmptySeatsPlaceholder = seats === '0';
+
+	if (hasNoSeatsParam || isEmptySeatsPlaceholder) return [];
 	return seats.split(',').map(seat => Number(seat));
 }
 
@@ -39,4 +42,16 @@ export function buildSeatsUrl(
 	seats: number[]
 ): string {
 	return `${pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${seats.join(',')}`;
+}
+
+/**
+ * Znacznik zamówienia bez numerowanych miejsc (używany zamiast numeru miejsca).
+ */
+export const NO_SEAT = 'no-seat';
+
+/**
+ * Sprawdza czy zamiast numeru miejsca przekazano znacznik "bez miejsca" (NO_SEAT).
+ */
+export function isNoSeatPlaceholder(seat: string): boolean {
+	return seat === NO_SEAT;
 }

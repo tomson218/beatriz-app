@@ -5,7 +5,7 @@ import { queryKeys } from '@/api/queryKeys';
 const useGetAllEventsQuery = () => {
 	const getAllEvents = async () => {
 		const response = await instance.get('/events');
-		return response.data.events;
+		return response.data.data.events;
 	};
 
 	return useQuery({

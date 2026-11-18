@@ -3,6 +3,7 @@ import { NEW_EVENT } from '@beatriz/shared/constants/misc';
 export const checkEventIsNew = (date: Date) => {
 	const differenceInDays = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
 
-	if (differenceInDays <= NEW_EVENT) return true;
-	else return false;
+	const isNewEvent = differenceInDays <= NEW_EVENT;
+
+	return isNewEvent;
 };

@@ -44,8 +44,10 @@ const AddEvent = () => {
 		formData.append('description', descriptionRef.current?.value ?? '');
 		formData.append('date', dateRef.current?.value ?? '');
 		formData.append('star', starsRef.current?.value ?? '');
-		if (imageRef.current?.files?.[0]) {
-			formData.append('image', imageRef.current.files[0]);
+		const selectedImage = imageRef.current?.files?.[0];
+
+		if (selectedImage) {
+			formData.append('image', selectedImage);
 		}
 		formData.append('seatRequired', seatRequiredRef.current?.checked ?? false);
 		formData.append('normal', String(normalRef.current?.value ?? '0'));

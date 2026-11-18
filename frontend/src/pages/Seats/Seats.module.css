@@ -1,27 +1,6 @@
-:root {
-	--selected: #ff6347;
-	--occupied: #808080;
-	--free: #4caf50;
-}
-
-body {
-	background-color: white;
-}
-
 .title {
-	font-size: 3rem;
+	composes: page-title from global;
 	margin-bottom: 20px;
-	color: #fff;
-	text-align: center;
-}
-
-.seats-page {
-	min-height: 94.4dvh;
-	background-color: white;
-}
-
-.title {
-	color: black;
 }
 
 .seats-nav {

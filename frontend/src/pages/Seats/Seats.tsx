@@ -62,7 +62,7 @@ const Seats = () => {
 		: `/ticket-choice?eventId=${eventId}&sector=${sector}&block=${block}&seats=${sortedSelectedSeats.join(',')}`;
 
 	return (
-		<section className={classes['seats-page']}>
+		<section>
 			<h1 className={classes.title}>
 				Wybierz miejsca dla sektora: {sector} i strefy {block}
 			</h1>

@@ -10,7 +10,9 @@ export function isSectorAvailable(sector: string, availableSectors: string[]): b
  * Zwraca pustego stringa, jeśli sektor nie jest wybrany.
  */
 export function buildBlocksUrl(eventId: string, sector: string): string {
-	if (sector === '') {
+	const isSectorNotSelected = sector === '';
+
+	if (isSectorNotSelected) {
 		return '';
 	}
 	return `/blocks?eventId=${eventId}&sector=${sector}`;

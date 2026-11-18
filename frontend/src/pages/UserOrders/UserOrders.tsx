@@ -21,6 +21,8 @@ const OrderCard = ({ order, date }: OrderCardProps) => {
 		setIsExpanded(!isExpanded);
 	};
 
+	const hasNoTickets = order.tickets.length === 0;
+
 	return (
 		<article key={order._id} className={classes.order}>
 			<h3>Identyfikator zamówienia: {order._id}</h3>
@@ -29,7 +31,7 @@ const OrderCard = ({ order, date }: OrderCardProps) => {
 			</p>
 			<p>Data zamówienia: {date}</p>
 
-			{order.tickets.length === 0 && <p>Brak biletów dla tego zamówienia.</p>}
+			{hasNoTickets && <p>Brak biletów dla tego zamówienia.</p>}
 
 			<Button onClick={handleShowTickets}>{isExpanded ? 'Ukryj' : 'Wyświetl'} bilety</Button>
 

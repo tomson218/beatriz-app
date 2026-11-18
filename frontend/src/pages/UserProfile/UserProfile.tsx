@@ -24,7 +24,7 @@ const UserProfile = () => {
 					className={classes['user-photo']}
 				/>
 			</figure>
-			<ul className='list'>
+			<ul className={classes.list}>
 				<li className={classes['list-item']}>Nazwa użytkownika: {userDetails?.username}</li>
 				<li className={classes['list-item']}>Imię: {userDetails?.firstName}</li>
 				<li className={classes['list-item']}>Nazwisko: {userDetails?.lastName}</li>

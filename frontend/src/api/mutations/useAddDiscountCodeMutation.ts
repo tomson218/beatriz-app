@@ -1,20 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/api/apiConfig';
-import type { DiscountCodeDto } from '@beatriz/shared/discountCodes';
-import type { SuccessItem } from '@beatriz/shared/common';
+import type { AddDiscountCodeResponse, DiscountCodeDto } from '@beatriz/shared/discountCodes';
 
 const useAddDiscountCodeMutation = () => {
-	const addDiscountCode = async (discountCode: DiscountCodeDto): Promise<SuccessItem<DiscountCodeDto>> => {
+	const addDiscountCode = async (discountCode: DiscountCodeDto): Promise<AddDiscountCodeResponse> => {
 		const uri = '/discount-codes';
-		const response = await instance.post<SuccessItem<DiscountCodeDto>>(uri, discountCode);
+		const response = await instance.post<AddDiscountCodeResponse>(uri, discountCode);
 		return response.data;
 	};
 
 	return useMutation({
 		mutationFn: addDiscountCode,
 
-		onSuccess: (data: SuccessItem<DiscountCodeDto>) => {
+		onSuccess: (data: AddDiscountCodeResponse) => {
 			console.log(data);
 			toast.success('Pomyślnie dodano nowy kod');
 		},

@@ -17,6 +17,9 @@ interface ViewUserProps {
 }
 
 const ViewUser = ({ user }: ViewUserProps) => {
+	const isGoogleAccount = Object.hasOwn(user, 'googleId');
+	const isFacebookAccount = Object.hasOwn(user, 'facebookData');
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -27,7 +30,7 @@ const ViewUser = ({ user }: ViewUserProps) => {
 					<DialogTitle>Szczegóły konta</DialogTitle>
 				</DialogHeader>
 				<form>
-					<div className='grid gap-4 py-4'>
+					<div className={classes['dialog-body']}>
 						<FormField label='Nazwa użytkownika' htmlFor='name'>
 							<Input id='name' defaultValue={user?.username} readOnly />
 						</FormField>
@@ -42,7 +45,7 @@ const ViewUser = ({ user }: ViewUserProps) => {
 						</FormField>
 						<FormField label='Zalogowany przez Google' htmlFor='google'>
 							<p>
-								{Object.hasOwn(user, 'googleId') ? (
+								{isGoogleAccount ? (
 									<svg
 										fill='#0f0'
 										width='32px'
@@ -60,7 +63,7 @@ const ViewUser = ({ user }: ViewUserProps) => {
 							</p>
 						</FormField>
 						<FormField label='Zalogowany przez Facebooka' htmlFor='facebook'>
-							<p>{Object.hasOwn(user, 'facebookData') ? 'TAK' : 'NIE'}</p>
+							<p>{isFacebookAccount ? 'TAK' : 'NIE'}</p>
 						</FormField>
 					</div>
 				</form>

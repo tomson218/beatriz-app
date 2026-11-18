@@ -8,7 +8,7 @@ const useGetUserOrdersQuery = (id: User['_id']) => {
 		console.log(id);
 		const uri = `/orders/${id}`;
 		const response = await instance.get(uri);
-		return response.data.orders;
+		return response.data.data.orders;
 	};
 
 	return useQuery({

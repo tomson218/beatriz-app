@@ -38,8 +38,10 @@ const DiscountCodeForm = () => {
 		try {
 			const response = await applyDiscountCode({ enteredCode, totalPrice });
 
-			if (response.discount) {
-				const discount = response.discount;
+			const discount = response.data?.discount;
+			const hasDiscount = !!discount;
+
+			if (hasDiscount) {
 				setDiscountPercent(discount);
 
 				setOrder(prevOrder => {
@@ -55,20 +57,24 @@ const DiscountCodeForm = () => {
 		} catch (error) {
 			console.error('Error applying discount code:', error);
 
-			if (error.response.status === 400 && error.response.data.message === 'Discount code already applied.') {
+			const isBadRequest = error.response?.status === 400;
+			const isCodeAlreadyApplied = error.response?.data?.message === 'Discount code already applied.';
+			const isCodeNotFound = error.response?.status === 404;
+
+			if (isBadRequest && isCodeAlreadyApplied) {
 				setDiscountError({
 					message: 'Kod zniżkowy został już użyty',
 					visible: true,
 				});
 				return;
-			} else if (error.response.status === 400) {
+			} else if (isBadRequest) {
 				setDiscountError({
 					message:
 						'Użyty kod jest już nieważny albo wartość zamówienia jest za mała, żeby skorzystać z tego kodu',
 					visible: true,
 				});
 				return;
-			} else if (error.response.status === 404) {
+			} else if (isCodeNotFound) {
 				setDiscountError({
 					message: 'Użyty kod jest niepoprawny',
 					visible: true,

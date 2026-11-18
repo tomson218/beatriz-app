@@ -5,7 +5,6 @@
 	align-items: center;
 	height: 100vh;
 	margin: 0;
-	background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
 }
 
 .hala-container {
@@ -29,15 +28,8 @@
 	position: relative;
 }
 
-.hall-page {
-	min-height: 94.4dvh;
-	background-image: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-}
-
 .title {
-	font-size: 3rem;
-	color: #000;
-	text-align: center;
+	composes: page-title from global;
 	padding: 1rem 1rem 0;
 }
 

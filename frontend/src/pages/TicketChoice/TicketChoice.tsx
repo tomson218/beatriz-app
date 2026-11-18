@@ -21,6 +21,20 @@ import type { Prices, Event } from '@beatriz/shared/events';
 import type { TicketType } from '@beatriz/shared/tickets';
 import type { CartTicket } from '@beatriz/shared/orders';
 import { ASSET_BASE_URL } from '@/api/apiConfig';
+import { NO_SEAT, isNoSeatPlaceholder } from '@/utils/seats';
+
+/** Cena biletu dla danego miejsca (klucz: numer miejsca albo NO_SEAT). */
+type SeatPrices = Record<string, number>;
+
+/** Sprawdza czy pozycja zamówienia dotyczy danego miejsca (lub zamówienia bez miejsc, gdy seat to NO_SEAT). */
+const isOrderItemForSeat = (item: CartTicket, seat: string): boolean => {
+	const isSameSeat = item?.seating === seat;
+	const hasNoSeating = !item?.seating;
+	const isNoSeatSelected = isNoSeatPlaceholder(seat);
+	const isItemWithoutSeatMatching = hasNoSeating && isNoSeatSelected;
+
+	return isSameSeat || isItemWithoutSeatMatching;
+};
 
 const getTicketTypeByPrice = (prices: Prices, value: number): TicketType | undefined => {
 	return Object.keys(prices).find(key => prices[key as TicketType] === value) as TicketType | undefined;
@@ -50,21 +64,23 @@ const TicketChoice = () => {
 	} = useGetEventByIdQuery(eventId);
 	const { mutate: addCart } = useAddUserCartMutation();
 
-	const [ticketsPrice, setTicketsPrice] = useState<Record<string, number>>({});
+	const [ticketsPrice, setTicketsPrice] = useState<SeatPrices>({});
 
-	const hasSeats = seats && seats.trim() !== '';
+	const hasSeatsParam = Boolean(seats);
+	const isSeatsParamBlank = seats?.trim() === '';
+	const hasSeats = hasSeatsParam && !isSeatsParamBlank;
 
 	const location = useLocation();
 	const currentUrl = `${location.pathname}${location.search}`;
 
 	const seatsArray = useMemo(() => {
-		return hasSeats ? seats.split(',') : ['no-seat'];
+		return hasSeats ? seats.split(',') : [NO_SEAT];
 	}, [seats]);
 
 	useEffect(() => {
 		if (eventDetails) {
 			const prices = eventDetails.prices || {};
-			const pricesObj = seatsArray.reduce<Record<string, number>>((acc, seat) => {
+			const pricesObj = seatsArray.reduce<SeatPrices>((acc, seat) => {
 				acc[seat] = prices.normal;
 				return acc;
 			}, {});
@@ -82,12 +98,14 @@ const TicketChoice = () => {
 					name: eventDetails.name,
 					date: eventDetails.date,
 					images: [`${ASSET_BASE_URL}/images/events/${eventDetails.image}`],
-					seating: seat !== 'no-seat' ? seat : undefined,
+					seating: isNoSeatPlaceholder(seat) ? undefined : seat,
 					price: ticketsPrice[seat],
 					type: getTicketTypeByPrice(eventDetails.prices, ticketsPrice[seat]),
 				}));
 
 				localStorage.setItem('ORDERS', JSON.stringify(newOrder));
+				// Zamówienie budowane od nowa nie ma już rabatu, więc zapamiętany kod rabatowy przestaje być aktualny.
+				localStorage.removeItem('code');
 
 				return newOrder;
 			});
@@ -95,7 +113,7 @@ const TicketChoice = () => {
 	}, [eventDetails, ticketsPrice, seatsArray, eventId, sector]);
 
 	useEffect(() => {
-		const totalAmount = hasSeats ? order.reduce((sum, item) => sum + item?.price, 0) : ticketsPrice['no-seat'] || 0;
+		const totalAmount = hasSeats ? order.reduce((sum, item) => sum + item?.price, 0) : ticketsPrice[NO_SEAT] || 0;
 
 		setTotalPrice(totalAmount);
 		localStorage.setItem('totalPrice', JSON.stringify(totalAmount));
@@ -112,7 +130,7 @@ const TicketChoice = () => {
 		}));
 		setOrder(prevOrder => {
 			return prevOrder.map((item: CartTicket) => {
-				if (item?.seating === seat || (!item?.seating && seat === 'no-seat')) {
+				if (isOrderItemForSeat(item, seat)) {
 					return {
 						...item,
 						price: price,
@@ -137,21 +155,29 @@ const TicketChoice = () => {
 		return <p>Ładowanie...</p>;
 	}
 
-	const isEventDetailsMissing = !eventDetails || !eventDetails.prices;
-	if (eventDetailsError || isEventDetailsMissing) {
+	const hasNoEventDetails = !eventDetails;
+	const hasNoEventPrices = !eventDetails?.prices;
+	const isEventDetailsMissing = hasNoEventDetails || hasNoEventPrices;
+	const isEventDetailsUnavailable = eventDetailsError || isEventDetailsMissing;
+
+	if (isEventDetailsUnavailable) {
 		return <p>Nie udało się załadować szczegółów wydarzenia.</p>;
 	}
 
+	const isSeatedOrder = seats !== undefined;
+	const isOrderWithoutSeats = seats === undefined;
+	const canGoToSummary = !isError;
+
 	return (
-		<main className={classes['ticket-choice-page']}>
+		<main>
 			<h2 className={classes['page-title']}>
 				Wybór typu biletów
 			</h2>
 			<section className={classes['grid-container']}>
-				{seats !== undefined &&
+				{isSeatedOrder &&
 					order.map((orderItem, index) => (
 						<Order
-							key={`${orderItem.seating || 'no-seat'}-${orderItem.price}`}
+							key={`${orderItem.seating || NO_SEAT}-${orderItem.price}`}
 							ticket={{
 								eventId: orderItem.eventId,
 								sector: orderItem.sector,
@@ -159,7 +185,7 @@ const TicketChoice = () => {
 								block: orderItem.block,
 							}}
 							eventDetails={eventDetails}
-							onChangePrice={e => handleChangePrice(e, orderItem.seating || 'no-seat')}
+							onChangePrice={e => handleChangePrice(e, orderItem.seating || NO_SEAT)}
 							price={orderItem?.price}
 							type={orderItem?.type}
 							isChoice
@@ -167,7 +193,7 @@ const TicketChoice = () => {
 					))}
 			</section>
 
-			{seats === undefined && (
+			{isOrderWithoutSeats && (
 				<OrderWithOutSeats
 					eventDetails={eventDetails}
 					block={block}
@@ -179,7 +205,7 @@ const TicketChoice = () => {
 			<TotalAmount />
 
 			<footer className={classes.buttons}>
-				<Link to={!isError ? `/summary?eventId=${eventId}` : currentUrl}>
+				<Link to={canGoToSummary ? `/summary?eventId=${eventId}` : currentUrl}>
 					<Button
 						onClick={() => {
 							if (isError) {

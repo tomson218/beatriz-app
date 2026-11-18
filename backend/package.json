@@ -8,8 +8,9 @@
 	},
 	"scripts": {
 		"test": "jest",
-		"start:prod": "NODE_ENV=production nodemon server.ts",
-		"start": "babel-node index.ts"
+		"start": "node --env-file-if-exists=.env.local index.ts",
+		"dev": "node --watch --env-file-if-exists=.env.local index.ts",
+		"start:prod": "node index.ts"
 	},
 	"type": "module",
 	"author": "TP",
@@ -22,6 +23,7 @@
 		"@react-pdf/renderer": "^4.1.6",
 		"@types/swagger-jsdoc": "^6.0.4",
 		"@types/swagger-ui-express": "^4.1.8",
+		"axios": "^1.7.7",
 		"body-parser": "^1.20.2",
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.5",
@@ -30,6 +32,8 @@
 		"express-session": "^1.18.1",
 		"helmet": "^8.1.0",
 		"jsonwebtoken": "^9.0.2",
+		"jwt-decode": "^4.0.0",
+		"mongoose": "^8.7.2",
 		"mongoose-timestamp": "^0.6.0",
 		"morgan": "^1.10.0",
 		"multer": "^1.4.1",

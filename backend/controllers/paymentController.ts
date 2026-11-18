@@ -2,34 +2,65 @@ import dotenv from 'dotenv';
 import Stripe from 'stripe';
 import { formattedDate, formattedTime } from '../utils/formattingDate.ts';
 import UserModel from '../models/userModel.ts';
+import EventModel from '../models/eventModel.ts';
+import DiscountCodeModel from '../models/discountCodeModel.ts';
+import AppError from '../utils/appError.ts';
 import { type Request, type Response, type NextFunction } from 'express';
-import type { User } from '@beatriz/shared/users';
-import { validatePositiveNumber } from '../utils/validateNumbers.ts';
+import {
+	applyDiscount,
+	parseRequestedTickets,
+	priceTickets,
+	toStripeAmount,
+	type CheckoutEvent,
+	type CheckoutItem,
+} from '../utils/checkout.ts';
 
 dotenv.config({ path: './.env.local' });
 
 const stripe = new Stripe(process.env.STRIPE_SK);
 
-export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
+export const createCheckoutSession = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const { products } = req.body;
+		// Z żądania bierzemy tylko CO klient kupuje. Ceny i rabaty liczy serwer.
+		const tickets = parseRequestedTickets(req.body.products);
 
-		const user: User | null = await UserModel.findById(req.user.id);
+		const eventIds = [...new Set(tickets.map(ticket => ticket.eventId))];
+		const events = await EventModel.find({ _id: { $in: eventIds } })
+			.select('name date prices sectors seatRequired')
+			.lean();
+		const eventsById = new Map<string, CheckoutEvent>(
+			events.map(event => [event._id.toString(), event as unknown as CheckoutEvent]),
+		);
 
-		const hasCartItems = user.cart.length > 0;
-		if (hasCartItems) {
-			user.cart = [];
-			await user.save();
+		let items: CheckoutItem[] = priceTickets(tickets, eventsById);
+
+		const discountCode = typeof req.body.discountCode === 'string' ? req.body.discountCode.trim() : '';
+
+		if (discountCode) {
+			const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+			const code = await DiscountCodeModel.findOne({ code: discountCode });
+
+			if (!code) {
+				throw new AppError('Discount code not found.', 404);
+			}
+			if (Date.now() > new Date(code.expiration).getTime()) {
+				throw new AppError('Discount code has expired.', 400);
+			}
+			if (subtotal < code.usageConditions) {
+				throw new AppError('Total amount does not meet the usage conditions.', 400);
+			}
+			if (req.user.appliedDiscountCodes?.some(item => item.code === discountCode && item.isUsed === true)) {
+				throw new AppError('Discount code already applied.', 400);
+			}
+
+			items = applyDiscount(items, code.value);
 		}
 
-		user.cart = products;
+		// Zatwierdzony koszyk trafia do `myCart`, którego klient nie może zmienić (`cart` można nadpisać przez /users/addCart).
+		// Webhook po opłaceniu zamówienia czyta bilety wyłącznie stąd.
+		await UserModel.findByIdAndUpdate(req.user.id, { myCart: items });
 
-		await user.save();
-
-		// otypowac to
-		const productsList = products.map(({ id, name, images, price, seating, sector, date, block }: any) => {
-			validatePositiveNumber(price, `Cena produktu "${name}"`);
-
+		const lineItems = items.map(({ name, date, images, price, seating, sector, block }) => {
 			const eventDate = new Date(date);
 
 			return {
@@ -37,23 +68,23 @@ export const createCheckoutSession = async (req: Request, res: Response, next: N
 					currency: 'pln',
 					product_data: {
 						name: `${name} - ${formattedDate(eventDate)} ${formattedTime(eventDate)}`,
-						images: images,
+						images: images.length > 0 ? images : undefined,
 						description: `sektor: ${sector} strefa: ${block} ${seating ? `miejsce: ${seating}` : ''}`,
 					},
-					unit_amount: price * 100,
+					unit_amount: toStripeAmount(price),
 				},
 				quantity: 1,
 			};
 		});
 
 		const session = await stripe.checkout.sessions.create({
-			line_items: productsList,
+			line_items: lineItems,
 			mode: 'payment',
 			success_url: `${process.env.CLIENT_URL}/success`,
 			cancel_url: `${process.env.CLIENT_URL}/cancel`,
 			metadata: {
 				userId: JSON.stringify(req.user.id),
-				discountCode: JSON.stringify(req.body.discountCode),
+				discountCode: JSON.stringify(discountCode || null),
 			},
 		});
 

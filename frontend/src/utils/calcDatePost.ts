@@ -6,15 +6,19 @@ export const calcDatePost = (date: string) => {
 	const monthsDifference = daysDifference / 30;
 	const yearsDifference = monthsDifference / 12;
 
-	if (hoursDifference < 24) {
+	const isLessThanDayAgo = hoursDifference < 24;
+	const isLessThanMonthAgo = daysDifference < 30;
+	const isLessThanYearAgo = monthsDifference < 12;
+
+	if (isLessThanDayAgo) {
 		return `${Math.floor(hoursDifference)} h`;
 	}
 
-	if (daysDifference < 30) {
+	if (isLessThanMonthAgo) {
 		return `${Math.floor(daysDifference)} days`;
 	}
 
-	if (monthsDifference < 12) {
+	if (isLessThanYearAgo) {
 		return `${Math.floor(monthsDifference)} months`;
 	}
 

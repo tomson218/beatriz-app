@@ -1,13 +1,6 @@
-.container {
-	min-height: 94.4dvh;
-	background-color: #f5f5dc;
-}
-
 .heading {
-	text-align: center;
+	composes: page-title from global;
 	padding: 1rem;
-	font-size: 2rem;
-	font-weight: 600;
 }
 
 .blocks {

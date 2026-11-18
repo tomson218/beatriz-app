@@ -41,6 +41,8 @@ const FormInput = <T extends FieldValues>({
 		return null;
 	};
 
+	const message = getMessage();
+
 	return (
 		<section className={className || classes['form-group']}>
 			<Label htmlFor={inputId}>{labelText}</Label>
@@ -51,7 +53,7 @@ const FormInput = <T extends FieldValues>({
 				{...register(inputId as Path<T>, validation)}
 				{...props}
 			/>
-			{getMessage() && <p className={classes['error-message']}>{getMessage()}</p>}
+			{message && <p className={classes['error-message']}>{message}</p>}
 		</section>
 	);
 };

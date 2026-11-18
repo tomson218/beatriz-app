@@ -120,7 +120,9 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 		localStorage.setItem('ORDERS', JSON.stringify(newOrder));
 	}, [countTickets, eventDetails, setOrder, setTotalPrice, block, sector]);
 
-	if (!eventDetails) {
+	const isEventDetailsMissing = !eventDetails;
+
+	if (isEventDetailsMissing) {
 		return <div>Ładowanie...</div>;
 	}
 

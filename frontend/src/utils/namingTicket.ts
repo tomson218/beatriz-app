@@ -1,18 +1,27 @@
 import type { BlockType } from '@beatriz/shared/tickets';
+import type { CssModuleClasses } from '@/types/css';
 
 export const getNameBlock = (name: BlockType) => {
-	if (name === 'blue') return 'niebieska';
-	else if (name === 'green') return 'zielona';
-	else if (name === 'yellow') return 'żółta';
+	const isBlue = name === 'blue';
+	const isGreen = name === 'green';
+	const isYellow = name === 'yellow';
+
+	if (isBlue) return 'niebieska';
+	else if (isGreen) return 'zielona';
+	else if (isYellow) return 'żółta';
 	else return 'czarna';
 };
 
 export const getNameTypeTicket = (type: string) => {
-	if (type === 'VIP') {
+	const isVip = type === 'VIP';
+	const isNormal = type === 'normal';
+	const isChild = type === 'child';
+
+	if (isVip) {
 		return 'VIP';
-	} else if (type === 'normal') {
+	} else if (isNormal) {
 		return 'Normalny';
-	} else if (type === 'child') {
+	} else if (isChild) {
 		return 'Dziecinny';
 	} else return 'Unknown';
 };
@@ -20,7 +29,7 @@ export const getNameTypeTicket = (type: string) => {
 /**
  * Buduje klasę CSS dla odznaki strefy (block badge).
  */
-export function getBlockBadgeClass(block: BlockType, classes: Record<string, string>): string {
+export function getBlockBadgeClass(block: BlockType, classes: CssModuleClasses): string {
 	const blockClass = `block-badge--${block}`;
 	return `${classes['block-badge']} ${classes[blockClass]}`;
 }

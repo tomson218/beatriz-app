@@ -12,12 +12,12 @@ import {
 	forgetPassword,
 	resetPassword,
 	updatePassword,
-	protect,
 	googleLogin,
 	facebookLogin,
 	refreshAccessToken,
 	logout,
 } from '../controllers/authController.ts';
+import { protect } from '../middleware/authMiddleware.ts';
 
 const router = express.Router({ caseSensitive: true, strict: true });
 
@@ -35,8 +35,8 @@ router.post('/facebookLogin', facebookLogin);
 router.post('/password/forgot', forgetPassword);
 router.post('/forgetPassword', forgetPassword);
 
-router.post('/password/reset/:token', protect, resetPassword);
-router.patch('/resetPassword/:token', protect, resetPassword);
+router.post('/password/reset/:token', resetPassword);
+router.patch('/resetPassword/:token', resetPassword);
 
 router.patch('/password', protect, updatePassword);
 router.patch('/updateMyPassword', protect, updatePassword);

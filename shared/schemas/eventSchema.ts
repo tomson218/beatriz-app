@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import { sectorSchema, pricesSchema } from './utils';
-import { EVENT_TYPES } from '@/enums/eventTypes';
+import { sectorSchema, pricesSchema } from '#schemas/utils';
+import { EVENT_TYPES } from '#enums/eventTypes';
 
 export const eventSchema = new Schema(
 	{

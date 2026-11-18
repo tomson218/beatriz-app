@@ -62,12 +62,12 @@ describe('API REQUESTS', () => {
 		});
 
 		const mockUser = {
-			email: 'bvb1909@gmail.com',
-			firstName: 'Marco',
-			lastName: 'Reus',
-			password: 'marco19121909',
-			passwordConfirm: 'marco19121909',
-			username: 'marco1909',
+			email: 'jan.test@example.com',
+			firstName: 'Jan',
+			lastName: 'Testowy',
+			password: 'test-password-1',
+			passwordConfirm: 'test-password-1',
+			username: 'jan.test',
 		};
 
 		act(() => {

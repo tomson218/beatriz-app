@@ -33,7 +33,9 @@ const Hall = () => {
 	}, [eventDetails]);
 
 	const handleSelectSector = (sector: string) => {
-		if (!isSectorAvailable(sector, availableSector)) {
+		const isSectorUnavailable = !isSectorAvailable(sector, availableSector);
+
+		if (isSectorUnavailable) {
 			return;
 		}
 		setSelectedSector(sector);
@@ -51,8 +53,16 @@ const Hall = () => {
 	const blocksUrl = buildBlocksUrl(eventId, selectedSector);
 	const nextUrl = blocksUrl || currentUrl;
 
+	const handleChooseBlocksClick = () => {
+		const isSectorNotSelected = !selectedSector;
+
+		if (isSectorNotSelected) {
+			setIsOpen(true);
+		}
+	};
+
 	return (
-		<main className={classes['hall-page']}>
+		<main>
 			<h1 className={classes.title}>
 				Wybierz odpowiedni sektor hali
 			</h1>
@@ -80,11 +90,7 @@ const Hall = () => {
 					<Button
 						className={classes['hall-button']}
 						variant='ghost'
-						onClick={() => {
-							if (!selectedSector) {
-								setIsOpen(true);
-							}
-						}}>
+						onClick={handleChooseBlocksClick}>
 						Wybierz strefę
 					</Button>
 				</Link>

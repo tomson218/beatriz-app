@@ -31,7 +31,9 @@ export const listenWebhook = async (request: Request, response: Response, next: 
 			try {
 				const checkoutSessionCompleted = event.data.object;
 
-				const user = await UserModel.findById(JSON.parse(checkoutSessionCompleted.metadata.userId));
+				const user = await UserModel.findById(JSON.parse(checkoutSessionCompleted.metadata.userId)).select(
+					'+myCart',
+				);
 
 				const discountCode = JSON.parse(checkoutSessionCompleted.metadata.discountCode);
 
@@ -42,7 +44,14 @@ export const listenWebhook = async (request: Request, response: Response, next: 
 					await user.save();
 				}
 
-				const userCart = user.cart;
+				// `myCart` zapisuje wyłącznie createCheckoutSession (z cenami wyliczonymi na serwerze).
+				// `cart` może zmienić klient przez /users/addCart, więc nie wolno z niego czytać.
+				const userCart = user.myCart;
+
+				if (!userCart?.length) {
+					console.warn(`Checkout session ${checkoutSessionCompleted.id}: no approved cart, skipping.`);
+					break;
+				}
 
 				const orderPrice = userCart.reduce((a, b) => a + Number(b.price), 0);
 
@@ -94,7 +103,7 @@ export const listenWebhook = async (request: Request, response: Response, next: 
 					return next(new AppError('Problem with sending an email.', 500));
 				}
 
-				await UserModel.findByIdAndUpdate(user._id, { cart: [] });
+				await UserModel.findByIdAndUpdate(user._id, { cart: [], myCart: [] });
 			} catch (error) {
 				console.error('Error handling checkout.session.completed:', error);
 			}

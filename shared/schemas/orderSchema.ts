@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
-import { ticketSchema } from './utils';
-import { CURRENCIES } from '@/enums/currencies';
+import { ticketSchema } from '#schemas/utils';
+import { CURRENCIES } from '#enums/currencies';
 
 export const orderSchema = new Schema({
 	totalAmount: {

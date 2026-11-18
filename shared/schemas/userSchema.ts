@@ -1,10 +1,9 @@
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { Schema, model } from 'mongoose';
-import type { NextFunction } from 'express';
-import { USER_ROLES } from '@/enums/userRoles';
-import { appliedDiscountCodesSchema } from './utils';
+import { Schema, type Query } from 'mongoose';
+import { USER_ROLES } from '#enums/userRoles';
+import { appliedDiscountCodesSchema } from '#schemas/utils';
 
 export const userSchema = new Schema({
 	username: {
@@ -24,7 +23,9 @@ export const userSchema = new Schema({
 	},
 	googleId: {
 		type: String,
+		// sparse: konta bez googleId (rejestracja hasłem) nie mogą kolidować ze sobą na pustej wartości.
 		unique: true,
+		sparse: true,
 	},
 	facebookData: {
 		type: Object,
@@ -73,24 +74,21 @@ export const userSchema = new Schema({
 	appliedDiscountCodes: [appliedDiscountCodesSchema],
 });
 
-userSchema.pre('save', async function (next: NextFunction): Promise<void> {
-	if (!this.isModified('password')) return next();
-	{
-		this.password = await bcrypt.hash(this.password, 12);
-		this.passwordConfirm = undefined;
-		next();
-	}
+userSchema.pre('save', async function (): Promise<void> {
+	if (!this.isModified('password') || !this.password) return;
+
+	this.password = await bcrypt.hash(this.password, 12);
+	this.passwordConfirm = undefined;
 });
 
-userSchema.pre('save', function (next: NextFunction): void {
-	if (!this.isModified('password') || this.insNew) return next();
-	this.passwordChangedAt = Date.now() - 1000;
-	next();
+userSchema.pre('save', function (): void {
+	if (!this.isModified('password') || this.isNew) return;
+
+	this.passwordChangedAt = new Date(Date.now() - 1000);
 });
 
-userSchema.pre(/^find/, function (next: NextFunction): void {
+userSchema.pre(/^find/, function (this: Query<unknown, unknown>): void {
 	this.find({ active: { $ne: false } });
-	next();
 });
 
 userSchema.methods.correctPassword = async function (
@@ -102,7 +100,7 @@ userSchema.methods.correctPassword = async function (
 
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boolean {
 	if (this.passwordChangedAt) {
-		const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+		const changedTimestamp = Math.floor(this.passwordChangedAt.getTime() / 1000);
 		return JWTTimestamp < changedTimestamp;
 	}
 	return false;

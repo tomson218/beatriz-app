@@ -1,8 +1,8 @@
-import type { SuccessItem, SuccessList } from '@/types/common';
-import { Types, type InferSchemaType } from 'mongoose';
-import { userSchema } from '@/schemas/userSchema';
-import type { Event } from '@/types/events';
-import { USER_ROLES } from '@/enums/userRoles';
+import type { ApiResponse, ItemResponse, ListResponse, MessageResponse } from '#types/common';
+import type { Types, InferSchemaType } from 'mongoose';
+import type { userSchema } from '#schemas/userSchema';
+import type { Event } from '#types/events';
+import type { USER_ROLES } from '#enums/userRoles';
 
 export type User = InferSchemaType<typeof userSchema> & { _id: Types.ObjectId };
 export type UserRole = (typeof USER_ROLES)[number];
@@ -17,7 +17,7 @@ export interface AppliedDiscountCode {
 	code?: string;
 }
 
-export interface UserDto extends Omit<User, 'password' | 'passwordConfirm' | 'passwordResetToken' | 'passwordResetExpires' | 'myCart'> {
+export interface UserDto extends Omit<User, '_id' | 'password' | 'passwordConfirm' | 'passwordResetToken' | 'passwordResetExpires' | 'myCart'> {
 	_id: string;
 }
 
@@ -30,12 +30,17 @@ export interface UpdateUserRequest extends UpdateMeRequest {
 }
 
 export interface UserIdParams {
-	userId: User["_id"];
+	id: string;
 }
 
 export interface AddCartRequest {
-	items: unknown[];
+	cart: Cart;
 }
+
+export type AddCartResponse = ApiResponse<{
+	cart: Cart;
+	userId: string;
+}>;
 
 export interface DataMap {
 	[key: string]: unknown;
@@ -45,11 +50,15 @@ export interface UserMessageSuccess {
 	message: string;
 }
 
-export type GetAllUsersResponse = SuccessList<UserDto>;
+export type GetAllUsersResponse = ListResponse<'users', UserDto>;
 
-export type GetUserResponse = SuccessItem<UserDto>;
+export type GetUserResponse = ItemResponse<'user', UserDto>;
 
-export interface DeleteUserResponse {
-	message: string;
-}
+/** Ulubione wydarzenia: `{ status, data: { results, events } }`. */
+export type FavouriteEventsResponse = ListResponse<'events', Event>;
 
+/** Dodanie/usunięcie ulubionego: `{ status, message }`. */
+export type FavouriteEventResponse = MessageResponse;
+
+/** Usunięcie użytkownika kończy się statusem 204 (bez treści). */
+export type DeleteUserResponse = Partial<MessageResponse>;

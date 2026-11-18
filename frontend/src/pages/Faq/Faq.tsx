@@ -1,12 +1,13 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/Accordion/Accordion';
 import { FAQ_ITEMS } from '@beatriz/shared/constants/faq';
+import classes from './Faq.module.css';
 
 const Faq = () => {
 	return (
-		<section className='mx-auto max-w-4xl space-y-6 px-4 py-10'>
-			<header className='space-y-2'>
-				<p className='text-sm font-medium uppercase tracking-[0.2em] text-amber-600'>Pomoc</p>
-				<h1 className='text-3xl font-bold text-slate-900'>Sekcja FAQ</h1>
+		<section className={classes.page}>
+			<header className={classes.header}>
+				<p className={classes.eyebrow}>Pomoc</p>
+				<h1 className={classes.title}>Sekcja FAQ</h1>
 			</header>
 
 			<Accordion

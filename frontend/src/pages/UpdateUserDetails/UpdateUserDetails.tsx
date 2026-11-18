@@ -122,7 +122,7 @@ const UpdateUserDetails = () => {
 						Wprowadź zmiany w swoim profilu. Kliknij Zapisz, gdy skończysz.
 					</DialogDescription>
 				</DialogHeader>
-			<div className='grid gap-4 py-4'>
+			<div className={classes['dialog-body']}>
 				<FormField label='Nazwa użytkownika' htmlFor='name'>
 					<Input id='name' value={userDetails?.username} />
 				</FormField>

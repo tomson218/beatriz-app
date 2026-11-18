@@ -1,10 +1,10 @@
-import type { SuccessList } from '@/types/common';
-import type { Event } from '@/types/events';
-import type { User } from '@/types/users';
-import { Types, type InferSchemaType } from 'mongoose';
-import { ticketSchemaDef } from '@/schemas/ticketSchema';
-import { TICKET_TYPES } from '@/enums/ticketTypes';
-import { BLOCK_TYPES } from '@/enums/blockTypes';
+import type { ApiResponse, ListResponse } from '#types/common';
+import type { Event } from '#types/events';
+import type { User } from '#types/users';
+import type { Types, InferSchemaType } from 'mongoose';
+import type { ticketSchemaDef } from '#schemas/ticketSchema';
+import type { TICKET_TYPES } from '#enums/ticketTypes';
+import type { BLOCK_TYPES } from '#enums/blockTypes';
 
 export type Ticket = InferSchemaType<typeof ticketSchemaDef> & { _id: Types.ObjectId };
 export type TicketType = (typeof TICKET_TYPES)[number];
@@ -29,9 +29,13 @@ export interface OccupiedSeatsParams {
 	block: BlockType;
 }
 
-export type TicketsResponse = SuccessList<TicketDto>;
+export type TicketsResponse = ListResponse<'tickets', TicketDto>;
 
-export type GroupAvailableSectorsResponse = SuccessList<string>;
+/** `freeSectorsCount`: liczba wolnych miejsc w każdym sektorze wydarzenia, np. `{ A: 380, B: 400 }`. */
+export type GroupAvailableSectorsResponse = ApiResponse<{
+	results: number;
+	freeSectorsCount: Record<string, number>;
+}>;
 
 export interface GetOccupiedSeatsRequest {
 	eventId: Event["_id"];
@@ -39,4 +43,7 @@ export interface GetOccupiedSeatsRequest {
 	block: BlockType;
 }
 
-export type GetOccupiedSeatsResponse = SuccessList<number>;
+export type GetOccupiedSeatsResponse = ApiResponse<{
+	results: number;
+	occupiedSeats: number[];
+}>;

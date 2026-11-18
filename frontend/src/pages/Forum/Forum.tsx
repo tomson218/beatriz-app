@@ -7,7 +7,7 @@ import useAddPostToForumMutation from '@/api/mutations/useAddPostToForumMutation
 import { Button } from '@/components/ui/Button/Button';
 import classes from './Forum.module.css';
 import { isEmptyMessage } from '@/utils/sector';
-import { hasNoForumPosts, isPostAuthor } from '@/utils/forum';
+import { hasAnyForumPosts, hasNoForumPosts, isPostAuthor } from '@/utils/forum';
 
 const Forum = () => {
 	const { eventId } = useParams();
@@ -40,19 +40,23 @@ const Forum = () => {
 		setError(false);
 	};
 
-	if (isForumPostsLoading || isEventDetailsLoading) {
+	const isAnyDataLoading = isForumPostsLoading || isEventDetailsLoading;
+
+	if (isAnyDataLoading) {
 		return <p>Ładowanie...</p>;
 	}
 
+	const isFormHidden = !isShown;
+
 	return (
-		<main className={classes['forum-page']}>
+		<main>
 			<h2 className={classes['forum-title']}>
 				Opinie dla {eventDetails.name}
 			</h2>
 
 			{hasNoForumPosts(forumPosts) && <p>Brak postów dla tego wydarzenia!</p>}
 
-			{!hasNoForumPosts(forumPosts) && (
+			{hasAnyForumPosts(forumPosts) && (
 				<section className={classes['forum-posts']}>
 					{forumPosts.map(forumPost => (
 						<Post
@@ -65,7 +69,7 @@ const Forum = () => {
 			)}
 
  			<aside className={classes.toggle}>
- 			{!isShown && (
+ 			{isFormHidden && (
  				<Button onClick={handleShowForm}>
  					Dodaj nowy post
  				</Button>

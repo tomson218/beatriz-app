@@ -9,7 +9,7 @@ const useResetPasswordMutation = (resetToken: string) => {
 	const navigate = useNavigate();
 
 	const resetPassword = async (data: ResetPasswordRequest): Promise<MessageResponse> => {
-		const uri = `${API_URL}/users/resetpassword/${resetToken}`;
+		const uri = `${API_URL}/auth/resetPassword/${resetToken}`;
 		const response = await axios.patch<MessageResponse>(uri, data);
 		return response.data;
 	};

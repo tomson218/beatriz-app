@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/Label/Label';
 import { useState } from 'react';
 import { calcDatePost } from '@/utils/calcDatePost';
 import { parseEventDate } from '@/utils/eventDate';
+import { matchesEventFilter } from '@/utils/eventFilter';
 import type { EventFilter } from '@beatriz/shared/events';
 
 const Home = () => {
@@ -29,15 +30,22 @@ const Home = () => {
 		seatRequired: [],
 	});
 
-	if (isEventsLoading || isFavouriteEventsLoading) {
+	const isAnyDataLoading = isEventsLoading || isFavouriteEventsLoading;
+
+	if (isAnyDataLoading) {
 		return <div>Ładowanie...</div>;
 	}
 
 	const handleFilterChange = e => {
 		const { name, value } = e.target;
+
+		const isMinPriceField = name === 'minPrice';
+		const isMaxPriceField = name === 'maxPrice';
+		const isPriceField = isMinPriceField || isMaxPriceField;
+
 		setFilter(prevFilter => ({
 			...prevFilter,
-			[name]: name === 'minPrice' || name === 'maxPrice' ? parseInt(value, 10) : value,
+			[name]: isPriceField ? parseInt(value, 10) : value,
 		}));
 	};
 
@@ -79,21 +87,10 @@ const Home = () => {
 	};
 
 	const filteredEvents = events
-		.filter(event => {
-			const eventDate = parseEventDate(event.date).toISOString().split('T')[0];
-			const filterDate = filter.date ? parseEventDate(filter.date).toISOString().split('T')[0] : '';
-
-			return (
-				(!filter.date || eventDate === filterDate) &&
-				(!filter.name || event.name.toLowerCase().includes(filter.name.toLowerCase())) &&
-				(filter.type.length === 0 || filter.type.includes(event.type)) &&
-				(!filter.star || event.star.includes(filter.star)) &&
-				(filter.seatRequired.length === 0 || filter.seatRequired.includes(event.seatRequired)) &&
-				event.prices.normal >= filter.minPrice &&
-				event.prices.normal <= filter.maxPrice
-			);
-		})
+		.filter(event => matchesEventFilter(event, filter))
 		.toSorted((a, b) => parseEventDate(a.date).getTime() - parseEventDate(b.date).getTime());
+
+	const hasNoFilteredEvents = filteredEvents.length === 0;
 
 	return (
 		<main className={classes.container}>
@@ -228,7 +225,7 @@ const Home = () => {
 						/>
 					))}
 
-				{filteredEvents.length === 0 && <p>Nie znaleziono wydarzeń</p>}
+				{hasNoFilteredEvents && <p>Nie znaleziono wydarzeń</p>}
 			</section>
 		</main>
 	);

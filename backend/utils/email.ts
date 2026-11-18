@@ -12,7 +12,7 @@ export const sendEmail = async (options: any): Promise<void> => {
 	});
 
 	const mailOptions = {
-		from: 'tomson.studia@gmail.com',
+		from: process.env.GOOGLE_MAIL_USERNAME,
 		to: options.email,
 		subject: options.subject,
 		text: options.message,

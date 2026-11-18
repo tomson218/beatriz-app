@@ -6,7 +6,7 @@ import type { ForgetPasswordRequest, MessageResponse } from '@beatriz/shared/aut
 
 const useForgetPasswordMutation = () => {
 	const forgetPassword = async (email: string): Promise<MessageResponse> => {
-		const uri = `${API_URL}/users/forgetPassword`;
+		const uri = `${API_URL}/auth/forgetPassword`;
 		const payload: ForgetPasswordRequest = { email };
 		const response = await axios.post<MessageResponse>(uri, payload);
 		return response.data;

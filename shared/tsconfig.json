@@ -10,13 +10,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
-		"jsx": "react-jsx",
-		"baseUrl": ".",
-		"paths": {
-			"@/types/*": ["types/*"],
-			"@/enums/*": ["enums/*"],
-			"@/schemas/*": ["schemas/*"]
-		}
+		"jsx": "react-jsx"
 	},
 	"include": ["types/**/*.ts", "enums/**/*.ts", "schemas/**/*.ts", "constants/**/*.ts"]
 }

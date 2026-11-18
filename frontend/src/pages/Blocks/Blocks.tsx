@@ -34,11 +34,12 @@ const Blocks = () => {
 
 	if (isEventDetailsLoading) return <div>Ładowanie...</div>;
 
+	const isBlockNotSelected = !selectedBlock;
 	const isSeatRequired = eventDetails.seatRequired;
 	const needsSeatSelection = selectedBlock && isSeatRequired;
 
 	const buildNextPageUrl = () => {
-		if (!selectedBlock) return null;
+		if (isBlockNotSelected) return null;
 		const base = `?eventId=${eventId}&sector=${sector}&block=${selectedBlock}`;
 		return needsSeatSelection ? `/seats${base}` : `/ticket-choice${base}`;
 	};
@@ -50,7 +51,7 @@ const Blocks = () => {
 	};
 
 	const handleChoosePage = () => {
-		if (!selectedBlock) {
+		if (isBlockNotSelected) {
 			setIsOpen(true);
 			return;
 		}
@@ -59,7 +60,7 @@ const Blocks = () => {
 	};
 
 	return (
-		<main className={classes.container}>
+		<main>
 			<h1 className={classes.heading}>Wybierz strefę</h1>
 
 			<section className={classes.blocks}>

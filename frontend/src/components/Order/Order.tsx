@@ -37,23 +37,20 @@ const Order = ({ ticket, eventDetails, onChangePrice, price, isChoice, isSummary
 				Data: {formattedDate(eventDate)} o {formattedTime(eventDate)}
 			</p>
 			<figure>
-				<img
-					src={`${ASSET_BASE_URL}/images/events/${eventDetails.image}`}
-					alt={eventDetails.name}
-				/>
+				<img src={`${ASSET_BASE_URL}/images/events/${eventDetails.image}`} alt={eventDetails.name} />
 			</figure>
 			<section>
- 			<p>
- 				<strong>Sektor:</strong> {ticket.sector}
- 			</p>
- 			<p>
- 				<strong>Strefa:</strong> {getNameBlock(ticket.block)}
- 			</p>
- 			{ticket.seat && (
- 				<p>
- 					<strong>Miejsce:</strong> {ticket.seat}
- 				</p>
- 			)}
+				<p>
+					<strong>Sektor:</strong> {ticket.sector}
+				</p>
+				<p>
+					<strong>Strefa:</strong> {getNameBlock(ticket.block)}
+				</p>
+				{ticket.seat && (
+					<p>
+						<strong>Miejsce:</strong> {ticket.seat}
+					</p>
+				)}
 				{isSummary && (
 					<p>
 						<strong>Rodzaj biletu:</strong> {typeTicket}
@@ -62,25 +59,23 @@ const Order = ({ ticket, eventDetails, onChangePrice, price, isChoice, isSummary
 					</p>
 				)}
 			</section>
- 	{isChoice && onChangePrice && (
- 		<>
- 			<Label>Wybierz rodzaj biletu:</Label>
- 			<Select
- 				value={price.toString()}
- 				onValueChange={value => onChangePrice(parseFloat(value))}>
- 				<SelectTrigger>
- 					<SelectValue />
- 				</SelectTrigger>
- 				<SelectContent>
- 					{Object.entries(eventDetails.prices).map(([k, v]) => (
- 						<SelectItem key={k} value={v.toString()}>
- 							{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
- 						</SelectItem>
- 					))}
- 				</SelectContent>
- 			</Select>
- 		</>
- 	)}
+			{isChoice && onChangePrice && (
+				<>
+					<Label>Wybierz rodzaj biletu:</Label>
+					<Select value={price.toString()} onValueChange={value => onChangePrice(parseFloat(value))}>
+						<SelectTrigger>
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							{Object.entries(eventDetails.prices).map(([k, v]) => (
+								<SelectItem key={k} value={v.toString()}>
+									{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</>
+			)}
 		</article>
 	);
 };

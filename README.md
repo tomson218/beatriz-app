@@ -16,7 +16,7 @@ Projekt jest **monorepo** zarządzanym przez npm workspaces, składający się z
 
 ### Wymagania
 
-- **Node.js** 18+
+- **Node.js** 22.18+ (backend jest uruchamiany natywnie jako TypeScript, bez kompilacji i Babela)
 - **MongoDB** — lokalna instancja lub MongoDB Atlas
 - **Stripe** — konto i klucze API
 
@@ -30,7 +30,7 @@ Instalacja zainstaluje zależności wszystkich trzech modułów jednocześnie (d
 
 ### Konfiguracja
 
-#### Backend — `backend/config.env`
+#### Backend — `backend/.env.local` (wzór: `backend/.env.example`)
 
 ```
 DATABASE=mongodb://localhost:27017/beatriz

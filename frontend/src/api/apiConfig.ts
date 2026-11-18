@@ -9,8 +9,12 @@ const instance = axios.create({
 	withCredentials: true,
 });
 
+const REFRESH_TOKEN_PATH = '/auth/refresh-token';
+
+const isRefreshTokenRequest = (url?: string): boolean => url?.includes(REFRESH_TOKEN_PATH) ?? false;
+
 export const refreshAccessToken = async (): Promise<string | null> => {
-	const response = await instance.post('/auth/refresh-token');
+	const response = await instance.post(REFRESH_TOKEN_PATH);
 	const accessToken = response.data?.data?.accessToken;
 
 	if (accessToken) {
@@ -23,7 +27,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
 instance.interceptors.request.use(
 	function (config: AxiosRequestConfig) {
-		if (config.url?.includes('/auth/refresh-token')) {
+		if (isRefreshTokenRequest(config.url)) {
 			return config;
 		}
 
@@ -46,7 +50,11 @@ instance.interceptors.response.use(
 	async function (error: AxiosError) {
 		const originalRequest = error.config;
 
-		if (error.response?.status === 401 && !originalRequest?._retry) {
+		const isUnauthorized = error.response?.status === 401;
+		const isNotRetriedYet = !originalRequest?._retry;
+		const isNotRefreshTokenRequest = !isRefreshTokenRequest(originalRequest?.url);
+
+		if (isUnauthorized && isNotRetriedYet && isNotRefreshTokenRequest) {
 			originalRequest._retry = true;
 
 			const newAccessToken = await refreshAccessToken();

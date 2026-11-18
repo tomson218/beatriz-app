@@ -1,4 +1,4 @@
-import type { EventType } from '../types/events';
+import type { EventType } from '#types/events';
 
 export interface EventTypeOption {
 	value: EventType;

@@ -3,14 +3,21 @@ import { Navigate } from 'react-router-dom';
 import useGetUserByIdQuery from '@/api/queries/useGetUserByIdQuery';
 import { getItemLocalStorage } from '@/utils/localStorage';
 
-const ProtectedRoutes = ({ children, isRequiredAdmin = false }: { children: ReactNode; isRequiredAdmin?: boolean }) => {
+interface ProtectedRoutesProps {
+	children: ReactNode;
+	isRequiredAdmin?: boolean;
+}
+
+const ProtectedRoutes = ({ children, isRequiredAdmin = false }: ProtectedRoutesProps) => {
 	const token = localStorage.getItem('token');
 	const isLoggedIn = !!token;
 
 	const userId = getItemLocalStorage('user-id');
 	const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserByIdQuery(userId);
 
-	if (!isLoggedIn) {
+	const isNotLoggedIn = !isLoggedIn;
+
+	if (isNotLoggedIn) {
 		return <Navigate to='/' replace />;
 	}
 
@@ -20,7 +27,10 @@ const ProtectedRoutes = ({ children, isRequiredAdmin = false }: { children: Reac
 
 	const isAdmin = userDetails?.role === 'admin';
 
-	if (isRequiredAdmin && !isAdmin) {
+	const isNotAdmin = !isAdmin;
+	const isAdminAccessDenied = isRequiredAdmin && isNotAdmin;
+
+	if (isAdminAccessDenied) {
 		return <Navigate to='/home' replace />;
 	}
 

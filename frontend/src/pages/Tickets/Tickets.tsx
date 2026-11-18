@@ -35,12 +35,16 @@ const Tickets = () => {
 		setTickets(ticketsUser);
 	};
 
-	if (isTicketsUserLoading || isUserDetailsLoading) {
+	const isAnyDataLoading = isTicketsUserLoading || isUserDetailsLoading;
+
+	if (isAnyDataLoading) {
 		return <Loader />;
 	}
 
+	const hasNoTickets = tickets.length === 0;
+
 	return (
-		<main className={classes['tickets-page']}>
+		<main>
 			<nav className={classes.buttons}>
 				<button className={classes.upcoming} onClick={handleUpcomingTickets}>
 					Nadchodzące
@@ -50,7 +54,7 @@ const Tickets = () => {
 				</button>
 			</nav>
 
-			{tickets.length === 0 && <p>Brak zakupionych biletów</p>}
+			{hasNoTickets && <p>Brak zakupionych biletów</p>}
 
 			<section className={classes.tickets}>
 				{tickets.map(ticket => (

@@ -3,8 +3,6 @@
 	flex-direction: column;
 	gap: 1rem;
 	padding: 1rem;
-	min-height: 94.4dvh;
-	background-color: var(--primary-background);
 }
 
 .order {
@@ -15,11 +13,7 @@
 }
 
 .heading {
-	font-size: 3rem;
-	color: #000;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	text-align: center;
+	composes: page-title from global;
 }
 
 .order h3 {

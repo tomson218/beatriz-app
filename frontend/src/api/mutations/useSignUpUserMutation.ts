@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
+import { isFailedResponse } from '@/utils/response';
 import type { AuthUserRequest, AuthResponse } from '@beatriz/shared/auth';
 import { API_URL } from '@/api/apiConfig';
 import toast from 'react-hot-toast';
@@ -19,7 +20,7 @@ const useSignUpUserMutation = () => {
 		mutationFn: signUser,
 
 		onSuccess: (data: AuthResponse) => {
-			if (data.status !== 'success') {
+			if (isFailedResponse(data)) {
 				throw new Error(data.message);
 			}
 			console.log(data);

@@ -23,9 +23,11 @@ const AddPost = ({ refetch }: AddPostProps) => {
 		setIsShown(prevState => !prevState);
 	};
 
+	const isFormHidden = !isShown;
+
 	return (
 		<section className={classes.container}>
-			{!isShown && (
+			{isFormHidden && (
 				<Button onClick={handleShowForm}>
 					Dodaj nowy post
 				</Button>

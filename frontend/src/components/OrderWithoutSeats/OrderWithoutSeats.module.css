@@ -1,12 +1,6 @@
-:root {
-	--container-margin: 1rem;
-}
-
-body {
-	font-family: 'Roboto';
-}
-
 .container {
+	--container-margin: 1rem;
+
 	container-type: inline-size;
 	display: flex;
 	flex-direction: column;

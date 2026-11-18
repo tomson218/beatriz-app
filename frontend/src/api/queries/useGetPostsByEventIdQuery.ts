@@ -1,14 +1,12 @@
-import { API_URL } from '@/api/apiConfig';
-import axios from 'axios';
+import instance from '@/api/apiConfig';
 import { useQuery } from '@tanstack/react-query';
 import type { Event } from '@beatriz/shared/events';
 import { queryKeys } from '@/api/queryKeys';
 
 const useGetPostsByEventIdQuery = (eventId: Event["_id"]) => {
 	const getPostsByEventId = async () => {
-		const uri = `${API_URL}/forum/${eventId}`;
-		const response = await axios.get(uri);
-		return response.data.forumPosts;
+		const response = await instance.get(`/forum/events/${eventId}`);
+		return response.data.data.posts;
 	};
 
 	return useQuery({

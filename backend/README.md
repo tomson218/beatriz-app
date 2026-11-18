@@ -6,7 +6,7 @@ Serwer API zbudowany na Express.js + Mongoose, obsługujący zarządzanie wydarz
 
 ### Wymagania
 
-- **Node.js** 18+
+- **Node.js** 22.18+ (backend jest uruchamiany natywnie jako TypeScript, bez kompilacji i Babela)
 - **MongoDB** — lokalna instancja lub MongoDB Atlas
 - **Stripe** — konto i klucze API
 
@@ -20,7 +20,7 @@ npm install
 
 ### Konfiguracja
 
-Stwórz plik `backend/config.env`:
+Stwórz plik `backend/.env.local` (wzór: `backend/.env.example`):
 
 ```env
 DATABASE=mongodb://localhost:27017/beatriz

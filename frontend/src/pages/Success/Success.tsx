@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import StatusResult from '@/components/libs/StatusResult/StatusResult';
 import { Button } from '@/components/ui/Button/Button';
-import classes from './Success.module.css';
 
 const Success = () => {
 	return (
-		<main className={classes.container}>
+		<main>
 			<StatusResult
 				status='success'
 				title='Płatność została pomyślnie zakończona!'

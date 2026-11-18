@@ -34,3 +34,33 @@
 	border-left: 5px solid black;
 	align-self: flex-start;
 }
+
+.avatar {
+	height: 2.5rem;
+	width: 2.5rem;
+	border-radius: 0.75rem;
+	object-fit: cover;
+}
+
+.author {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.author-email {
+	font-size: 1rem;
+	line-height: 1.5rem;
+	font-weight: 600;
+}
+
+.post-date {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	color: hsl(var(--muted-foreground));
+}
+
+.message {
+	font-size: 1rem;
+	line-height: 2rem;
+}

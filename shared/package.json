@@ -3,6 +3,11 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
+	"imports": {
+		"#types/*": "./types/*.ts",
+		"#enums/*": "./enums/*.ts",
+		"#schemas/*": "./schemas/*.ts"
+	},
 	"dependencies": {
 		"axios": "^1.7.7",
 		"bcryptjs": "^2.4.3",

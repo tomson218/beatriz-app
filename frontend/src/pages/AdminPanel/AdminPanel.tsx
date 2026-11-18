@@ -10,21 +10,25 @@ type AdminPanelTab = 'addEvent' | 'users' | 'addDiscountCode';
 const AdminPanel = () => {
 	const [activateButton, setActivateButton] = useState<AdminPanelTab>('addEvent');
 
-	const handleToggleButton = (id: string) => {
+	const handleToggleButton = (id: AdminPanelTab) => {
 		setActivateButton(id);
 	};
 
+	const isUsersTabActive = activateButton === 'users';
+	const isAddEventTabActive = activateButton === 'addEvent';
+	const isAddDiscountCodeTabActive = activateButton === 'addDiscountCode';
+
 	return (
-		<main className={classes.container}>
+		<main>
 			<nav className={classes['btn-group']}>
 				<Button onClick={() => handleToggleButton('users')}>Użytkownicy</Button>
 				<Button onClick={() => handleToggleButton('addEvent')}>Dodaj wydarzenie</Button>
 				<Button onClick={() => handleToggleButton('addDiscountCode')}>Dodaj nowy kod rabatowy</Button>
 			</nav>
 
-			{activateButton === 'users' && <Users />}
-			{activateButton === 'addEvent' && <AddEvent />}
-			{activateButton === 'addDiscountCode' && <AddDiscountCode />}
+			{isUsersTabActive && <Users />}
+			{isAddEventTabActive && <AddEvent />}
+			{isAddDiscountCodeTabActive && <AddDiscountCode />}
 		</main>
 	);
 };

@@ -1,5 +1,6 @@
 import FormInput from '@/components/FormInput/FormInput';
-import type { FieldValues, RegisterOptions, Path } from 'react-hook-form';
+import type { FieldValues, RegisterOptions, Path, ValidationValueMessage } from 'react-hook-form';
+import type { ValidationMessages, ValidationRuleName } from '@/types/forms';
 
 interface PolishFormInputProps<T extends FieldValues = FieldValues>
 	extends Omit<Parameters<typeof FormInput<T>>[0], 'validation' | 'error'> {
@@ -7,8 +8,8 @@ interface PolishFormInputProps<T extends FieldValues = FieldValues>
 	fieldName?: string;
 }
 
-const getFieldMessage = (fieldName: string, type: 'required' | 'minLength' | 'maxLength' | 'validate') => {
-	const messages: Record<string, Record<string, string>> = {
+const getFieldMessage = (fieldName: string, type: ValidationRuleName) => {
+	const messages: ValidationMessages = {
 		required: {
 			default: 'To pole jest wymagane',
 		},
@@ -26,6 +27,21 @@ const getFieldMessage = (fieldName: string, type: 'required' | 'minLength' | 'ma
 	return messages[type]?.[fieldName] || messages[type]?.default || '';
 };
 
+/** Sprawdza czy reguła walidacji ma postać obiektu z wartością i komunikatem (np. { value: 8, message: '...' }). */
+const isRuleWithValue = (rule: unknown): rule is ValidationValueMessage<number> => {
+	const isRuleMissing = !rule;
+
+	if (isRuleMissing) return false;
+
+	const isNotRuleObject = typeof rule !== 'object';
+
+	if (isNotRuleObject) return false;
+
+	const hasValueKey = 'value' in rule;
+
+	return hasValueKey;
+};
+
 const PolishFormInput = <T extends FieldValues>({
 	labelText,
 	inputId,
@@ -40,27 +56,32 @@ const PolishFormInput = <T extends FieldValues>({
 	const field = fieldName || labelText;
 
 	const buildValidation = (v?: RegisterOptions<T>): RegisterOptions<T> | undefined => {
-		if (!v) return undefined;
+		const hasNoValidation = !v;
+
+		if (hasNoValidation) return undefined;
 
 		const result: RegisterOptions<T> = { ...v };
+		const { minLength, maxLength } = result;
 
-		if (result.required === true) {
+		const isRequiredFlag = result.required === true;
+		const hasMinLengthWithValue = isRuleWithValue(minLength);
+		const hasMaxLengthWithValue = isRuleWithValue(maxLength);
+
+		if (isRequiredFlag) {
 			result.required = getFieldMessage(field, 'required');
 		}
 
-		if (result.minLength && typeof result.minLength === 'object' && 'value' in result.minLength) {
-			const minVal = result.minLength.value;
+		if (hasMinLengthWithValue) {
 			result.minLength = {
-				...result.minLength,
-				message: getFieldMessage(field, 'minLength').replace('{min}', String(minVal)),
+				...minLength,
+				message: getFieldMessage(field, 'minLength').replace('{min}', String(minLength.value)),
 			};
 		}
 
-		if (result.maxLength && typeof result.maxLength === 'object' && 'value' in result.maxLength) {
-			const maxVal = result.maxLength.value;
+		if (hasMaxLengthWithValue) {
 			result.maxLength = {
-				...result.maxLength,
-				message: getFieldMessage(field, 'maxLength').replace('{max}', String(maxVal)),
+				...maxLength,
+				message: getFieldMessage(field, 'maxLength').replace('{max}', String(maxLength.value)),
 			};
 		}
 

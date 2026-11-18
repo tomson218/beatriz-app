@@ -5,3 +5,10 @@
 .error-message {
 	color: #f00;
 }
+
+/* Treść okna dialogowego: pola jedno pod drugim (wcześniej Tailwind: grid gap-4 py-4). */
+.dialog-body {
+	display: grid;
+	gap: 1rem;
+	padding: 1rem 0;
+}
