@@ -1,290 +1,85 @@
-import UserModel from '../models/userModel.ts';
-import type { User } from '@beatriz/shared/users';
-import AppError from '../utils/appError.ts';
-import mongoose from 'mongoose';
-import { type Request, type Response, type NextFunction } from 'express';
-import type {
-	UserDto,
-	GetUserResponse,
-	GetAllUsersResponse,
-	DeleteUserResponse,
-	UpdateMeRequest,
-	UpdateUserRequest,
-	UserIdParams,
-	AddCartRequest,
-	AddCartResponse,
-	FavouriteEventResponse,
-} from '@beatriz/shared/users';
-import type { ListResponse } from '@beatriz/shared/common';
-import type { EventIdParams } from '@beatriz/shared/events';
+import { catchAsync } from '../utils/catchAsync.ts';
+import { itemResponse, listResponse } from '../utils/apiResponse.ts';
 import { toUserDto } from '../mappers/userMapper.ts';
+import {
+	addFavouriteEvent,
+	deactivateAccount,
+	deleteUserById,
+	getAllUsers as findAllUsers,
+	getFavouriteEvents,
+	getUserById,
+	removeFavouriteEvent,
+	saveCart,
+	updateOwnProfile,
+	updateUserByAdmin,
+} from '../services/userService.ts';
+import type { AddCartRequest, UpdateMeRequest, UpdateUserRequest, UserIdParams } from '@beatriz/shared/users';
+import type { EventIdParams } from '@beatriz/shared/events';
 
-const { ObjectId } = mongoose.Types;
+export const getAllUsers = catchAsync(async (req, res) => {
+	const users = await findAllUsers();
 
-/* to do innego pliku */
-const filterObj = (obj: any, ...allowedFields: any): any => {
-	const newObj = {};
-	Object.keys(obj).forEach(item => {
-		if (allowedFields.includes(item)) {
-			newObj[item] = obj[item];
-		}
-	});
-	return newObj;
-};
+	res.status(200).json(listResponse('users', users.map(toUserDto)));
+});
 
-export const getAllUsers = async (
-	req: Request,
-	res: Response<GetAllUsersResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const users: User[] = await UserModel.find().select('-__v');
+export const getUser = catchAsync<UserIdParams>(async (req, res) => {
+	const user = await getUserById(req.params.id);
 
-		const usersDto: UserDto[] = users.map((u: User) => toUserDto(u));
+	res.status(200).json(itemResponse('user', toUserDto(user)));
+});
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: usersDto.length,
-				users: usersDto,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+export const updateMe = catchAsync<{}, UpdateMeRequest>(async (req, res) => {
+	const user = await updateOwnProfile(req.user.id, req.body);
 
-export const getUser = async (
-	req: Request<UserIdParams>,
-	res: Response<GetUserResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { id } = req.params;
+	res.status(200).json(itemResponse('user', toUserDto(user)));
+});
 
-		const user: User | null = await UserModel.findById(id).select('-__v'); // do poprawy
+export const deleteMe = catchAsync(async (req, res) => {
+	await deactivateAccount(req.user.id);
 
-		const userDto: UserDto = toUserDto(user);
+	res.status(204).json({ status: 'success', data: null });
+});
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				user: userDto,
-			},
-		});
-	} catch (err) {
-		console.error(err);
-		res.status(500).json({
-			status: 'error',
-			message: 'Something went wrong',
-		});
-	}
-};
+export const getUserFavoriteEvents = catchAsync(async (req, res) => {
+	const events = await getFavouriteEvents(req.user.id);
 
-export const updateMe = async (req: Request, res: Response<GetUserResponse>, next: NextFunction): Promise<void> => {
-	try {
-		if (req.body.password || req.body.passwordConfirm) {
-			return next(new AppError("This route isn't for password updates. Please use /updateMyPassword", 400));
-		}
+	res.status(200).json(listResponse('events', events));
+});
 
-		const filteredBody = filterObj(req.body, 'username', 'email', 'lastName', 'firstName');
+export const addEventToFavourite = catchAsync<{}, EventIdParams>(async (req, res) => {
+	await addFavouriteEvent(req.user.id, req.body.eventId);
 
-		const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, filteredBody, {
-			// do poprawy
-			new: true,
-			runValidators: true,
-		});
+	res.status(200).json({ status: 'success', message: 'Wydarzenie dodane do ulubionych' });
+});
 
-		const updatedUserDto: UserDto = toUserDto(updatedUser);
+export const removeEventFromFavourite = catchAsync<{}, EventIdParams>(async (req, res) => {
+	await removeFavouriteEvent(req.user.id, req.body.eventId);
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				user: updatedUserDto,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+	res.status(200).json({ status: 'success', message: 'Wydarzenie usuniete z ulubionych' });
+});
 
-export const deleteMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-	try {
-		await UserModel.findByIdAndUpdate(req.user.id, { active: false });
+export const addCart = catchAsync<{}, AddCartRequest>(async (req, res) => {
+	const userId = String(req.user.id);
+	const { cart } = req.body;
 
-		res.status(204).json({
-			status: 'success',
-			data: null,
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+	await saveCart(userId, cart);
 
-export const getUserFavoriteEvents = async (
-	req: Request,
-	res: Response<ListResponse<'events', unknown>>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const user = await UserModel.findById(req.user.id).populate('favouriteEvents').exec(); // do poprawy
+	res.status(200).json({ status: 'success', data: { cart, userId } });
+});
 
-		if (!user) {
-			return next(new AppError('This event is not on your list of favourites.', 404));
-		}
+export const createUser = catchAsync(async (req, res) => {
+	res.status(500).json({ status: 'error', message: 'This route is not yet defined!' });
+});
 
-		const { favouriteEvents } = user;
+export const updateUser = catchAsync<UserIdParams, UpdateUserRequest>(async (req, res) => {
+	const { id } = req.params;
+	const user = await updateUserByAdmin(id, req.body);
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: favouriteEvents.length,
-				events: favouriteEvents,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+	res.status(200).json({ ...itemResponse('user', toUserDto(user)), message: `User ${id} updated!` });
+});
 
-export const addEventToFavourite = async (
-	req: Request<{}, {}, EventIdParams>,
-	res: Response<FavouriteEventResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { eventId } = req.body;
+export const deleteUser = catchAsync<UserIdParams>(async (req, res) => {
+	await deleteUserById(req.params.id);
 
-		const user: User | null = await UserModel.findById(req.user.id); // do poprawy
-
-		const isExistEvent = (e: any) => e.toString() === eventId;
-
-		if (user.favouriteEvents.findIndex(isExistEvent) !== -1) {
-			return next(new AppError('This event is on your list of favourites.', 409));
-		}
-
-		const eventObjectId = new ObjectId(eventId);
-
-		user.favouriteEvents.push(eventObjectId);
-
-		await user.save({ validateBeforeSave: false });
-
-		res.status(200).json({ status: 'success', message: 'Wydarzenie dodane do ulubionych' });
-	} catch (err) {
-		next(err);
-	}
-};
-
-export const removeEventFromFavourite = async (
-	req: Request<{}, {}, EventIdParams>,
-	res: Response<FavouriteEventResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { eventId } = req.body;
-
-		const user: User | null = await UserModel.findById(req.user.id);
-
-		const isExistEvent = (e: any) => e.toString() === eventId.toString();
-
-		const searchIndex = user.favouriteEvents.findIndex(isExistEvent);
-
-		if (searchIndex === -1) {
-			return next(new AppError('This event is not on your list of favourites.', 404));
-		}
-
-		user.favouriteEvents.splice(searchIndex, 1);
-
-		await user.save({ validateBeforeSave: false });
-
-		res.status(200).json({ status: 'success', message: 'Wydarzenie usuniete z ulubionych' });
-	} catch (err) {
-		next(err);
-	}
-};
-
-export const addCart = async (
-	req: Request<{}, {}, AddCartRequest>,
-	res: Response<AddCartResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const userId = String(req.user.id);
-
-		const { cart } = req.body;
-
-		await UserModel.findByIdAndUpdate(userId, { cart }, { new: true, runValidators: true });
-
-		res.status(200).json({
-			status: 'success',
-			data: {
-				cart,
-				userId,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-export const createUser = (req: Request, res: Response) => {
-	res.status(500).json({
-		status: 'error',
-		message: 'This route is not yet defined!',
-	});
-};
-
-export const updateUser = async (
-	req: Request<UserIdParams, {}, UpdateUserRequest>,
-	res: Response<GetUserResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { id } = req.params;
-
-		const updatedUser: User | null = await UserModel.findByIdAndUpdate(id, req.body, {
-			new: true,
-			runValidators: true,
-		});
-
-		const updatedUserDto: UserDto = toUserDto(updatedUser);
-
-		res.status(200).json({
-			status: 'success',
-			message: `User ${id} updated!`,
-			data: {
-				user: updatedUserDto,
-			},
-		});
-	} catch (err) {
-		res.status(500).json({
-			status: 'error',
-			message: 'Error updating user',
-		});
-	}
-};
-
-export const deleteUser = async (
-	req: Request<UserIdParams>,
-	res: Response<DeleteUserResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { id } = req.params;
-
-		const user: User | null = await UserModel.findById(id);
-
-		console.log(user);
-
-		await UserModel.findByIdAndDelete(id);
-
-		res.status(204).json({
-			status: 'success',
-		});
-	} catch (err) {
-		res.status(500).json({
-			status: 'error',
-			message: 'Error deleting user',
-		});
-	}
-};
+	res.status(204).json({ status: 'success' });
+});

@@ -1,125 +1,41 @@
-import TicketModel from '../models/ticketModel.ts';
-import EventModel from '../models/eventModel.ts';
-import { COUNT_BLOCKS, COUNT_SEAT } from '@beatriz/shared/constants/hallCapacity';
-import { type Request, type Response, type NextFunction } from 'express';
-import type { TicketsResponse, TicketDto } from '@beatriz/shared/tickets';
+import { catchAsync } from '../utils/catchAsync.ts';
+import { listResponse } from '../utils/apiResponse.ts';
 import { toTicketDto } from '../mappers/ticketMapper.ts';
-import type { Ticket } from '@beatriz/shared/tickets';
-import type { User } from '@beatriz/shared/users';
+import {
+	getAllTickets as findAllTickets,
+	getFreeSectorsSummary,
+	getOccupiedSeats as findOccupiedSeats,
+	getTicketsOfUser,
+} from '../services/ticketService.ts';
 
-export const getAllTickets = async (
-	req: Request,
-	res: Response<TicketsResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const tickets: Ticket[] = await TicketModel.find();
+/** Parametry trasy z miejscami: identyfikator wydarzenia, sektor i strefa. */
+interface OccupiedSeatsRouteParams {
+	eventId: string;
+	sector: string;
+	block: string;
+}
 
-		const ticketsDto: TicketDto[] = tickets.map((t: Ticket) => toTicketDto(t));
+export const getAllTickets = catchAsync(async (req, res) => {
+	const tickets = await findAllTickets();
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: ticketsDto.length,
-				tickets: ticketsDto,
-			},
-		});
-	} catch (error) {
-		res.status(500).json({
-			status: 'fail',
-			message: 'Internal Server Error',
-		});
-	}
-};
+	res.status(200).json(listResponse('tickets', tickets.map(toTicketDto)));
+});
 
-export const getUserTickets = async (
-	req: Request<{ id: User['_id'] }>,
-	res: Response<TicketsResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { id } = req.params;
+export const getUserTickets = catchAsync<{ id: string }>(async (req, res) => {
+	const tickets = await getTicketsOfUser(req.params.id);
 
-		const tickets: Ticket[] = await TicketModel.find({ user: id }).sort({ date: 1 }).populate('event').exec();
+	res.status(200).json(listResponse('tickets', tickets.map(toTicketDto)));
+});
 
-		const ticketsDto: TicketDto[] = tickets.map((t: Ticket) => toTicketDto(t));
+export const groupAvailableSectors = catchAsync<{ eventId: string }>(async (req, res) => {
+	const { ticketsCount, freeSectorsCount } = await getFreeSectorsSummary(req.params.eventId);
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: ticketsDto.length,
-				tickets: ticketsDto,
-			},
-		});
-	} catch (err) {
-		res.status(500).json({
-			status: 'fail',
-			message: err.message,
-		});
-	}
-};
+	res.status(200).json({ status: 'success', data: { results: ticketsCount, freeSectorsCount } });
+});
 
-export const groupAvailableSectors = async (
-	req: Request<{ eventId: Event['_id'] }>,
-	res: Response,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { eventId } = req.params;
-		const tickets: Ticket[] = await TicketModel.find({ event: eventId }).select('-__v').exec();
-		const event: Event | null = await EventModel.findOne({ _id: eventId }).select('sectors -_id').exec(); // to może być nullem
-		const sectorAvailable = event?.sectors;
+export const getOccupiedSeats = catchAsync<OccupiedSeatsRouteParams>(async (req, res) => {
+	const { eventId, sector, block } = req.params;
+	const occupiedSeats = await findOccupiedSeats(eventId, sector, block);
 
-		const groupedSectors = Object.groupBy(tickets, ({ seating }) => seating.sector);
-		const occupiedSectors = Object.entries(groupedSectors).reduce((acc: any, [key, items]) => {
-			acc[key] = items.length;
-			return acc;
-		}, {});
-
-		const countCapacity = sectorAvailable.length * COUNT_BLOCKS * COUNT_SEAT;
-
-		const freeSectorsCount: any = sectorAvailable.reduce((acc: any, sector: any) => {
-			const occupied = occupiedSectors[sector] || 0;
-			acc[sector] = countCapacity - occupied;
-			return acc;
-		}, {});
-
-		const ticketsDto: TicketDto[] = tickets.map((t: Ticket) => toTicketDto(t));
-
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: ticketsDto.length,
-				freeSectorsCount,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-export const getOccupiedSeats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-	try {
-		const { eventId, sector, block } = req.params;
-
-		const tickets: Ticket[] = await TicketModel.find({
-			event: eventId,
-			'seating.sector': sector,
-			'seating.block': block,
-		}).select('-__v');
-
-		const occupiedSeats: number[] = tickets.map((t: Ticket) => Number(t.seating.seat));
-
-		const sortedOccupiedSeats: number[] = occupiedSeats.sort((a: number, b: number) => a - b);
-
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: sortedOccupiedSeats.length,
-				occupiedSeats: sortedOccupiedSeats,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+	res.status(200).json({ status: 'success', data: { results: occupiedSeats.length, occupiedSeats } });
+});

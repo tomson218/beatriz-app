@@ -10,7 +10,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import AppError from './utils/appError.ts';
 import userRouter from './routes/userRoutes.ts';
-import globalErrorHandler from './controllers/errorController.ts';
+import globalErrorHandler from './middleware/errorHandler.ts';
 import cors from 'cors';
 import eventRouter from './routes/eventRoutes.ts';
 import paymentRoutes from './routes/paymentRoutes.ts';

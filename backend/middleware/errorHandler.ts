@@ -1,4 +1,4 @@
-﻿import AppError from '../utils/appError.ts';
+import AppError from '../utils/appError.ts';
 import { type Request, type Response, type NextFunction } from 'express';
 
 type DbError = Error & {
@@ -62,6 +62,7 @@ const sendErrorProd = (err: DbError, res: Response): void => {
 	}
 };
 
+/** Globalny handler błędów Expressa: zamienia błędy bazy i JWT na czytelne odpowiedzi, a szczegóły ujawnia tylko poza produkcją. */
 const errorHandler = (err: DbError, req: Request, res: Response, next: NextFunction): void => {
 	// Odpowiedź już poszła do klienta: nie można wysłać drugiej, więc oddajemy błąd domyślnej obsłudze Expressa.
 	if (res.headersSent) {
@@ -71,19 +72,22 @@ const errorHandler = (err: DbError, req: Request, res: Response, next: NextFunct
 	err.statusCode = err.statusCode ?? 500;
 	err.status = err.status ?? 'error';
 
-	if (process.env.NODE_ENV === 'development') {
+	const isProduction = process.env.NODE_ENV === 'production';
+
+	if (!isProduction) {
 		sendErrorDev(err, res);
-	} else if (process.env.NODE_ENV === 'production') {
-		let error: DbError = { ...err };
-
-		if (error.name === 'CastError') error = handleCastErrorDB(error);
-		if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-		if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
-		if (error.name === 'JsonWebTokenError') error = handleJwtError();
-		if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
-
-		sendErrorProd(error, res);
+		return;
 	}
+
+	let error: DbError = { ...err };
+
+	if (error.name === 'CastError') error = handleCastErrorDB(error);
+	if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+	if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
+	if (error.name === 'JsonWebTokenError') error = handleJwtError();
+	if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
+
+	sendErrorProd(error, res);
 };
 
 export default errorHandler;

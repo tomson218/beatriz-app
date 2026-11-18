@@ -16,7 +16,7 @@ import ForgetPassword from './pages/ForgetPassword/ForgetPassword.tsx';
 import ResetPassword from './pages/ResetPassword/ResetPassword.tsx';
 import ChangeUserPassword from './pages/ChangeUserPassword/ChangeUserPassword.tsx';
 import UpdateUserDetails from './pages/UpdateUserDetails/UpdateUserDetails.tsx';
-import EventsCalendar from './pages/EventsCalendar/EventsCalendar.tsx';
+
 import Sectors from './components/Sector/Sector.tsx';
 import Seats from './pages/Seats/Seats.tsx';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes.tsx';
@@ -121,17 +121,6 @@ const router = createBrowserRouter([
 			<ProtectedRoutes>
 				<LayoutWrapper>
 					<Forum />
-				</LayoutWrapper>
-			</ProtectedRoutes>
-		),
-	},
-
-	{
-		path: '/calendar',
-		element: (
-			<ProtectedRoutes>
-				<LayoutWrapper>
-					<EventsCalendar />
 				</LayoutWrapper>
 			</ProtectedRoutes>
 		),

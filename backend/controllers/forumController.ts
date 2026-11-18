@@ -1,85 +1,24 @@
-import ForumModel from '../models/forumModel.ts';
-import type { ForumPost } from '@beatriz/shared/forums';
-import { type Request, type Response, type NextFunction } from 'express';
-import type {
-	AddNewPostToForumResponse,
-	ForumPostDto,
-	GetAllForumPostsResponse,
-} from '@beatriz/shared/forums';
+import { catchAsync } from '../utils/catchAsync.ts';
+import { itemResponse, listResponse } from '../utils/apiResponse.ts';
 import { toForumDto } from '../mappers/forumMapper.ts';
-import type { User } from '@beatriz/shared/users';
+import { addPost, getAllPosts, getPostsByEvent } from '../services/forumService.ts';
+import type { AddNewPostToForumRequest } from '@beatriz/shared/forums';
 
-export const getAllForumPosts = async (
-	req: Request,
-	res: Response<GetAllForumPostsResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const forumPosts: ForumPost[] = await ForumModel.find().select('-__v');
+export const getAllForumPosts = catchAsync(async (req, res) => {
+	const posts = await getAllPosts();
 
-		const forumPostsDto: ForumPostDto[] = forumPosts.map(f => toForumDto(f));
+	res.status(200).json(listResponse('posts', posts.map(toForumDto)));
+});
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: forumPostsDto.length,
-				posts: forumPostsDto,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+export const getPostsByEventId = catchAsync<{ eventId: string }>(async (req, res) => {
+	const posts = await getPostsByEvent(req.params.eventId);
 
-export const getPostsByEventId = async (
-	req: Request<{ eventId: Event['_id'] }>,
-	res: Response<GetAllForumPostsResponse>,
-	next: NextFunction,
-): Promise<void> => {
-	try {
-		const { eventId } = req.params;
+	res.status(200).json(listResponse('posts', posts.map(toForumDto)));
+});
 
-		const forumPosts: ForumPost[] = await ForumModel.find({ event: eventId })
-			.populate('user')
-			.select('-__v')
-			.sort({ date: 1 });
+export const addNewPostToForum = catchAsync<{}, AddNewPostToForumRequest>(async (req, res) => {
+	const { message, eventId } = req.body;
+	const post = await addPost(req.user.id, eventId, message);
 
-		const forumPostsDto: ForumPostDto[] = forumPosts.map(f => toForumDto(f));
-
-		res.status(200).json({
-			status: 'success',
-			data: {
-				results: forumPostsDto.length,
-				posts: forumPostsDto,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-export const addNewPostToForum = async (req: Request, res: Response<AddNewPostToForumResponse>, next: NextFunction) => {
-	try {
-		const userId: User['_id'] = req.user.id;
-
-		const { message, eventId } = req.body;
-
-		const newPost: ForumPost = await ForumModel.create({
-			user: userId,
-			message: message,
-			event: eventId,
-			date: Date.now(),
-		});
-
-		const newPostDto: ForumPostDto = toForumDto(newPost);
-
-		res.status(200).json({
-			status: 'success',
-			data: {
-				post: newPostDto,
-			},
-		});
-	} catch (err) {
-		next(err);
-	}
-};
+	res.status(200).json(itemResponse('post', toForumDto(post)));
+});
