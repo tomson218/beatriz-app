@@ -12,5 +12,5 @@
 		"allowSyntheticDefaultImports": true,
 		"jsx": "react-jsx"
 	},
-	"include": ["types/**/*.ts"]
+	"include": ["types/**/*.ts", "enums/**/*.ts", "schemas/**/*.ts", "constants/**/*.ts"]
 }

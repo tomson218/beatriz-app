@@ -1,13 +1,29 @@
-export type ErrorResponse = { status: 'error' | 'fail'; message: string };
+export type ApiStatus = 'success' | 'fail' | 'error';
 
-export type SuccessList<K extends string, T> = {
-  status: 'success';
-  data: {
-    results: number;
-  } & Record<K, T[]>;
-};
+/**
+ * Koperta każdej odpowiedzi API: `{ status, message?, data }`.
+ * Błędy (4xx/5xx) mają postać `ErrorResponse`.
+ */
+export interface ApiResponse<TData = null> {
+	status: ApiStatus;
+	message?: string;
+	data: TData;
+}
 
-export type SuccessItem<K extends string, T> = {
-  status: 'success';
-  data: Record<K, T>;
-};
+/** Odpowiedź bez danych, np. `{ status: 'success', message: 'Token sent to email!' }`. */
+export interface MessageResponse {
+	status: ApiStatus;
+	message: string;
+}
+
+/** Odpowiedź błędu (4xx/5xx), np. `{ status: 'fail', message: 'Incorrect email or password' }`. */
+export interface ErrorResponse {
+	status: Exclude<ApiStatus, 'success'>;
+	message: string;
+}
+
+/** Lista zasobów: `{ status, data: { results, [K]: T[] } }`, np. `ListResponse<'events', EventDto>`. */
+export type ListResponse<K extends string, T> = ApiResponse<{ results: number } & Record<K, T[]>>;
+
+/** Pojedynczy zasób: `{ status, data: { [K]: T } }`, np. `ItemResponse<'event', EventDto>`. */
+export type ItemResponse<K extends string, T> = ApiResponse<Record<K, T>>;

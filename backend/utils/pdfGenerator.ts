@@ -1,10 +1,11 @@
 import PDFDocument from 'pdfkit';
 import { formattedDate, formattedTime } from './formattingDate.ts';
 import { getNameBlock, getNameTypeTicket } from './formattings.ts';
+import type { PdfTicket } from '../modules/payments/payments.type.ts';
 
-export const generatePDF = async (ticketList: any[]): Promise<unknown> => {
+export const generatePDF = async (ticketList: PdfTicket[]): Promise<Buffer> => {
 	const doc = new PDFDocument({ margin: 50 });
-	let buffers = [];
+	const buffers: Buffer[] = [];
 
 	doc.on('data', buffers.push.bind(buffers));
 
@@ -36,12 +37,12 @@ export const generatePDF = async (ticketList: any[]): Promise<unknown> => {
 
 			doc.text(`Strefa: ${getNameBlock(ticket.block)}`, 60, startY + 70);
 
-			doc.text(`Miejsce: ${ticket.seating}`, 60, startY + 85);
+			doc.text(`Miejsce: ${ticket.seating || '-'}`, 60, startY + 85);
 
 			doc.text(`Cena: ${ticket.price} PLN`, 300, startY + 40);
 			doc.text(`Typ: ${getNameTypeTicket(ticket.type)}`, 300, startY + 55);
 			doc.text(
-				`Data: ${formattedDate(new Date(ticket.date))} ${formattedTime(new Date(ticket.date))}`,
+				`Data: ${formattedDate(new Date(ticket.date ?? Date.now()))} ${formattedTime(new Date(ticket.date ?? Date.now()))}`,
 				300,
 				startY + 70,
 			);

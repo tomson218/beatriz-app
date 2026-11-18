@@ -1,19 +1,6 @@
-import type { Event } from '../models/eventModel.ts';
-import type { Ticket } from '../models/ticketModel.ts';
+const BLOCK_NAMES: Record<string, string> = { blue: 'niebieska', green: 'zielona', yellow: 'żółta' };
+const TICKET_TYPE_NAMES: Record<string, string> = { VIP: 'VIP', normal: 'Normalny', child: 'Dziecinny' };
 
-export const getNameBlock = (name: Event['block']): string => {
-	if (name === 'blue') return 'niebieska';
-	else if (name === 'green') return 'zielona';
-	else if (name === 'yellow') return 'żółta';
-	else return 'czarna';
-};
+export const getNameBlock = (name?: string | null): string => BLOCK_NAMES[name ?? ''] ?? 'czarna';
 
-export const getNameTypeTicket = (type: Ticket['type']): string => {
-	if (type === 'VIP') {
-		return 'VIP';
-	} else if (type === 'normal') {
-		return 'Normalny';
-	} else if (type === 'child') {
-		return 'Dziecinny';
-	} else return 'Unknown';
-};
+export const getNameTypeTicket = (type?: string | null): string => TICKET_TYPE_NAMES[type ?? ''] ?? 'Unknown';

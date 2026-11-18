@@ -16,7 +16,7 @@ Base prefix: `/api/v2`
 - Returns `accessToken` in the response body.
 - Sets `refreshToken` in an HTTP-only cookie.
 
-### 3) POST `/api/v2/auth/refresh-token`
+### 3) POST `/api/v2/auth/refresh`
 
 - Reads `refreshToken` from the cookie.
 - Validates the token.
@@ -35,27 +35,15 @@ Base prefix: `/api/v2`
     }
     ```
 
-### 5) POST `/api/v2/auth/googleLogin`
+### 5) POST `/api/v2/auth/google`
 
 - Google OAuth login flow.
 - Returns `accessToken` plus user data.
 
-### 6) POST `/api/v2/auth/facebookLogin`
+### 6) POST `/api/v2/auth/facebook`
 
 - Facebook OAuth login flow.
 - Returns `accessToken` plus user data.
-
-### 7) POST `/api/v2/auth/forgetPassword`
-
-- Sends reset-password email.
-
-### 8) PATCH `/api/v2/auth/resetPassword/:token`
-
-- Resets password using token from email.
-
-### 9) PATCH `/api/v2/auth/updateMyPassword`
-
-- Updates current user password.
 
 ## Security notes
 

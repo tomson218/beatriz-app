@@ -1,0 +1,22 @@
+.heading {
+	composes: page-title from global;
+	padding: 1rem;
+}
+
+.blocks {
+	display: grid;
+	gap: 1rem;
+	padding: 1rem;
+	grid-template-columns: 1fr;
+}
+
+.link {
+	padding: 1rem;
+	margin: 1rem;
+}
+
+@media (min-width: 40rem) {
+	.blocks {
+		grid-template-columns: 1fr 1fr;
+	}
+}

@@ -1,0 +1,43 @@
+.orders {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.order {
+	background-color: #f9f9f9;
+	border: 2px solid orange;
+	border-radius: 1rem;
+	padding: 1rem;
+}
+
+.order h3 {
+	margin-top: 0;
+	overflow-wrap: anywhere;
+}
+
+.order p {
+	margin: 0.5rem 0;
+}
+
+.amount {
+	font-weight: 600;
+}
+
+.tickets {
+	margin: 0.75rem 0;
+	padding-left: 1.25rem;
+	list-style: disc;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.message {
+	padding: 2rem 1rem;
+	text-align: center;
+}
