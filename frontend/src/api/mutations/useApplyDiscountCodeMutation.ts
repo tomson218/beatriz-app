@@ -5,7 +5,7 @@ import type { ApplyDiscountCodeRequest, ApplyDiscountCodeResponse } from '@beatr
 
 const useApplyDiscountCodeMutation = () => {
 	const applyDiscountCode = async (discountDetails: ApplyDiscountCodeRequest): Promise<ApplyDiscountCodeResponse> => {
-		const uri = '/discount-codes/applyCode';
+		const uri = '/discount-codes/apply';
 		const response = await instance.post<ApplyDiscountCodeResponse>(uri, discountDetails);
 		return response.data;
 	};

@@ -12,9 +12,6 @@ import Cancel from './pages/Cancel/Cancel.tsx';
 import Success from './pages/Success/Success.tsx';
 import Error404 from './pages/Error404/Error404.tsx';
 import Tickets from './pages/Tickets/Tickets.tsx';
-import ForgetPassword from './pages/ForgetPassword/ForgetPassword.tsx';
-import ResetPassword from './pages/ResetPassword/ResetPassword.tsx';
-import ChangeUserPassword from './pages/ChangeUserPassword/ChangeUserPassword.tsx';
 import UpdateUserDetails from './pages/UpdateUserDetails/UpdateUserDetails.tsx';
 
 import Sectors from './components/Sector/Sector.tsx';
@@ -182,39 +179,10 @@ const router = createBrowserRouter([
 	},
 
 	{
-		path: '/forget-password',
-		element: (
-			<ProtectedRoutes>
-				<LayoutWrapper>
-					<ForgetPassword />
-				</LayoutWrapper>
-			</ProtectedRoutes>
-		),
-	},
-
-	{
-		path: '/reset-password/:resetToken',
-		element: (
-			<LayoutWrapper>
-				<ResetPassword />
-			</LayoutWrapper>
-		),
-	},
-
-	{
 		path: '/update-userdetails',
 		element: (
 			<LayoutWrapper>
 				<UpdateUserDetails />
-			</LayoutWrapper>
-		),
-	},
-
-	{
-		path: '/change-password',
-		element: (
-			<LayoutWrapper>
-				<ChangeUserPassword />
 			</LayoutWrapper>
 		),
 	},

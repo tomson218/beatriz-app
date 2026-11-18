@@ -9,7 +9,7 @@ const instance = axios.create({
 	withCredentials: true,
 });
 
-const REFRESH_TOKEN_PATH = '/auth/refresh-token';
+const REFRESH_TOKEN_PATH = '/auth/refresh';
 
 const isRefreshTokenRequest = (url?: string): boolean => url?.includes(REFRESH_TOKEN_PATH) ?? false;
 

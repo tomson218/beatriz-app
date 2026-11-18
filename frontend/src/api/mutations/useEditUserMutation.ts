@@ -10,7 +10,7 @@ interface UseEditUserMutationProps {
 
 const useEditUserMutation = () => {
 	const editUser = async ({ id, updatedUser }: UseEditUserMutationProps): Promise<UserResponse> => {
-		const uri = `/users/editUser/${id}`;
+		const uri = `/users/${id}`;
 		const response = await instance.patch<UserResponse>(uri, updatedUser);
 		return response.data;
 	};

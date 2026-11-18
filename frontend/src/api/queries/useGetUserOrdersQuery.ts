@@ -6,7 +6,7 @@ import type { User } from '@beatriz/shared/users';
 const useGetUserOrdersQuery = (id: User['_id']) => {
 	const getUserOrders = async () => {
 		console.log(id);
-		const uri = `/orders/${id}`;
+		const uri = '/users/me/orders';
 		const response = await instance.get(uri);
 		return response.data.data.orders;
 	};

@@ -145,9 +145,6 @@ frontend/src/
 │   ├── UserOrders/     # Zamówienia użytkownika
 │   ├── Forum/          # Forum wydarzenia
 │   ├── AdminPanel/     # Panel administratora
-│   ├── ForgetPassword/ # Zapomniane hasło
-│   ├── ResetPassword/  # Reset hasła
-│   ├── ChangeUserPassword/ # Zmiana hasła
 │   ├── UpdateUserDetails/ # Edycja danych
 │   └── Error404/       # Strona nie znaleziona
 ├── constants/          # Stałe
@@ -337,7 +334,7 @@ Strona wyświetla:
 #### Kod Rabatowy
 
 **Komponent:** `DiscountCodeForm.tsx`
-**API:** `useApplyDiscountCodeMutation()` → `POST /api/v2/discountCodes/apply`
+**API:** `useApplyDiscountCodeMutation()` → `POST /api/v2/discount-codes/apply`
 
 Użytkownik wpisuje kod i klika „Użyj kodu". Backend zwraca procent rabatu. Frontend:
 1. Obniża ceny wszystkich biletów w `OrderContext` o podany procent
@@ -345,14 +342,15 @@ Użytkownik wpisuje kod i klika „Użyj kodu". Backend zwraca procent rabatu. F
 3. Zapisuje kod w localStorage jako `code`
 
 **Obsługa błędów:**
-- `400` — kod już użyty lub wartość zamówienia za mała
+- `400` — kod wygasł lub wartość zamówienia za mała
+- `409` — kod już użyty
 - `404` — kod niepoprawny
 
 ---
 
 ### Krok 8: Płatność Stripe
 
-**API:** `useCreateCheckoutSessionMutation()` → `POST /api/v2/create-checkout-session`
+**API:** `useCreateCheckoutSessionMutation()` → `POST /api/v2/checkout-sessions`
 
 Przycisk „Zapłać teraz" wysyła tablicę biletów (`CartTicket[]`) do backendu.
 

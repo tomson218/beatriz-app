@@ -4,7 +4,7 @@ import { queryKeys } from '@/api/queryKeys';
 
 const useGetFavouriteEventsQuery = () => {
 	const getFavouriteEvents = async () => {
-		const response = await instance.get('/users/favourite');
+		const response = await instance.get('/users/me/favourites');
 		return response.data.data.events;
 	};
 

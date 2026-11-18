@@ -8,21 +8,19 @@ import express, { type Express, type Request, type Response, type NextFunction }
 import morgan from 'morgan';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import AppError from './utils/appError.ts';
-import userRouter from './routes/userRoutes.ts';
-import globalErrorHandler from './middleware/errorHandler.ts';
+import userRouter from './modules/users/users.routes.ts';
 import cors from 'cors';
-import eventRouter from './routes/eventRoutes.ts';
-import paymentRoutes from './routes/paymentRoutes.ts';
+import eventRouter from './modules/events/events.routes.ts';
+import paymentRoutes from './modules/payments/payments.routes.ts';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import ticketRoutes from './routes/ticketRoutes.ts';
-import discountCodeRoutes from './routes/discountCodeRoutes.ts';
-import forumRoutes from './routes/forumRoutes.ts';
-import webhookRoutes from './routes/webhookRoutes.ts';
-import orderRoutes from './routes/orderRoutes.ts';
-import authRouter from './routes/authRoutes.ts';
+import ticketRoutes from './modules/tickets/tickets.routes.ts';
+import discountCodeRoutes from './modules/discountCodes/discountCodes.routes.ts';
+import postRoutes from './modules/posts/posts.routes.ts';
+import webhookRoutes from './modules/webhooks/webhooks.routes.ts';
+import orderRoutes from './modules/orders/orders.routes.ts';
+import authRouter from './modules/auth/auth.routes.ts';
 import swaggerDocs from './swagger.ts';
 
 const app: Express = express();
@@ -87,7 +85,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use((req: Request, res: Response, next: NextFunction): void => {
-	if (req.originalUrl.includes('/api/webhook')) {
+	if (req.originalUrl.startsWith('/api/v2/webhooks')) {
 		next();
 	} else {
 		express.json({ limit: '10mb' })(req, res, next);
@@ -102,19 +100,15 @@ app.use((req: Request, res: Response, next: NextFunction): void => {
 app.use('/api/v2/auth', authRouter);
 app.use('/api/v2/users', userRouter);
 app.use('/api/v2/events', eventRouter);
-app.use('/api/v2/create-checkout-session', paymentRoutes);
-app.use('/api/v2/webhook', webhookRoutes);
+app.use('/api/v2/checkout-sessions', paymentRoutes);
+app.use('/api/v2/webhooks/stripe', webhookRoutes);
 app.use('/api/v2/orders', orderRoutes);
 app.use('/api/v2/tickets', ticketRoutes);
 app.use('/api/v2/discount-codes', discountCodeRoutes);
-app.use('/api/v2/forum', forumRoutes);
+app.use('/api/v2/posts', postRoutes);
 
 swaggerDocs(app);
 
-app.all('*', (req: Request, res: Response, next: NextFunction): void => {
-	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
-
-app.use(globalErrorHandler);
+//app.use(globalErrorHandler);
 
 export default app;

@@ -6,7 +6,13 @@ import type { Types, InferSchemaType } from 'mongoose';
 import type { orderSchema } from '#schemas/orderSchema';
 import type { CURRENCIES } from '#enums/currencies';
 
-export type Order = InferSchemaType<typeof orderSchema> & { _id: Types.ObjectId };
+/** `user`, `event` i `tickets[].event` to pola wirtualne: mają wartość tylko po `populate`. */
+export type Order = Omit<InferSchemaType<typeof orderSchema>, 'tickets'> & {
+	_id: Types.ObjectId;
+	tickets: OrderTicket[];
+	user?: User;
+	event?: Event;
+};
 export type Currency = (typeof CURRENCIES)[number];
 
 export interface Seating {
@@ -16,7 +22,9 @@ export interface Seating {
 }
 
 export interface OrderTicket {
-	eventId: Event | Event["_id"];
+	_id?: Types.ObjectId;
+	eventId: Event["_id"];
+	event?: Event;
 	seating: Seating[];
 	price: number;
 	type: TicketType;
@@ -45,9 +53,9 @@ export interface OrderIdParams {
 export type GetAllOrdersResponse = ListResponse<'orders', OrderDto>;
 
 export type OrderRequest = Pick<Order, 'totalAmount' | 'currency'> & {
-	user: User["_id"];
+	userId: User["_id"];
 	tickets: OrderTicket[];
-	event: Event["_id"];
+	eventId: Event["_id"];
 	countOfTickets: number;
 };
 

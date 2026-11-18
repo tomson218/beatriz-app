@@ -6,8 +6,8 @@ import { queryKeys } from '@/api/queryKeys';
 
 const useGetOccupiedSeatsQuery = (eventId: Event["_id"], sector: string, block: BlockType) => {
 	const getOccupiedSeats = async () => {
-		const uri = `/tickets/events/${eventId}/occupied-seats/${sector}/${block}`;
-		const response = await instance.get(uri);
+		const uri = `/events/${eventId}/occupied-seats`;
+		const response = await instance.get(uri, { params: { sector, block } });
 		return response.data.data.occupiedSeats;
 	};
 

@@ -5,9 +5,9 @@ import type { AddCartRequest, AddCartResponse } from '@beatriz/shared/users';
 
 const useAddUserCartMutation = () => {
 	const addUserCart = async (cart: AddCartRequest['cart']): Promise<AddCartResponse> => {
-		const uri = '/users/addCart';
+		const uri = '/users/me/cart';
 		const payload: AddCartRequest = { cart };
-		const response = await instance.post<AddCartResponse>(uri, payload);
+		const response = await instance.put<AddCartResponse>(uri, payload);
 		return response.data;
 	};
 

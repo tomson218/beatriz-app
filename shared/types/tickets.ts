@@ -6,7 +6,8 @@ import type { ticketSchemaDef } from '#schemas/ticketSchema';
 import type { TICKET_TYPES } from '#enums/ticketTypes';
 import type { BLOCK_TYPES } from '#enums/blockTypes';
 
-export type Ticket = InferSchemaType<typeof ticketSchemaDef> & { _id: Types.ObjectId };
+/** `user` i `event` to pola wirtualne: mają wartość tylko po `populate`. */
+export type Ticket = InferSchemaType<typeof ticketSchemaDef> & { _id: Types.ObjectId; user?: User; event?: Event };
 export type TicketType = (typeof TICKET_TYPES)[number];
 export type BlockType = (typeof BLOCK_TYPES)[number];
 
@@ -18,8 +19,8 @@ export interface TicketIdParams {
 	ticketId: Ticket["_id"];
 }
 
-export type TicketRequest = Pick<Ticket, 'event' | 'type' | 'date' | 'price'> & {
-	user: User["_id"];
+export type TicketRequest = Pick<Ticket, 'eventId' | 'type' | 'date' | 'price'> & {
+	userId: User["_id"];
 	seating: { sector: string; block: BlockType; seat: number };
 };
 

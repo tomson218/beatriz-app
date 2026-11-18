@@ -5,7 +5,7 @@ import type { User } from '@beatriz/shared/users';
 
 const useGetTicketsByUserQuery = (id: User['_id']) => {
 	const getTicketsByUser = async () => {
-		const uri = `/tickets/users/${id}`;
+		const uri = `/users/${id}/tickets`;
 		const response = await instance.get(uri);
 		return response.data.data.tickets;
 	};

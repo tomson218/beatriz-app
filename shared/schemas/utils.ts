@@ -48,12 +48,14 @@ export const ticketTypeSchema = {
 	enum: TICKET_TYPES,
 };
 
-export const ticketSchema = {
+export const ticketSchema = new Schema({
 	eventId: { type: Schema.Types.ObjectId, ref: 'Event' },
 	seating: [seatingSchema],
 	price: Number,
 	type: ticketTypeSchema,
-};
+});
+
+ticketSchema.virtual('event', { ref: 'Event', localField: 'eventId', foreignField: '_id', justOne: true });
 
 export const appliedDiscountCodesSchema = {
 	isUsed: {

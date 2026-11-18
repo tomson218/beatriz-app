@@ -58,10 +58,10 @@ const DiscountCodeForm = () => {
 			console.error('Error applying discount code:', error);
 
 			const isBadRequest = error.response?.status === 400;
-			const isCodeAlreadyApplied = error.response?.data?.message === 'Discount code already applied.';
+			const isCodeAlreadyApplied = error.response?.status === 409;
 			const isCodeNotFound = error.response?.status === 404;
 
-			if (isBadRequest && isCodeAlreadyApplied) {
+			if (isCodeAlreadyApplied) {
 				setDiscountError({
 					message: 'Kod zniżkowy został już użyty',
 					visible: true,

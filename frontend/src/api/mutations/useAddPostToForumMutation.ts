@@ -4,9 +4,9 @@ import instance from '@/api/apiConfig';
 import type { AddNewPostToForumRequest, AddNewPostToForumResponse } from '@beatriz/shared/forums';
 
 const useAddPostToForumMutation = (refetch: () => void) => {
-	const addPostToForum = async (postDetails: AddNewPostToForumRequest): Promise<AddNewPostToForumResponse> => {
-		const uri = '/forum';
-		const response = await instance.post<AddNewPostToForumResponse>(uri, postDetails);
+	const addPostToForum = async ({ eventId, message }: AddNewPostToForumRequest): Promise<AddNewPostToForumResponse> => {
+		const uri = `/events/${eventId}/posts`;
+		const response = await instance.post<AddNewPostToForumResponse>(uri, { message });
 		return response.data;
 	};
 

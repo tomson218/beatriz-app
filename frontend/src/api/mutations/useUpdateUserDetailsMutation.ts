@@ -5,7 +5,7 @@ import instance from '@/api/apiConfig';
 
 const useUpdateUserDetailsMutation = () => {
 	const updateUserDetails = async (updatedUser: UpdateUserRequest): Promise<UserResponse> => {
-		const uri = '/users/updateMe';
+		const uri = '/users/me';
 		const response = await instance.patch<UserResponse>(uri, updatedUser);
 		return response.data;
 	};

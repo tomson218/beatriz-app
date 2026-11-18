@@ -8,7 +8,7 @@ import classes from './PostCard.module.css';
 
 type PostUser = Pick<UserDto, '_id' | 'email' | 'photo' | 'username'>;
 
-type PostWithUser = ForumPostDto & { user: PostUser };
+type PostWithUser = Omit<ForumPostDto, 'user'> & { user: PostUser };
 
 interface PostProps {
 	post: PostWithUser;

@@ -83,16 +83,6 @@ const swaggerOptions = {
 					},
 				},
 			},
-			'/api/v2/auth/refresh-token': {
-				post: {
-					tags: ['Auth'],
-					summary: 'Alias odświeżenia access tokena',
-					responses: {
-						200: { description: 'Nowy access token' },
-						401: { description: 'Brak lub nieważny refresh token' },
-					},
-				},
-			},
 			'/api/v2/auth/logout': {
 				post: {
 					tags: ['Auth'],
@@ -104,103 +94,24 @@ const swaggerOptions = {
 					},
 				},
 			},
-			'/api/v2/auth/googleLogin': {
+			'/api/v2/auth/google': {
 				post: {
 					tags: ['Auth'],
 					summary: 'Logowanie przez Google',
 					responses: {
 						200: { description: 'Pomyślne logowanie Google' },
-						400: { description: 'Nieprawidłowy token Google' },
+						201: { description: 'Utworzono konto przez Google' },
 					},
 				},
 			},
-			'/api/v2/auth/facebookLogin': {
+			'/api/v2/auth/facebook': {
 				post: {
 					tags: ['Auth'],
 					summary: 'Logowanie przez Facebook',
 					responses: {
 						200: { description: 'Pomyślne logowanie Facebook' },
-						400: { description: 'Nieprawidłowy token Facebook' },
-					},
-				},
-			},
-			'/api/v2/auth/password/forgot': {
-				post: {
-					tags: ['Auth'],
-					summary: 'Zapomniane hasło',
-					responses: {
-						200: { description: 'Wysłano link resetujący hasło' },
-						400: { description: 'Błędne dane' },
-					},
-				},
-			},
-			'/api/v2/auth/forgetPassword': {
-				post: {
-					tags: ['Auth'],
-					summary: 'Alias zapomnianego hasła',
-					responses: {
-						200: { description: 'Wysłano link resetujący hasło' },
-						400: { description: 'Błędne dane' },
-					},
-				},
-			},
-			'/api/v2/auth/password/reset/{token}': {
-				post: {
-					tags: ['Auth'],
-					summary: 'Resetowanie hasła po tokenie',
-					parameters: [
-						{
-							name: 'token',
-							in: 'path',
-							required: true,
-							schema: { type: 'string' },
-							description: 'Token resetujący hasło z e-maila',
-						},
-					],
-					responses: {
-						200: { description: 'Hasło zresetowane' },
-						400: { description: 'Niepoprawny token lub dane' },
-					},
-				},
-			},
-			'/api/v2/auth/resetPassword/{token}': {
-				patch: {
-					tags: ['Auth'],
-					summary: 'Alias resetowania hasła po tokenie',
-					parameters: [
-						{
-							name: 'token',
-							in: 'path',
-							required: true,
-							schema: { type: 'string' },
-							description: 'Token resetujący hasło z e-maila',
-						},
-					],
-					responses: {
-						200: { description: 'Hasło zresetowane' },
-						400: { description: 'Niepoprawny token lub dane' },
-					},
-				},
-			},
-			'/api/v2/auth/password': {
-				patch: {
-					tags: ['Auth'],
-					summary: 'Aktualizacja bieżącego hasła użytkownika',
-					security: [{ bearerAuth: [] }],
-					responses: {
-						200: { description: 'Hasło zostało zaktualizowane' },
-						401: { description: 'Brak autoryzacji' },
-					},
-				},
-			},
-			'/api/v2/auth/updateMyPassword': {
-				patch: {
-					tags: ['Auth'],
-					summary: 'Alias aktualizacji bieżącego hasła użytkownika',
-					security: [{ bearerAuth: [] }],
-					responses: {
-						200: { description: 'Hasło zostało zaktualizowane' },
-						401: { description: 'Brak autoryzacji' },
+						201: { description: 'Utworzono konto przez Facebook' },
+						401: { description: 'Nieprawidłowy token Facebook' },
 					},
 				},
 			},
@@ -212,14 +123,7 @@ const swaggerOptions = {
 					responses: {
 						200: { description: 'Lista użytkowników' },
 						401: { description: 'Brak autoryzacji' },
-					},
-				},
-				post: {
-					tags: ['Users'],
-					summary: 'Utwórz użytkownika',
-					responses: {
-						201: { description: 'Użytkownik stworzony' },
-						400: { description: 'Błędne dane' },
+						403: { description: 'Brak uprawnień' },
 					},
 				},
 			},
@@ -244,35 +148,65 @@ const swaggerOptions = {
 				},
 				delete: {
 					tags: ['Users'],
-					summary: 'Usuń bieżącego użytkownika',
+					summary: 'Dezaktywuj konto bieżącego użytkownika',
 					security: [{ bearerAuth: [] }],
 					responses: {
-						200: { description: 'Użytkownik usunięty' },
+						204: { description: 'Konto dezaktywowane' },
 						401: { description: 'Brak autoryzacji' },
 					},
+				},
+			},
+			'/api/v2/users/me/cart': {
+				put: {
+					tags: ['Users'],
+					summary: 'Zastąp koszyk bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Koszyk zapisany' } },
 				},
 			},
 			'/api/v2/users/me/favourites': {
 				get: {
 					tags: ['Users'],
-					summary: 'Pobierz ulubione eventy bieżącego użytkownika',
+					summary: 'Pobierz ulubione wydarzenia bieżącego użytkownika',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Lista ulubionych eventów' } },
+					responses: { 200: { description: 'Lista ulubionych wydarzeń' } },
 				},
 				post: {
 					tags: ['Users'],
-					summary: 'Dodaj event do ulubionych bieżącego użytkownika',
+					summary: 'Dodaj wydarzenie do ulubionych bieżącego użytkownika',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Dodano do ulubionych' } },
+					responses: {
+						201: { description: 'Dodano do ulubionych' },
+						409: { description: 'Wydarzenie jest już w ulubionych' },
+					},
 				},
 			},
 			'/api/v2/users/me/favourites/{eventId}': {
 				delete: {
 					tags: ['Users'],
-					summary: 'Usuń event z ulubionych bieżącego użytkownika',
+					summary: 'Usuń wydarzenie z ulubionych bieżącego użytkownika',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Usunięto z ulubionych' } },
+					responses: {
+						204: { description: 'Usunięto z ulubionych' },
+						404: { description: 'Wydarzenia nie ma w ulubionych' },
+					},
+				},
+			},
+			'/api/v2/users/me/orders': {
+				get: {
+					tags: ['Orders'],
+					summary: 'Pobierz zamówienia bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Lista zamówień bieżącego użytkownika' } },
+				},
+			},
+			'/api/v2/users/me/tickets': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Pobierz bilety bieżącego użytkownika',
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: 'Lista biletów bieżącego użytkownika' } },
 				},
 			},
 			'/api/v2/users/{id}': {
@@ -291,7 +225,10 @@ const swaggerOptions = {
 					summary: 'Edytuj użytkownika po ID',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Zaktualizowano użytkownika' } },
+					responses: {
+						200: { description: 'Zaktualizowano użytkownika' },
+						404: { description: 'Użytkownik nie istnieje' },
+					},
 				},
 				delete: {
 					tags: ['Users'],
@@ -299,72 +236,39 @@ const swaggerOptions = {
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
 					responses: {
-						200: { description: 'Usunięto użytkownika' },
+						204: { description: 'Usunięto użytkownika' },
 						404: { description: 'Użytkownik nie istnieje' },
 					},
 				},
 			},
-			'/api/v2/users/editUser/{id}': {
-				patch: {
-					tags: ['Users'],
-					summary: 'Legacy alias: edytuj użytkownika po ID',
+			'/api/v2/users/{id}/orders': {
+				get: {
+					tags: ['Orders'],
+					summary: 'Pobierz zamówienia użytkownika po ID',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Zaktualizowano użytkownika' } },
+					responses: {
+						200: { description: 'Lista zamówień użytkownika' },
+						403: { description: 'Brak uprawnień' },
+					},
 				},
 			},
-			'/api/v2/users/updateMe': {
-				patch: {
-					tags: ['Users'],
-					summary: 'Legacy alias: zaktualizuj profil bieżącego użytkownika',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Zaktualizowano profil' } },
-				},
-			},
-			'/api/v2/users/deleteMe': {
-				delete: {
-					tags: ['Users'],
-					summary: 'Legacy alias: usuń bieżącego użytkownika',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Usunięto bieżącego użytkownika' } },
-				},
-			},
-			'/api/v2/users/favourite': {
+			'/api/v2/users/{id}/tickets': {
 				get: {
-					tags: ['Users'],
-					summary: 'Legacy alias: pobierz ulubione eventy użytkownika',
+					tags: ['Tickets'],
+					summary: 'Pobierz bilety użytkownika po ID',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Lista ulubionych eventów' } },
-				},
-			},
-			'/api/v2/users/addFavourite': {
-				post: {
-					tags: ['Users'],
-					summary: 'Legacy alias: dodaj event do ulubionych',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Dodano do ulubionych' } },
-				},
-			},
-			'/api/v2/users/removeFavourite': {
-				delete: {
-					tags: ['Users'],
-					summary: 'Legacy alias: usuń event z ulubionych',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Usunięto z ulubionych' } },
-				},
-			},
-			'/api/v2/users/addCart': {
-				post: {
-					tags: ['Users'],
-					summary: 'Dodaj produkt do koszyka',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Dodano do koszyka' } },
+					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: {
+						200: { description: 'Lista biletów użytkownika' },
+						403: { description: 'Brak uprawnień' },
+					},
 				},
 			},
 			'/api/v2/events': {
 				get: {
 					tags: ['Events'],
-					summary: 'Pobierz wszystkie wydarzenia',
+					summary: 'Pobierz nadchodzące wydarzenia',
 					security: [{ bearerAuth: [] }],
 					responses: { 200: { description: 'Lista wydarzeń' } },
 				},
@@ -381,21 +285,71 @@ const swaggerOptions = {
 					summary: 'Pobierz wydarzenie po ID',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Szczegóły wydarzenia' } },
+					responses: {
+						200: { description: 'Szczegóły wydarzenia' },
+						404: { description: 'Wydarzenie nie istnieje' },
+					},
 				},
 				patch: {
 					tags: ['Events'],
 					summary: 'Zaktualizuj wydarzenie',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Wydarzenie zaktualizowane' } },
+					responses: {
+						200: { description: 'Wydarzenie zaktualizowane' },
+						404: { description: 'Wydarzenie nie istnieje' },
+					},
 				},
 				delete: {
 					tags: ['Events'],
 					summary: 'Usuń wydarzenie',
 					security: [{ bearerAuth: [] }],
 					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Wydarzenie usunięte' } },
+					responses: {
+						204: { description: 'Wydarzenie usunięte' },
+						404: { description: 'Wydarzenie nie istnieje' },
+					},
+				},
+			},
+			'/api/v2/events/{eventId}/posts': {
+				get: {
+					tags: ['Forum'],
+					summary: 'Pobierz posty wydarzenia',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 200: { description: 'Posty wydarzenia' } },
+				},
+				post: {
+					tags: ['Forum'],
+					summary: 'Dodaj post do wydarzenia',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: { 201: { description: 'Post dodany' } },
+				},
+			},
+			'/api/v2/events/{eventId}/availability': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Pobierz liczbę wolnych miejsc w sektorach wydarzenia',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: {
+						200: { description: 'Wolne miejsca w sektorach' },
+						404: { description: 'Wydarzenie nie istnieje' },
+					},
+				},
+			},
+			'/api/v2/events/{eventId}/occupied-seats': {
+				get: {
+					tags: ['Tickets'],
+					summary: 'Pobierz zajęte miejsca w sektorze i strefie',
+					security: [{ bearerAuth: [] }],
+					parameters: [
+						{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } },
+						{ name: 'sector', in: 'query', required: true, schema: { type: 'string' } },
+						{ name: 'block', in: 'query', required: true, schema: { type: 'string' } },
+					],
+					responses: { 200: { description: 'Zajęte miejsca' } },
 				},
 			},
 			'/api/v2/orders': {
@@ -406,32 +360,6 @@ const swaggerOptions = {
 					responses: { 200: { description: 'Lista zamówień' } },
 				},
 			},
-			'/api/v2/orders/me': {
-				get: {
-					tags: ['Orders'],
-					summary: 'Pobierz zamówienia bieżącego użytkownika',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Lista zamówień bieżącego użytkownika' } },
-				},
-			},
-			'/api/v2/orders/users/{id}': {
-				get: {
-					tags: ['Orders'],
-					summary: 'Pobierz zamówienia użytkownika po ID',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Lista zamówień użytkownika' } },
-				},
-			},
-			'/api/v2/orders/{id}': {
-				get: {
-					tags: ['Orders'],
-					summary: 'Pobierz zamówienie po ID',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Szczegóły zamówienia' } },
-				},
-			},
 			'/api/v2/tickets': {
 				get: {
 					tags: ['Tickets'],
@@ -440,74 +368,12 @@ const swaggerOptions = {
 					responses: { 200: { description: 'Lista biletów' } },
 				},
 			},
-			'/api/v2/tickets/me': {
+			'/api/v2/posts': {
 				get: {
-					tags: ['Tickets'],
-					summary: 'Pobierz bilety bieżącego użytkownika',
+					tags: ['Forum'],
+					summary: 'Pobierz wszystkie posty',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Lista biletów bieżącego użytkownika' } },
-				},
-			},
-			'/api/v2/tickets/users/{id}': {
-				get: {
-					tags: ['Tickets'],
-					summary: 'Pobierz bilety użytkownika po ID',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Lista biletów użytkownika' } },
-				},
-			},
-			'/api/v2/tickets/events/{eventId}/available-sectors': {
-				get: {
-					tags: ['Tickets'],
-					summary: 'Pobierz dostępne sektory dla wydarzenia',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Lista dostępnych sektorów' } },
-				},
-			},
-			'/api/v2/tickets/events/{eventId}/availability': {
-				get: {
-					tags: ['Tickets'],
-					summary: 'Alias dostępnych sektorów dla wydarzenia',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Lista dostępnych sektorów' } },
-				},
-			},
-			'/api/v2/tickets/events/{eventId}/tickets/availability': {
-				get: {
-					tags: ['Tickets'],
-					summary: 'Alias dostępności biletów dla wydarzenia',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Lista dostępnych sektorów' } },
-				},
-			},
-			'/api/v2/tickets/events/{eventId}/occupied-seats/{sector}/{block}': {
-				get: {
-					tags: ['Tickets'],
-					summary: 'Pobierz zajęte miejsca dla sektora i bloku',
-					security: [{ bearerAuth: [] }],
-					parameters: [
-						{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } },
-						{ name: 'sector', in: 'path', required: true, schema: { type: 'string' } },
-						{ name: 'block', in: 'path', required: true, schema: { type: 'string' } },
-					],
-					responses: { 200: { description: 'Zajęte miejsca' } },
-				},
-			},
-			'/api/v2/tickets/events/{eventId}/tickets/seats': {
-				get: {
-					tags: ['Tickets'],
-					summary: 'Pobierz zajęte miejsca wg query paramów sector i block',
-					security: [{ bearerAuth: [] }],
-					parameters: [
-						{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } },
-						{ name: 'sector', in: 'query', required: false, schema: { type: 'string' } },
-						{ name: 'block', in: 'query', required: false, schema: { type: 'string' } },
-					],
-					responses: { 200: { description: 'Zajęte miejsca' } },
+					responses: { 200: { description: 'Lista postów' } },
 				},
 			},
 			'/api/v2/discount-codes': {
@@ -524,50 +390,35 @@ const swaggerOptions = {
 					responses: { 201: { description: 'Kod rabatowy utworzony' } },
 				},
 			},
-			'/api/v2/discount-codes/applyCode': {
+			'/api/v2/discount-codes/apply': {
 				post: {
 					tags: ['Discount Codes'],
 					summary: 'Zastosuj kod rabatowy',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Kod rabatowy zastosowany' } },
+					responses: {
+						200: { description: 'Kod rabatowy zastosowany' },
+						400: { description: 'Kod wygasł lub wartość zamówienia jest za niska' },
+						404: { description: 'Kod nie istnieje' },
+						409: { description: 'Kod został już użyty' },
+					},
 				},
 			},
-			'/api/v2/forum': {
-				get: {
-					tags: ['Forum'],
-					summary: 'Pobierz wszystkie posty forum',
-					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Lista postów forum' } },
-				},
-				post: {
-					tags: ['Forum'],
-					summary: 'Dodaj nowy post do forum',
-					security: [{ bearerAuth: [] }],
-					responses: { 201: { description: 'Post dodany' } },
-				},
-			},
-			'/api/v2/forum/events/{eventId}': {
-				get: {
-					tags: ['Forum'],
-					summary: 'Pobierz posty forum dla konkretnego eventu',
-					security: [{ bearerAuth: [] }],
-					parameters: [{ name: 'eventId', in: 'path', required: true, schema: { type: 'string' } }],
-					responses: { 200: { description: 'Posty dla eventu' } },
-				},
-			},
-			'/api/v2/create-checkout-session': {
+			'/api/v2/checkout-sessions': {
 				post: {
 					tags: ['Payments'],
 					summary: 'Utwórz sesję płatności Stripe',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Sesja płatności utworzona' } },
+					responses: { 201: { description: 'Sesja płatności utworzona' } },
 				},
 			},
-			'/api/v2/webhook': {
+			'/api/v2/webhooks/stripe': {
 				post: {
 					tags: ['Webhook'],
 					summary: 'Webhook Stripe',
-					responses: { 200: { description: 'Webhook odebrany' } },
+					responses: {
+						200: { description: 'Webhook odebrany' },
+						400: { description: 'Nieprawidłowy podpis' },
+					},
 				},
 			},
 		},

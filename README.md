@@ -72,7 +72,7 @@ Aplikacja frontendowa będzie dostępna pod adresem `http://localhost:5173`.
 
 ```bash
 stripe login
-stripe listen --forward-to localhost:3000/api/v2/webhook
+stripe listen --forward-to localhost:3000/api/v2/webhooks/stripe
 ```
 
 ## Struktura Projektu
@@ -80,9 +80,7 @@ stripe listen --forward-to localhost:3000/api/v2/webhook
 ```
 beatriz-app/
 ├── backend/          # Serwer API (Express)
-│   ├── controllers/  # Logika biznesowa endpointów
-│   ├── models/       # Modele Mongoose
-│   ├── mappers/      # Mapowanie modeli na DTO
+│   ├── modules/      # Moduły domenowe (trasy, kontroler, serwis, model, mapper, typy)
 │   ├── utils/        # Pomocnicze funkcje
 │   └── tests/        # Testy jednostkowe
 ├── frontend/         # Aplikacja React

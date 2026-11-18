@@ -10,7 +10,7 @@ const useFacebookLoginMutation = () => {
 	const navigate = useNavigate();
 
 	const facebookLogin = async (facebookDataDetails: FacebookLoginRequest): Promise<AuthResponse> => {
-		const uri = `${API_URL}/auth/facebookLogin`;
+		const uri = `${API_URL}/auth/facebook`;
 		const response = await axios.post<AuthResponse>(uri, facebookDataDetails);
 		return response.data;
 	};

@@ -10,7 +10,8 @@
 		"test": "jest",
 		"start": "node --env-file-if-exists=.env.local index.ts",
 		"dev": "node --watch --env-file-if-exists=.env.local index.ts",
-		"start:prod": "node index.ts"
+		"start:prod": "node index.ts",
+		"migrate:reference-fields": "node --env-file-if-exists=.env.local scripts/renameReferenceFields.ts"
 	},
 	"type": "module",
 	"author": "TP",

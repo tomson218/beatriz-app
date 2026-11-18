@@ -7,7 +7,7 @@ import instance from '@/api/apiConfig';
 const useAddEventToFavouriteMutation = () => {
 	const addEventToFavourite = async (eventId: Event["_id"]): Promise<FavouriteEventResponse> => {
 		const payload: EventIdParams = { eventId };
-		const response = await instance.post<FavouriteEventResponse>('/users/addFavourite', payload);
+		const response = await instance.post<FavouriteEventResponse>('/users/me/favourites', payload);
 		return response.data;
 	};
 

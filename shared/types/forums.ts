@@ -1,9 +1,11 @@
 import type { ItemResponse, ListResponse } from '#types/common';
 import type { Event } from '#types/events';
+import type { User } from '#types/users';
 import type { Types, InferSchemaType } from 'mongoose';
 import type { forumSchema } from '#schemas/forumSchema';
 
-export type ForumPost = InferSchemaType<typeof forumSchema> & { _id: Types.ObjectId };
+/** `user` i `event` to pola wirtualne: mają wartość tylko po `populate`. */
+export type ForumPost = InferSchemaType<typeof forumSchema> & { _id: Types.ObjectId; user?: User; event?: Event };
 
 export interface ForumPostDto extends Omit<ForumPost, '_id'> {
 	_id: string;

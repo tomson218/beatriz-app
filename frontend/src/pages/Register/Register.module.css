@@ -63,13 +63,6 @@
 	background-color: #0056b3;
 }
 
-.forget-password {
-	margin-top: 1rem;
-	color: #007bff;
-	text-decoration: underline;
-	cursor: pointer;
-}
-
 .divider-span {
 	background: var(--primary-color);
 	padding: 0 10px;

@@ -7,7 +7,7 @@ const useCreateCheckoutSessionMutation = () => {
 	const createCheckoutSession = async (
 		lineItems: CreateCheckoutSessionRequest['products'],
 	): Promise<CreateCheckoutSessionResponse> => {
-		const uri = '/create-checkout-session';
+		const uri = '/checkout-sessions';
 		// Serwer sam wylicza ceny i rabat, więc oprócz biletów wysyłamy tylko kod rabatowy (jeśli został zastosowany).
 		let discountCode: string | undefined;
 		try {

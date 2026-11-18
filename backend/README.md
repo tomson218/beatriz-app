@@ -55,36 +55,24 @@ Serwer uruchomi się na porcie wskazanym w `config.env` (domyślnie `3000`).
 
 ```bash
 stripe login
-stripe listen --forward-to localhost:3000/api/v2/webhook
+stripe listen --forward-to localhost:3000/api/v2/webhooks/stripe
 ```
 
 ## Struktura
 
 ```
 backend/
-├── controllers/        # Logika biznesowa endpointów
-│   ├── authController.ts        # Rejestracja, logowanie, reset hasła
-│   ├── userController.ts        # Zarządzanie użytkownikami
-│   ├── eventController.ts       # CRUD wydarzeń
-│   ├── orderController.ts       # Zamówienia
-│   ├── ticketController.ts      # Bilety i miejsca
-│   ├── forumController.ts       # Forum wydarzeń
-│   ├── discountCodeController.ts # Kody rabatowe
-│   ├── paymentController.ts     # Sesje płatności Stripe
-│   └── webhookController.ts     # Webhook Stripe
-├── models/             # Modele Mongoose
-│   ├── userModel.ts
-│   ├── eventModel.ts
-│   ├── orderModel.ts
-│   ├── ticketModel.ts
-│   ├── forumModel.ts
-│   ├── discountCodeModel.ts
-│   └── utils.ts
-├── mappers/            # Mapowanie modeli na DTO
-│   ├── orderMapper.ts
-│   └── forumMapper.ts
+├── modules/            # Moduły domenowe: <nazwa>.routes, .controller, .service, .model, .mapper, .type
+│   ├── auth/           # Rejestracja i logowanie
+│   ├── users/          # Zarządzanie użytkownikami
+│   ├── events/         # CRUD wydarzeń
+│   ├── orders/         # Zamówienia
+│   ├── tickets/        # Bilety i miejsca
+│   ├── posts/          # Forum wydarzeń
+│   ├── discountCodes/  # Kody rabatowe
+│   ├── payments/       # Sesje płatności Stripe
+│   └── webhooks/       # Webhook Stripe
 ├── utils/              # Funkcje pomocnicze
-│   ├── appError.ts         # Klasa błędów
 │   ├── emailTemplate.ts    # Szablony emaili
 │   ├── formattings.ts      # Formatowanie danych
 │   └── validateNumbers.ts  # Walidacja liczb
@@ -103,79 +91,80 @@ backend/
 |--------|---------|------|
 | POST | `/auth/signup` | Rejestracja nowego użytkownika |
 | POST | `/auth/login` | Logowanie |
+| POST | `/auth/refresh` | Odświeżenie access tokena |
 | POST | `/auth/logout` | Wylogowanie |
-| POST | `/auth/forget-password` | Żądanie resetu hasła |
-| POST | `/auth/reset-password` | Reset hasła |
-| POST | `/auth/update-password` | Zmiana hasła |
-| POST | `/auth/google-login` | Logowanie przez Google |
-| POST | `/auth/facebook-login` | Logowanie przez Facebook |
+| POST | `/auth/google` | Logowanie przez Google |
+| POST | `/auth/facebook` | Logowanie przez Facebook |
 
 ### Użytkownicy (`/api/v2/users`)
 
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
 | GET | `/users` | Pobierz wszystkich użytkowników (admin) |
-| GET | `/users/:id` | Pobierz użytkownika po ID |
-| PUT | `/users/me` | Zaktualizuj własne dane |
+| GET | `/users/me` | Pobierz własny profil |
+| PATCH | `/users/me` | Zaktualizuj własne dane |
+| DELETE | `/users/me` | Dezaktywuj własne konto |
+| PUT | `/users/me/cart` | Zastąp własny koszyk |
+| GET | `/users/me/favourites` | Pobierz ulubione wydarzenia |
+| POST | `/users/me/favourites` | Dodaj wydarzenie do ulubionych |
+| DELETE | `/users/me/favourites/:eventId` | Usuń wydarzenie z ulubionych |
+| GET | `/users/me/orders` | Pobierz własne zamówienia |
+| GET | `/users/me/tickets` | Pobierz własne bilety |
+| GET | `/users/:id` | Pobierz użytkownika (właściciel lub admin) |
+| PATCH | `/users/:id` | Edytuj użytkownika (admin) |
 | DELETE | `/users/:id` | Usuń użytkownika (admin) |
+| GET | `/users/:id/orders` | Pobierz zamówienia użytkownika (właściciel lub admin) |
+| GET | `/users/:id/tickets` | Pobierz bilety użytkownika (właściciel, admin lub pracownik) |
 
 ### Wydarzenia (`/api/v2/events`)
 
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
-| GET | `/events` | Pobierz wszystkie wydarzenia |
+| GET | `/events` | Pobierz nadchodzące wydarzenia |
+| POST | `/events` | Stwórz wydarzenie (admin, pracownik) |
 | GET | `/events/:id` | Pobierz szczegóły wydarzenia |
-| POST | `/events` | Stwórz nowe wydarzenie (admin) |
-| PUT | `/events/:id` | Zaktualizuj wydarzenie (admin) |
-| DELETE | `/events/:id` | Usuń wydarzenie (admin) |
+| PATCH | `/events/:id` | Zaktualizuj wydarzenie (admin, pracownik) |
+| DELETE | `/events/:id` | Usuń wydarzenie (admin, pracownik) |
+| GET | `/events/:eventId/posts` | Pobierz posty wydarzenia |
+| POST | `/events/:eventId/posts` | Dodaj post do wydarzenia |
+| GET | `/events/:eventId/availability` | Pobierz wolne miejsca w sektorach |
+| GET | `/events/:eventId/occupied-seats?sector=&block=` | Pobierz zajęte miejsca |
 
-### Zamówienia (`/api/v2/orders`)
-
-| Metoda | Ścieżka | Opis |
-|--------|---------|------|
-| GET | `/orders` | Pobierz wszystkie zamówienia |
-| POST | `/orders` | Stwórz zamówienie |
-
-### Bilety (`/api/v2/tickets`)
+### Zamówienia, bilety i posty
 
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
-| GET | `/tickets` | Pobierz bilety użytkownika |
-| GET | `/occupy-seats` | Pobierz zajęte miejsca (eventId, sector, block) |
+| GET | `/orders` | Pobierz wszystkie zamówienia (admin) |
+| GET | `/tickets` | Pobierz wszystkie bilety (admin, pracownik) |
+| GET | `/posts` | Pobierz wszystkie posty |
 
-### Forum (`/api/v2/forums`)
-
-| Metoda | Ścieżka | Opis |
-|--------|---------|------|
-| GET | `/forums/:eventId` | Pobierz posty dla wydarzenia |
-| POST | `/forums/:eventId` | Dodaj post do wydarzenia |
-
-### Kody Rabatowe (`/api/v2/discountCodes`)
+### Kody Rabatowe (`/api/v2/discount-codes`)
 
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
-| POST | `/discountCodes/apply` | Zastosuj kod rabatowy |
-| POST | `/discountCodes` | Dodaj kod rabatowy (admin) |
+| GET | `/discount-codes` | Pobierz kody rabatowe (admin) |
+| POST | `/discount-codes` | Dodaj kod rabatowy (admin) |
+| POST | `/discount-codes/apply` | Zastosuj kod rabatowy |
 
 ### Płatności
 
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
-| POST | `/create-checkout-session` | Stwórz sesję płatności Stripe |
-| POST | `/webhook` | Webhook Stripe (potwierdzenie płatności) |
+| POST | `/checkout-sessions` | Stwórz sesję płatności Stripe |
+| POST | `/webhooks/stripe` | Webhook Stripe (potwierdzenie płatności) |
 
 ## Przepływ Płatności
 
 ```
 Frontend (OrderSummary)
-    ↓ POST /create-checkout-session { products: CartTicket[] }
+    ↓ POST /checkout-sessions { products: CartTicket[] }
 Backend (paymentController)
     ↓ Zapisuje bilety w user.cart
     ↓ Tworzy sesję Stripe
     ↓ Zwraca session.url
 Frontend → Przekierowanie do Stripe Checkout
     ↓ Użytkownik płaci
-Stripe → POST /webhook { event: checkout.session.completed }
+Stripe → POST /webhooks/stripe { event: checkout.session.completed }
 Backend (webhookController)
     ↓ Tworzy Order
     ↓ Tworzy Tickets

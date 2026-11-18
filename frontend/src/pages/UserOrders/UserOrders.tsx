@@ -47,7 +47,7 @@ const OrderCard = ({ order, date }: OrderCardProps) => {
 
 						return (
 							<section key={ticketIndex} className={classes.ticket}>
-								<p>Nazwa wydarzenia: {ticket.eventId.name}</p>
+								<p>Nazwa wydarzenia: {ticket.event?.name}</p>
 								<p>
 									Sektor: {sector}, Strefa: {block}, {seat ? `Miejsce: ${seat}` : ''}
 								</p>

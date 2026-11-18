@@ -4,7 +4,8 @@ import type { userSchema } from '#schemas/userSchema';
 import type { Event } from '#types/events';
 import type { USER_ROLES } from '#enums/userRoles';
 
-export type User = InferSchemaType<typeof userSchema> & { _id: Types.ObjectId };
+/** `favouriteEvents` to pole wirtualne: ma wartość tylko po `populate`. */
+export type User = InferSchemaType<typeof userSchema> & { _id: Types.ObjectId; favouriteEvents?: Event[] };
 export type UserRole = (typeof USER_ROLES)[number];
 
 export type UserPassword = User['password'];
@@ -17,7 +18,7 @@ export interface AppliedDiscountCode {
 	code?: string;
 }
 
-export interface UserDto extends Omit<User, '_id' | 'password' | 'passwordConfirm' | 'passwordResetToken' | 'passwordResetExpires' | 'myCart'> {
+export interface UserDto extends Omit<User, '_id' | 'password' | 'passwordConfirm' | 'myCart'> {
 	_id: string;
 }
 
@@ -57,7 +58,7 @@ export type GetUserResponse = ItemResponse<'user', UserDto>;
 /** Ulubione wydarzenia: `{ status, data: { results, events } }`. */
 export type FavouriteEventsResponse = ListResponse<'events', Event>;
 
-/** Dodanie/usunięcie ulubionego: `{ status, message }`. */
+/** Dodanie ulubionego: `{ status, message }`. */
 export type FavouriteEventResponse = MessageResponse;
 
 /** Usunięcie użytkownika kończy się statusem 204 (bez treści). */

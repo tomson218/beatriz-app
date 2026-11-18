@@ -10,7 +10,7 @@ const useGoogleLoginMutation = () => {
 	const navigate = useNavigate();
 
 	const googleLogin = async (googleDataDetails: GoogleLoginRequest): Promise<AuthResponse> => {
-		const uri = `${API_URL}/auth/googleLogin`;
+		const uri = `${API_URL}/auth/google`;
 		const response = await axios.post<AuthResponse>(uri, googleDataDetails);
 		return response.data;
 	};

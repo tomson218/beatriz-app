@@ -5,7 +5,7 @@ import { queryKeys } from '@/api/queryKeys';
 
 const useGetPostsByEventIdQuery = (eventId: Event["_id"]) => {
 	const getPostsByEventId = async () => {
-		const response = await instance.get(`/forum/events/${eventId}`);
+		const response = await instance.get(`/events/${eventId}/posts`);
 		return response.data.data.posts;
 	};
 

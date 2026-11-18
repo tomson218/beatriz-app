@@ -3,7 +3,7 @@ import { TICKET_TYPES } from '#enums/ticketTypes';
 import { seatingSchema } from '#schemas/utils';
 
 export const ticketSchemaDef = new Schema({
-	event: {
+	eventId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Event',
 		required: [true, 'Please tell us your event'],
@@ -12,7 +12,7 @@ export const ticketSchemaDef = new Schema({
 		type: seatingSchema,
 		required: [true, 'Please tell us your seating'],
 	},
-	user: {
+	userId: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: [true, 'Please tell us your user'],
@@ -38,4 +38,7 @@ export const ticketSchemaDef = new Schema({
 		required: [true, 'Please tell us your date of event'],
 	},
 });
+
+ticketSchemaDef.virtual('user', { ref: 'User', localField: 'userId', foreignField: '_id', justOne: true });
+ticketSchemaDef.virtual('event', { ref: 'Event', localField: 'eventId', foreignField: '_id', justOne: true });
 

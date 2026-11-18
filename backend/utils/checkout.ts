@@ -1,4 +1,3 @@
-import AppError from './appError.ts';
 import { calcDiscountPrice, calcPricesAfterDiscount } from './discounts.ts';
 import { validatePositiveNumber } from './validateNumbers.ts';
 import { SECTORS } from '@beatriz/shared/enums/sectors';
@@ -44,7 +43,7 @@ const isOneOf = <T extends readonly string[]>(list: T, value: unknown): value is
 
 export const parseRequestedTickets = (products: unknown): RequestedTicket[] => {
 	if (!Array.isArray(products) || products.length === 0 || products.length > MAX_TICKETS_PER_ORDER) {
-		throw new AppError(`Zamówienie musi zawierać od 1 do ${MAX_TICKETS_PER_ORDER} biletów`, 400);
+		throw Object.assign(new Error(`Zamówienie musi zawierać od 1 do ${MAX_TICKETS_PER_ORDER} biletów`), { statusCode: 400 });
 	}
 
 	const seenSeats = new Set<string>();
@@ -53,22 +52,22 @@ export const parseRequestedTickets = (products: unknown): RequestedTicket[] => {
 		const position = `Bilet ${index + 1}`;
 
 		if (typeof raw !== 'object' || raw === null) {
-			throw new AppError(`${position}: nieprawidłowe dane`, 400);
+			throw Object.assign(new Error(`${position}: nieprawidłowe dane`), { statusCode: 400 });
 		}
 
 		const product = raw as Record<string, unknown>;
 
 		if (typeof product.eventId !== 'string' || !OBJECT_ID_REGEX.test(product.eventId)) {
-			throw new AppError(`${position}: nieprawidłowe wydarzenie`, 400);
+			throw Object.assign(new Error(`${position}: nieprawidłowe wydarzenie`), { statusCode: 400 });
 		}
 		if (!isOneOf(TICKET_TYPES, product.type)) {
-			throw new AppError(`${position}: nieprawidłowy typ biletu`, 400);
+			throw Object.assign(new Error(`${position}: nieprawidłowy typ biletu`), { statusCode: 400 });
 		}
 		if (!isOneOf(SECTORS, product.sector)) {
-			throw new AppError(`${position}: nieprawidłowy sektor`, 400);
+			throw Object.assign(new Error(`${position}: nieprawidłowy sektor`), { statusCode: 400 });
 		}
 		if (!isOneOf(BLOCK_TYPES, product.block)) {
-			throw new AppError(`${position}: nieprawidłowa strefa`, 400);
+			throw Object.assign(new Error(`${position}: nieprawidłowa strefa`), { statusCode: 400 });
 		}
 
 		let seating = '';
@@ -76,12 +75,12 @@ export const parseRequestedTickets = (products: unknown): RequestedTicket[] => {
 			seating = String(product.seating);
 			const seat = Number(seating);
 			if (!SEAT_REGEX.test(seating) || seat < 1 || seat > COUNT_SEAT) {
-				throw new AppError(`${position}: nieprawidłowe miejsce`, 400);
+				throw Object.assign(new Error(`${position}: nieprawidłowe miejsce`), { statusCode: 400 });
 			}
 
 			const seatKey = `${product.eventId}|${product.sector}|${product.block}|${seat}`;
 			if (seenSeats.has(seatKey)) {
-				throw new AppError(`${position}: to samo miejsce zostało wybrane dwa razy`, 400);
+				throw Object.assign(new Error(`${position}: to samo miejsce zostało wybrane dwa razy`), { statusCode: 400 });
 			}
 			seenSeats.add(seatKey);
 		}
@@ -110,16 +109,16 @@ export const priceTickets = (tickets: RequestedTicket[], events: Map<string, Che
 		const event = events.get(ticket.eventId);
 
 		if (!event) {
-			throw new AppError(`${position}: nie znaleziono wydarzenia`, 404);
+			throw Object.assign(new Error(`${position}: nie znaleziono wydarzenia`), { statusCode: 404 });
 		}
 		if (new Date(event.date).getTime() <= Date.now()) {
-			throw new AppError(`${position}: wydarzenie już się odbyło`, 400);
+			throw Object.assign(new Error(`${position}: wydarzenie już się odbyło`), { statusCode: 400 });
 		}
 		if (!event.sectors.includes(ticket.sector)) {
-			throw new AppError(`${position}: sektor ${ticket.sector} nie jest dostępny dla tego wydarzenia`, 400);
+			throw Object.assign(new Error(`${position}: sektor ${ticket.sector} nie jest dostępny dla tego wydarzenia`), { statusCode: 400 });
 		}
 		if (event.seatRequired && ticket.seating === '') {
-			throw new AppError(`${position}: to wydarzenie wymaga wyboru miejsca`, 400);
+			throw Object.assign(new Error(`${position}: to wydarzenie wymaga wyboru miejsca`), { statusCode: 400 });
 		}
 
 		const prices = calcPricesAfterDiscount(calcDiscountPrice(event.date), event.prices) as Record<string, number>;

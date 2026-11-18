@@ -11,7 +11,7 @@ export const orderSchema = new Schema({
 		type: Date,
 		required: [true, 'Please tell us your date of event'],
 	},
-	user: {
+	userId: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: [true, 'Please tell us your user of event'],
@@ -22,7 +22,7 @@ export const orderSchema = new Schema({
 		enum: CURRENCIES,
 	},
 	tickets: [ticketSchema],
-	event: {
+	eventId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Event',
 	},
@@ -33,4 +33,7 @@ export const orderSchema = new Schema({
 		max: 999,
 	},
 });
+
+orderSchema.virtual('user', { ref: 'User', localField: 'userId', foreignField: '_id', justOne: true });
+orderSchema.virtual('event', { ref: 'Event', localField: 'eventId', foreignField: '_id', justOne: true });
 
