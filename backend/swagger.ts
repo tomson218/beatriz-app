@@ -355,9 +355,36 @@ const swaggerOptions = {
 			'/api/v2/orders': {
 				get: {
 					tags: ['Orders'],
-					summary: 'Pobierz wszystkie zamówienia',
+					summary: 'Pobierz zamówienia (opcjonalnie według statusu)',
 					security: [{ bearerAuth: [] }],
-					responses: { 200: { description: 'Lista zamówień' } },
+					parameters: [{ name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['pending', 'paid', 'rejected', 'expired'] } }],
+					responses: {
+						200: { description: 'Lista zamówień' },
+						400: { description: 'Nieprawidłowy status' },
+					},
+				},
+				post: {
+					tags: ['Orders'],
+					summary: 'Złóż zamówienie z płatnością offline',
+					security: [{ bearerAuth: [] }],
+					responses: {
+						201: { description: 'Zamówienie czeka na potwierdzenie wpłaty' },
+						409: { description: 'Miejsce jest już zajęte' },
+					},
+				},
+			},
+			'/api/v2/orders/{id}': {
+				patch: {
+					tags: ['Orders'],
+					summary: 'Zatwierdź lub odrzuć wpłatę offline',
+					security: [{ bearerAuth: [] }],
+					parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+					responses: {
+						200: { description: 'Decyzja zapisana' },
+						400: { description: 'Nieprawidłowy status' },
+						404: { description: 'Zamówienie nie istnieje' },
+						409: { description: 'Zamówienie nie czeka na wpłatę' },
+					},
 				},
 			},
 			'/api/v2/tickets': {

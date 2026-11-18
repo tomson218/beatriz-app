@@ -1,15 +1,17 @@
 import type { NextFunction, Request, Response } from 'express';
 import { toForumDto } from './posts.mapper.ts';
-import { addPost, getAllPosts, getPostsByEvent } from './posts.service.ts';
-import type { ForumMessageParams, PostsByEventParams } from './posts.type.ts';
+import { addPost, findAllPosts, findPostsByEvent } from './posts.service.ts';
+import type { ForumMessageParams, ForumPostDto } from '@beatriz/shared/forums';
+import type { PostDocument, PostsByEventParams } from './posts.type.ts';
 
 export const getAllForumPosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const posts = await getAllPosts();
+		const posts: PostDocument[] = await findAllPosts();
+		const postsDto: ForumPostDto[] = posts.map(toForumDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: posts.length, posts: posts.map(toForumDto) },
+			data: { results: postsDto.length, posts: postsDto },
 		});
 	} catch (error) {
 		next(error);
@@ -18,11 +20,12 @@ export const getAllForumPosts = async (req: Request, res: Response, next: NextFu
 
 export const getPostsByEventId = async (req: Request<PostsByEventParams>, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const posts = await getPostsByEvent(req.params.eventId);
+		const posts: PostDocument[] = await findPostsByEvent(req.params.eventId);
+		const postsDto: ForumPostDto[] = posts.map(toForumDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: posts.length, posts: posts.map(toForumDto) },
+			data: { results: postsDto.length, posts: postsDto },
 		});
 	} catch (error) {
 		next(error);
@@ -35,11 +38,12 @@ export const addNewPostToForum = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const post = await addPost(req.user.id, req.params.eventId, req.body.message);
+		const post: PostDocument = await addPost(String(req.user._id), req.params.eventId, req.body.message);
+		const postDto: ForumPostDto = toForumDto(post);
 
 		res.status(201).json({
 			status: 'success',
-			data: { post: toForumDto(post) },
+			data: { post: postDto },
 		});
 	} catch (error) {
 		next(error);

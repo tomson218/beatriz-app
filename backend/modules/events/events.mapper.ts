@@ -1,7 +1,8 @@
-import type { Event, EventDto } from './events.type.ts';
+import type { EventDto } from '@beatriz/shared/events';
+import type { EventWithDiscount } from './events.type.ts';
 
-export const toEventDto = (event: Event): EventDto => ({
-	_id: event._id,
+export const toEventDto = (event: EventWithDiscount): EventDto => ({
+	_id: event._id.toString(),
 	name: event.name,
 	description: event.description,
 	star: event.star,
@@ -11,5 +12,5 @@ export const toEventDto = (event: Event): EventDto => ({
 	sectors: event.sectors,
 	prices: event.prices,
 	type: event.type,
-	discount: event.discount, // anomalia jakaś
+	discount: event.discount,
 });

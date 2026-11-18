@@ -33,7 +33,7 @@ router
 	.get(protect, getPostsByEventId)
 	.post(protect, addNewPostToForum);
 
-router.get('/:eventId/availability', protect, groupAvailableSectors);
-router.get('/:eventId/occupied-seats', protect, getOccupiedSeats);
+router.route('/:eventId/availability').get(protect, groupAvailableSectors);
+router.route('/:eventId/occupied-seats').get(protect, getOccupiedSeats);
 
 export default router;

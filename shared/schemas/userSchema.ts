@@ -68,6 +68,12 @@ export const userSchema = new Schema({
 		select: false,
 	},
 	appliedDiscountCodes: [appliedDiscountCodesSchema],
+}, {
+	methods: {
+		correctPassword(candidatePassword: string, userPassword: string): Promise<boolean> {
+			return bcrypt.compare(candidatePassword, userPassword);
+		},
+	},
 });
 
 userSchema.virtual('favouriteEvents', { ref: 'Event', localField: 'favouriteEventIds', foreignField: '_id' });
@@ -82,11 +88,4 @@ userSchema.pre('save', async function (): Promise<void> {
 userSchema.pre(/^find/, function (this: Query<unknown, unknown>): void {
 	this.find({ active: { $ne: false } });
 });
-
-userSchema.methods.correctPassword = async function (
-	candidatePassword: string,
-	userPassword: string,
-): Promise<boolean> {
-	return await bcrypt.compare(candidatePassword, userPassword);
-};
 

@@ -121,7 +121,7 @@ export const priceTickets = (tickets: RequestedTicket[], events: Map<string, Che
 			throw Object.assign(new Error(`${position}: to wydarzenie wymaga wyboru miejsca`), { statusCode: 400 });
 		}
 
-		const prices = calcPricesAfterDiscount(calcDiscountPrice(event.date), event.prices) as Record<string, number>;
+		const prices: Record<string, number> = calcPricesAfterDiscount(calcDiscountPrice(event.date), event.prices);
 		const price = prices[ticket.type];
 
 		validatePositiveNumber(price, `Cena biletu "${event.name}"`);

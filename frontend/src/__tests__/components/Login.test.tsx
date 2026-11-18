@@ -1,12 +1,12 @@
-import Login from '@/pages/Login/Login';
-import Blocks from '@/pages/Blocks/Blocks';
+import Login from '@/features/auth/pages/Login/Login';
+import Blocks from '@/features/tickets/pages/Blocks/Blocks';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Seats from '@/pages/Seats/Seats';
-import OrderSummary from '@/pages/OrderSummary/OrderSummary';
+import Seats from '@/features/tickets/pages/Seats/Seats';
+import OrderSummary from '@/features/orders/pages/OrderSummary/OrderSummary';
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 describe('RENDERING COMPONENTS', () => {

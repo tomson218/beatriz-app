@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+import { Schema } from 'mongoose';
+import { TICKET_STATUSES } from '#enums/ticketStatuses';
 import { TICKET_TYPES } from '#enums/ticketTypes';
 import { seatingSchema } from '#schemas/utils';
 
@@ -36,6 +37,15 @@ export const ticketSchemaDef = new Schema({
 	date: {
 		type: Date,
 		required: [true, 'Please tell us your date of event'],
+	},
+	orderId: {
+		type: Schema.Types.ObjectId,
+		ref: 'Order',
+	},
+	status: {
+		type: String,
+		enum: TICKET_STATUSES,
+		default: 'active',
 	},
 });
 

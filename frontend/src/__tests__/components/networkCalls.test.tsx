@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import useSignUpUserMutation from '@/api/mutations/useSignUpUserMutation';
+import useSignUpUserMutation from '@/features/auth/api/mutations/useSignUpUserMutation';
 import { vi } from 'vitest';
-import useGetUserOrdersQuery from '@/api/queries/useGetUserOrdersQuery';
+import useGetUserOrdersQuery from '@/features/orders/api/queries/useGetUserOrdersQuery';
 
-vi.mock('@/api/mutations/useLoginUserMutation', async importOriginal => {
+vi.mock('@/features/auth/api/mutations/useLoginUserMutation', async importOriginal => {
 	const originalModule = await importOriginal();
 	return {
 		...originalModule,
@@ -15,7 +15,7 @@ vi.mock('@/api/mutations/useLoginUserMutation', async importOriginal => {
 	};
 });
 
-vi.mock('@/api/mutations/useSignUpUserMutation', async importOriginal => {
+vi.mock('@/features/auth/api/mutations/useSignUpUserMutation', async importOriginal => {
 	const originalModule = await importOriginal();
 	return {
 		...originalModule,

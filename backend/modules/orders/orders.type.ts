@@ -1,17 +1,8 @@
-// Kontrakt API współdzielony z frontendem: encje, DTO, requesty i response'y.
-export type {
-	CartTicket,
-	CreateOrderResponse,
-	Currency,
-	GetAllOrdersResponse,
-	Order,
-	OrderDto,
-	OrderIdParams,
-	OrderRequest,
-	OrderTicket,
-	Seating,
-} from '@beatriz/shared/orders';
+import type { HydratedDocumentFromSchema } from 'mongoose';
+import type { orderSchema } from '@beatriz/shared/schemas/orderSchema';
 
-export interface UserOrdersParams {
+export type OrderDocument = HydratedDocumentFromSchema<typeof orderSchema>;
+
+export interface OrderRouteParams {
 	id: string;
 }

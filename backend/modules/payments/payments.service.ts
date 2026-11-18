@@ -1,4 +1,5 @@
 import type Stripe from 'stripe';
+import type { Types } from 'mongoose';
 import UserModel from '../users/users.model.ts';
 import EventModel from '../events/events.model.ts';
 import OrderModel from '../orders/orders.model.ts';
@@ -13,11 +14,13 @@ import {
 	toStripeAmount,
 	type CheckoutEvent,
 	type CheckoutItem,
+	type RequestedTicket,
 } from '../../utils/checkout.ts';
 import { getUsableDiscountCode } from '../discountCodes/discountCodes.service.ts';
 import { stripe } from './payments.stripe.ts';
-import type { User } from '../users/users.type.ts';
-import type { ApprovedCartItem, CheckoutRequestBody } from './payments.type.ts';
+import type { UserDocument } from '../users/users.type.ts';
+import type { DiscountCodeDocument } from '../discountCodes/discountCodes.type.ts';
+import type { CheckoutRequestBody, PdfTicket, PreparedCheckout } from './payments.type.ts';
 
 const normalizeDiscountCode = (value: unknown): string => (typeof value === 'string' ? value.trim() : '');
 
@@ -29,8 +32,87 @@ const loadCheckoutEvents = async (eventIds: string[]): Promise<Map<string, Check
 	return new Map(events.map(event => [event._id.toString(), event as unknown as CheckoutEvent]));
 };
 
+/** Odrzuca zamówienie, gdy któreś z miejsc jest już sprzedane albo zarezerwowane do wpłaty offline. */
+const assertSeatsAreFree = async (tickets: RequestedTicket[]): Promise<void> => {
+	const seatedTickets: RequestedTicket[] = tickets.filter(ticket => ticket.seating !== '');
+
+	for (const { eventId, sector, block, seating } of seatedTickets) {
+		const isTaken = await TicketModel.exists({
+			eventId,
+			'seating.sector': sector,
+			'seating.block': block,
+			'seating.seat': Number(seating),
+		});
+
+		if (isTaken) {
+			throw Object.assign(new Error(`Miejsce ${seating} w sektorze ${sector} jest już zajęte`), { statusCode: 409 });
+		}
+	}
+};
+
+/** Sprawdza żądanie i wylicza ceny po stronie serwera. Wspólne dla płatności online i offline. */
+export const prepareCheckout = async (user: UserDocument, body: CheckoutRequestBody): Promise<PreparedCheckout> => {
+	const requestedTickets: RequestedTicket[] = parseRequestedTickets(body.products);
+
+	await assertSeatsAreFree(requestedTickets);
+
+	const eventIds: string[] = [...new Set(requestedTickets.map(ticket => ticket.eventId))];
+	const eventsById: Map<string, CheckoutEvent> = await loadCheckoutEvents(eventIds);
+
+	let items: CheckoutItem[] = priceTickets(requestedTickets, eventsById);
+
+	const discountCode: string = normalizeDiscountCode(body.discountCode);
+
+	if (discountCode) {
+		const subtotal: number = items.reduce((sum, item) => sum + item.price, 0);
+		const code: DiscountCodeDocument = await getUsableDiscountCode(discountCode, subtotal, user);
+
+		items = applyDiscount(items, code.value);
+	}
+
+	return { items, discountCode };
+};
+
+export const calcTotalAmount = (items: CheckoutItem[]): number => {
+	const total: number = items.reduce((sum, item) => sum + Number(item.price), 0);
+
+	return Math.round(total * 100) / 100;
+};
+
+const toSeating = ({ sector, block, seating }: CheckoutItem) => ({
+	sector,
+	block,
+	seat: seating !== '' ? Number(seating) : undefined,
+});
+
+export const buildOrderTickets = (items: CheckoutItem[]) => {
+	return items.map(item => ({
+		eventId: item.eventId,
+		seating: [toSeating(item)],
+		price: item.price,
+		type: item.type,
+	}));
+};
+
+export const buildTickets = (
+	items: CheckoutItem[],
+	userId: Types.ObjectId,
+	extraFields: { orderId?: Types.ObjectId; status?: 'pending' | 'active' } = {},
+) => {
+	return items.map(item => ({
+		eventId: item.eventId,
+		type: item.type,
+		price: item.price,
+		quantity: 1,
+		seating: toSeating(item),
+		userId,
+		date: new Date(),
+		...extraFields,
+	}));
+};
+
 const toStripeLineItem = ({ name, date, images, price, seating, sector, block }: CheckoutItem) => {
-	const eventDate = new Date(date);
+	const eventDate: Date = new Date(date);
 
 	return {
 		price_data: {
@@ -48,35 +130,21 @@ const toStripeLineItem = ({ name, date, images, price, seating, sector, block }:
 
 /**
  * Tworzy sesję płatności Stripe i zwraca jej adres.
- * Zatwierdzony koszyk trafia do `myCart`, którego klient nie może zmienić (`cart` można nadpisać przez /users/addCart);
+ * Zatwierdzony koszyk trafia do `myCart`, którego klient nie może zmienić;
  * webhook po opłaceniu zamówienia czyta bilety wyłącznie stąd.
  */
-export const createCheckoutSession = async (user: User, body: CheckoutRequestBody): Promise<string | null> => {
-	const requestedTickets = parseRequestedTickets(body.products);
+export const createCheckoutSession = async (user: UserDocument, body: CheckoutRequestBody): Promise<string | null> => {
+	const { items, discountCode }: PreparedCheckout = await prepareCheckout(user, body);
 
-	const eventIds = [...new Set(requestedTickets.map(ticket => ticket.eventId))];
-	const eventsById = await loadCheckoutEvents(eventIds);
+	await UserModel.findByIdAndUpdate(user._id, { myCart: items });
 
-	let items: CheckoutItem[] = priceTickets(requestedTickets, eventsById);
-
-	const discountCode = normalizeDiscountCode(body.discountCode);
-
-	if (discountCode) {
-		const subtotal = items.reduce((sum, item) => sum + item.price, 0);
-		const code = await getUsableDiscountCode(discountCode, subtotal, user);
-
-		items = applyDiscount(items, code.value);
-	}
-
-	await UserModel.findByIdAndUpdate(user.id, { myCart: items });
-
-	const session = await stripe.checkout.sessions.create({
+	const session: Stripe.Checkout.Session = await stripe.checkout.sessions.create({
 		line_items: items.map(toStripeLineItem),
 		mode: 'payment',
 		success_url: `${process.env.CLIENT_URL}/success`,
 		cancel_url: `${process.env.CLIENT_URL}/cancel`,
 		metadata: {
-			userId: JSON.stringify(user.id),
+			userId: JSON.stringify(user._id),
 			discountCode: JSON.stringify(discountCode || null),
 		},
 	});
@@ -84,24 +152,24 @@ export const createCheckoutSession = async (user: User, body: CheckoutRequestBod
 	return session.url;
 };
 
-const buildTicketsFromCart = (cart: ApprovedCartItem[], userId: User['_id']) => {
-	return cart.map(item => ({
-		eventId: item.eventId,
-		type: item.type,
-		price: item.price,
-		quantity: 1,
-		seating: {
-			sector: item.sector,
-			block: item.block,
-			seat: item.seating !== '' ? item.seating : undefined,
-		},
-		userId,
-		date: new Date(),
-	}));
-};
-
 const buildOrderConfirmationMessage = (totalAmount: number, currency: string): string =>
 	`<p>Dziękujęmy za złożenie zamówienia na kwotę ${totalAmount} ${currency}. W załączniku znajduje się plik bilety.pdf, który zawiera listę zakupionych biletów oraz szczegóły dotyczące wydarzenia.</p> <p>Pozdrawiamy</p> <p>Zespół aplikacji Beatriz App</p>`;
+
+export const sendOrderConfirmation = async (
+	email: string,
+	totalAmount: number,
+	currency: string,
+	tickets: PdfTicket[],
+): Promise<void> => {
+	const pdfContent: Buffer = await generatePDF(tickets);
+
+	await sendEmail({
+		email,
+		subject: 'Złożenie zamówienia',
+		html: buildOrderConfirmationMessage(totalAmount, currency),
+		attachments: [{ filename: 'bilety.pdf', content: pdfContent, contentType: 'application/pdf' }],
+	});
+};
 
 /**
  * Realizuje opłacone zamówienie: zapisuje zamówienie i bilety, wysyła potwierdzenie z PDF-em i czyści koszyk.
@@ -109,9 +177,15 @@ const buildOrderConfirmationMessage = (totalAmount: number, currency: string): s
  * Błąd wysyłki maila kończy się wyjątkiem ze `statusCode` 500.
  */
 export const fulfillCheckoutSession = async (session: Stripe.Checkout.Session): Promise<void> => {
-	const user = await UserModel.findById(JSON.parse(session.metadata.userId)).select('+myCart');
-	const usedDiscountCode = JSON.parse(session.metadata.discountCode);
+	const metadata = session.metadata as Record<string, string>;
+	const user = (await UserModel.findById(JSON.parse(metadata.userId)).select('+myCart')) as UserDocument | null;
 
+	if (!user) {
+		console.warn(`Checkout session ${session.id}: user not found, skipping.`);
+		return;
+	}
+
+	const usedDiscountCode: string | null = JSON.parse(metadata.discountCode);
 	const appliedDiscount = user.appliedDiscountCodes.find(applied => applied.code === usedDiscountCode);
 
 	if (appliedDiscount) {
@@ -119,35 +193,29 @@ export const fulfillCheckoutSession = async (session: Stripe.Checkout.Session): 
 		await user.save();
 	}
 
-	const cart: ApprovedCartItem[] = user.myCart;
+	const cart = user.myCart as CheckoutItem[];
 
 	if (!cart?.length) {
 		console.warn(`Checkout session ${session.id}: no approved cart, skipping.`);
 		return;
 	}
 
-	const totalAmount = cart.reduce((sum, item) => sum + Number(item.price), 0);
+	const totalAmount: number = calcTotalAmount(cart);
+	const currency = 'PLN';
 
-	const order = await OrderModel.create({
+	await OrderModel.create({
 		totalAmount,
 		date: new Date(),
 		userId: user._id,
-		currency: 'PLN',
-		tickets: cart,
+		currency,
+		tickets: buildOrderTickets(cart),
 		countOfTickets: cart.length,
 	});
 
-	await Promise.all(buildTicketsFromCart(cart, user._id).map(ticket => TicketModel.create(ticket)));
-
-	const pdfContent = await generatePDF(cart);
+	await TicketModel.insertMany(buildTickets(cart, user._id));
 
 	try {
-		await sendEmail({
-			email: user.email,
-			subject: 'Złożenie zamówienia',
-			html: buildOrderConfirmationMessage(order.totalAmount, order.currency),
-			attachments: [{ filename: 'bilety.pdf', content: pdfContent, contentType: 'application/pdf' }],
-		});
+		await sendOrderConfirmation(user.email, totalAmount, currency, cart);
 	} catch {
 		throw Object.assign(new Error('Problem with sending an email.'), { statusCode: 500 });
 	}

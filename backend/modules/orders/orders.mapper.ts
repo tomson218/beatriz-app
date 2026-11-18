@@ -1,4 +1,6 @@
-import type { Order, OrderDto, OrderTicket } from './orders.type.ts';
+import type { OrderDto, OrderTicket } from '@beatriz/shared/orders';
+import { getOfflinePaymentDeadline } from '../../utils/offlinePayment.ts';
+import type { OrderDocument } from './orders.type.ts';
 
 /** Pola wirtualne nie trafiają do JSON-a subdokumentu, dlatego `event` jest przepisywany jawnie. */
 const toOrderTicketDto = (ticket: OrderTicket): OrderTicket => ({
@@ -10,13 +12,16 @@ const toOrderTicketDto = (ticket: OrderTicket): OrderTicket => ({
 	type: ticket.type,
 });
 
-export const toOrderDto = (order: Order): OrderDto => ({
-	_id: order._id,
+export const toOrderDto = (order: OrderDocument): OrderDto => ({
+	_id: order._id.toString(),
 	totalAmount: order.totalAmount,
 	date: order.date,
 	userId: order.userId,
-	user: order.user,
+	user: order.get('user'),
 	currency: order.currency,
 	tickets: order.tickets.map(toOrderTicketDto),
 	countOfTickets: order.countOfTickets,
+	paymentMethod: order.paymentMethod,
+	status: order.status,
+	expiresAt: order.status === 'pending' ? getOfflinePaymentDeadline(order.date) : undefined,
 });

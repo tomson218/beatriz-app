@@ -6,6 +6,7 @@ ADDING RELATIVE PATHS IN IMPORTS IN TYPESCRIPT 6.0.3 WITH NODENEXT MODULE SYSTEM
 
 import app from './app.ts';
 import connectDB from './database.ts';
+import { startOfflineOrderExpiryJob } from './modules/orders/orders.job.ts';
 
 process.on('uncaughtException', (err: Error) => {
 	console.log('An exception was not taken. Application terminated.');
@@ -15,6 +16,8 @@ process.on('uncaughtException', (err: Error) => {
 
 // Connect to MongoDB database
 await connectDB();
+
+startOfflineOrderExpiryJob();
 
 const port = process.env.PORT || 3000;
 export const server = app.listen(port, () => {

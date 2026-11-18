@@ -13,8 +13,6 @@ import cors from 'cors';
 import eventRouter from './modules/events/events.routes.ts';
 import paymentRoutes from './modules/payments/payments.routes.ts';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import ticketRoutes from './modules/tickets/tickets.routes.ts';
 import discountCodeRoutes from './modules/discountCodes/discountCodes.routes.ts';
 import postRoutes from './modules/posts/posts.routes.ts';
@@ -24,9 +22,6 @@ import authRouter from './modules/auth/auth.routes.ts';
 import swaggerDocs from './swagger.ts';
 
 const app: Express = express();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const allowedOrigins = (process.env.CLIENT_URL ?? 'http://localhost:5173')
 	.split(',')
@@ -60,7 +55,7 @@ app.use(
 // Zdjęcia wydarzeń i użytkowników (public/images). Helmet domyślnie ustawia `Cross-Origin-Resource-Policy: same-origin`,
 // co blokuje ładowanie obrazków przez frontend działający na innym originie, więc dla plików statycznych zezwalamy na `cross-origin`.
 app.use(
-	express.static(path.join(__dirname, 'public'), {
+	express.static(path.join(import.meta.dirname, 'public'), {
 		setHeaders: res => res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'),
 	}),
 );
@@ -90,11 +85,6 @@ app.use((req: Request, res: Response, next: NextFunction): void => {
 	} else {
 		express.json({ limit: '10mb' })(req, res, next);
 	}
-});
-
-app.use((req: Request, res: Response, next: NextFunction): void => {
-	req.requestTime = new Date().toISOString();
-	next();
 });
 
 app.use('/api/v2/auth', authRouter);

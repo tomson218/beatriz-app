@@ -1,20 +1,17 @@
 import type { NextFunction, Request, Response } from 'express';
 import { toTicketDto } from './tickets.mapper.ts';
-import {
-	getAllTickets as findAllTickets,
-	getFreeSectorsSummary,
-	getOccupiedSeats as findOccupiedSeats,
-	getTicketsOfUser,
-} from './tickets.service.ts';
-import type { EventTicketsParams, UserTicketsParams } from './tickets.type.ts';
+import { findAllTickets, findOccupiedSeats, findTicketsOfUser, getFreeSectorsSummary } from './tickets.service.ts';
+import type { TicketDto } from '@beatriz/shared/tickets';
+import type { EventTicketsParams, FreeSectorsSummary, TicketDocument, UserTicketsParams } from './tickets.type.ts';
 
 export const getAllTickets = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const tickets = await findAllTickets();
+		const tickets: TicketDocument[] = await findAllTickets();
+		const ticketsDto: TicketDto[] = tickets.map(toTicketDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: tickets.length, tickets: tickets.map(toTicketDto) },
+			data: { results: ticketsDto.length, tickets: ticketsDto },
 		});
 	} catch (error) {
 		next(error);
@@ -23,11 +20,26 @@ export const getAllTickets = async (req: Request, res: Response, next: NextFunct
 
 export const getUserTickets = async (req: Request<UserTicketsParams>, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const tickets = await getTicketsOfUser(req.params.id);
+		const tickets: TicketDocument[] = await findTicketsOfUser(req.params.id);
+		const ticketsDto: TicketDto[] = tickets.map(toTicketDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: tickets.length, tickets: tickets.map(toTicketDto) },
+			data: { results: ticketsDto.length, tickets: ticketsDto },
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getMyTickets = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const tickets: TicketDocument[] = await findTicketsOfUser(String(req.user._id));
+		const ticketsDto: TicketDto[] = tickets.map(toTicketDto);
+
+		res.status(200).json({
+			status: 'success',
+			data: { results: ticketsDto.length, tickets: ticketsDto },
 		});
 	} catch (error) {
 		next(error);
@@ -40,7 +52,7 @@ export const groupAvailableSectors = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const { ticketsCount, freeSectorsCount } = await getFreeSectorsSummary(req.params.eventId);
+		const { ticketsCount, freeSectorsCount }: FreeSectorsSummary = await getFreeSectorsSummary(req.params.eventId);
 
 		res.status(200).json({
 			status: 'success',
@@ -53,9 +65,9 @@ export const groupAvailableSectors = async (
 
 export const getOccupiedSeats = async (req: Request<EventTicketsParams>, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const sector = String(req.query.sector ?? '');
-		const block = String(req.query.block ?? '');
-		const occupiedSeats = await findOccupiedSeats(req.params.eventId, sector, block);
+		const sector: string = String(req.query.sector ?? '');
+		const block: string = String(req.query.block ?? '');
+		const occupiedSeats: number[] = await findOccupiedSeats(req.params.eventId, sector, block);
 
 		res.status(200).json({
 			status: 'success',

@@ -1,18 +1,5 @@
 import type { AuthUserRequest } from '@beatriz/shared/auth';
-import type { User } from '../users/users.type.ts';
-
-// Kontrakt API współdzielony z frontendem: requesty i response'y.
-export type {
-	AuthResponse,
-	AuthUserRequest,
-	FacebookLoginRequest,
-	FacebookTokens,
-	FacebookUserProfile,
-	GoogleLoginRequest,
-	LoginRequest,
-	MessageResponse,
-	RefreshTokenResponse,
-} from '@beatriz/shared/auth';
+import type { UserDocument } from '../users/users.type.ts';
 
 /** Dane z tokenu Google, których używamy do założenia lub powiązania konta. */
 export interface GoogleTokenPayload {
@@ -30,7 +17,7 @@ export interface FacebookData {
 
 /** Wynik logowania przez dostawcę zewnętrznego: konto i informacja, czy dopiero je założono. */
 export interface SocialLoginResult {
-	user: User;
+	user: UserDocument;
 	isNewUser: boolean;
 }
 

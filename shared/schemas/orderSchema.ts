@@ -1,6 +1,8 @@
-import { Schema, model } from 'mongoose';
+import { Schema } from 'mongoose';
 import { ticketSchema } from '#schemas/utils';
 import { CURRENCIES } from '#enums/currencies';
+import { ORDER_STATUSES } from '#enums/orderStatuses';
+import { PAYMENT_METHODS } from '#enums/paymentMethods';
 
 export const orderSchema = new Schema({
 	totalAmount: {
@@ -32,6 +34,17 @@ export const orderSchema = new Schema({
 		min: 1,
 		max: 999,
 	},
+	paymentMethod: {
+		type: String,
+		enum: PAYMENT_METHODS,
+		default: 'online',
+	},
+	status: {
+		type: String,
+		enum: ORDER_STATUSES,
+		default: 'paid',
+	},
+	discountCode: String,
 });
 
 orderSchema.virtual('user', { ref: 'User', localField: 'userId', foreignField: '_id', justOne: true });

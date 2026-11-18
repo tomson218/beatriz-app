@@ -134,7 +134,9 @@ backend/
 
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
-| GET | `/orders` | Pobierz wszystkie zamówienia (admin) |
+| GET | `/orders?status=` | Pobierz zamówienia, opcjonalnie według statusu (admin) |
+| POST | `/orders` | Złóż zamówienie z płatnością offline (nieopłacone wygasa po 48 godzinach) |
+| PATCH | `/orders/:id` | Zatwierdź (`paid`) lub odrzuć (`rejected`) wpłatę offline (admin) |
 | GET | `/tickets` | Pobierz wszystkie bilety (admin, pracownik) |
 | GET | `/posts` | Pobierz wszystkie posty |
 

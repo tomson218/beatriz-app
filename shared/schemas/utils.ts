@@ -37,7 +37,6 @@ export const seatingSchema = {
 
 	seat: {
 		type: Number,
-		required: [true, 'Please tell us your seat of seating'],
 		min: 1,
 		max: 1000,
 	},

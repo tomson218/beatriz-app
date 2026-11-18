@@ -68,99 +68,33 @@ Aplikacja jest zbudowana w **React + TypeScript** z następującymi kluczowymi t
 
 ```
 frontend/src/
-├── api/                # Hooki React Query
-│   ├── queries/        # Zapytania (GET)
-│   │   ├── useGetAllEventsQuery.tsx
-│   │   ├── useGetEventByIdQuery.tsx
-│   │   ├── useGetAllUsersQuery.tsx
-│   │   ├── useGetUserByIdQuery.tsx
-│   │   ├── useGetTicketsByUserQuery.tsx
-│   │   ├── useGetUserOrdersQuery.tsx
-│   │   ├── useGetFavoriteEventsQuery.tsx
-│   │   ├── useGetPostsByEventIdQuery.tsx
-│   │   └── useGetOccupiedSeatsQuery.tsx
-│   ├── mutations/      # Mutacje (POST/PUT/DELETE)
-│   │   ├── useSignUpUserMutation.tsx
-│   │   ├── useLoginUserMutation.tsx
-│   │   ├── useLogoutUserMutation.tsx
-│   │   ├── useCreateCheckoutSessionMutation.ts
-│   │   ├── useAddEventToFavouriteMutation.tsx
-│   │   ├── useAddNewEventMutation.tsx
-│   │   ├── useAddDiscountCodeMutation.ts
-│   │   ├── useAddPostToForumMutation.tsx
-│   │   └── ...
-│   └── apiConfig.ts    # Konfiguracja API (API_URL)
-├── components/         # Komponenty UI
-│   ├── Form/           # Formularz główny
-│   ├── FormButton/     # Przycisk formularza
-│   ├── FormInput/      # Pole formularza
-│   ├── PolishFormInput/# Pole formularza z polskimi komunikatami
-│   ├── ViewUser/       # Podgląd użytkownika (dialog)
-│   ├── EventCard/      # Karta wydarzenia
-│   ├── Ticket/         # Karta biletu
-│   ├── Order/          # Podsumowanie zamówienia (z miejscami)
-│   ├── OrderWithoutSeats/ # Podsumowanie (bez miejsc)
-│   ├── DiscountCodeForm/ # Formularz kodu rabatowego
-│   ├── TotalAmount/    # Łączna kwota
-│   ├── Seat/           # Miejsce na hali
-│   ├── Sector/         # Sektor hali
-│   ├── Block/          # Blok (strefa)
-│   ├── PostCard/       # Karta posta na forum
-│   ├── AddEvent/       # Formularz dodawania wydarzenia
-│   ├── AddPost/        # Formularz dodawania posta
-│   ├── AddDiscountCode/# Formularz dodawania kodu rabatowego
-│   ├── Navbar/         # Nawigacja główna
-│   ├── SocialMediaLogin/ # Logowanie społecznościowe
-│   ├── LayoutWrapper/  # Opcjonalny wrapper layoutu
-│   ├── libs/           # Biblioteka komponentów
-│   │   ├── Loader/     # Animacja ładowania
-│   │   └── StatusResult/ # Komunikat statusu
-│   └── ui/             # Shadcn/ui komponenty
-│       ├── Accordion/
-│       ├── Button/
-│       ├── Card/
-│       ├── Dialog/
-│       ├── FormField/
-│       ├── Input/
-│       ├── Label/
-│       └── Select/
-├── context/            # Konteksty React
-│   ├── UserContext.tsx # Stan użytkownika
-│   └── OrderContext.tsx # Stan zamówienia
-├── pages/              # Strony aplikacji
-│   ├── Home/           # Strona główna
-│   ├── Login/          # Logowanie
-│   ├── Register/       # Rejestracja
-│   ├── EventDetails/   # Szczegóły wydarzenia
-│   ├── Hall/           # Wybór sektora hali
-│   ├── Blocks/         # Wybór strefy (bloku)
-│   ├── Seats/          # Wybór miejsc
-│   ├── TicketChoice/   # Wybór typu biletów
-│   ├── OrderSummary/   # Podsumowanie zamówienia
-│   ├── Success/        # Sukces płatności
-│   ├── Cancel/         # Anulowanie płatności
-│   ├── Tickets/        # Moje bilety
-│   ├── FavouriteEvents/ # Ulubione wydarzenia
-│   ├── UserProfile/    # Profil użytkownika
-│   ├── UserOrders/     # Zamówienia użytkownika
-│   ├── Forum/          # Forum wydarzenia
-│   ├── AdminPanel/     # Panel administratora
-│   ├── UpdateUserDetails/ # Edycja danych
-│   └── Error404/       # Strona nie znaleziona
-├── constants/          # Stałe
-│   ├── constants.ts    # Agregacja stałych
-│   ├── eventTypes.ts   # Opcje UI wydarzeń
-│   ├── faq.ts          # Pytania FAQ
-│   ├── hallCapacity.ts # Pojemność hali
-│   ├── misc.ts         # Inne stałe
-│   ├── sectors.ts      # Sektory hali
-│   └── ticketTypes.ts  # Typy biletów
-├── utils/              # Funkcje pomocnicze
-│   ├── localStorage.ts # Helper localStorage
-│   ├── namingTicket.ts # Nazwy typów biletów
-│   └── seats.ts        # Logika miejsc
-├── Router.tsx          # Definicja tras
-└── App.tsx             # Główny komponent
+├── app/                # Start aplikacji
+│   ├── App.tsx         # Providery
+│   ├── Router.tsx      # Trasy
+│   ├── layout/         # Navbar i LayoutWrapper
+│   └── pages/          # Error404
+├── features/           # Funkcje aplikacji (odpowiedniki modułów backendu)
+│   ├── auth/           # Logowanie, rejestracja, ochrona tras, UserContext
+│   ├── users/          # Profil i zarządzanie użytkownikami
+│   ├── events/         # Wydarzenia i ulubione
+│   ├── orders/         # Koszyk, płatność, historia zamówień, OrderContext
+│   ├── tickets/        # Bilety, hala, sektory, strefy i miejsca
+│   ├── posts/          # Forum wydarzeń
+│   ├── discountCodes/  # Kody rabatowe
+│   ├── admin/          # Panel administratora
+│   └── faq/            # Pytania i odpowiedzi
+├── shared/             # Kod niezależny od funkcji
+│   ├── api/            # Klient HTTP i klucze zapytań
+│   ├── components/     # ui (shadcn), libs, Form, FormInput, FormButton
+│   ├── lib/            # Funkcja cn
+│   ├── types/          # Typy wspólne
+│   └── utils/          # localStorage, daty, odpowiedzi API
+├── assets/             # Obrazy i ikony
+├── test/               # Konfiguracja testów
+└── __tests__/          # Testy
+
+Każda funkcja w features/ może mieć katalogi:
+api/mutations/, api/queries/ (hooki React Query), components/, pages/, context/ i utils/.
 ```
 
 ## Konteksty i Zarządzanie Stanem

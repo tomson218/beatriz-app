@@ -1,7 +1,8 @@
 import EventModel from './events.model.ts';
 import { calcDiscountPrice, calcPricesAfterDiscount } from '../../utils/discounts.ts';
 import { validatePositiveNumber } from '../../utils/validateNumbers.ts';
-import type { CreateEventInput, Event } from './events.type.ts';
+import type { Event } from '@beatriz/shared/events';
+import type { CreateEventInput, EventWithDiscount } from './events.type.ts';
 
 /** Zamienia listę rozdzieloną przecinkami na tablicę bez zbędnych spacji. */
 const parseCommaSeparatedList = (value: string): string[] => value.split(',').map(item => item.trim());
@@ -15,13 +16,14 @@ const requireEvent = <T>(event: T | null): T => {
 };
 
 /** Dolicza do wydarzenia rabat (lub dopłatę) zależny od liczby dni do wydarzenia i przelicza ceny. */
-const withDiscountedPrices = (event: Event) => {
-	const discount = calcDiscountPrice(event.date);
+const withDiscountedPrices = (event: Event): EventWithDiscount => {
+	const discount: number = calcDiscountPrice(event.date);
+	const prices = calcPricesAfterDiscount(discount, event.prices as Record<string, number>) as Event['prices'];
 
-	return { ...event, discount, prices: calcPricesAfterDiscount(discount, event.prices) };
+	return { ...event, discount, prices };
 };
 
-export const getUpcomingEvents = async () => {
+export const findUpcomingEvents = async (): Promise<EventWithDiscount[]> => {
 	const events: Event[] = await EventModel.find({ date: { $gte: new Date() } })
 		.sort({ date: 1 })
 		.lean();
@@ -29,16 +31,16 @@ export const getUpcomingEvents = async () => {
 	return events.map(withDiscountedPrices);
 };
 
-export const getEventById = async (id: string) => {
+export const findEventById = async (id: string): Promise<EventWithDiscount> => {
 	const event: Event | null = await EventModel.findById(id).select('-__v').lean();
 
 	return withDiscountedPrices(requireEvent(event));
 };
 
 export const createEvent = async (input: CreateEventInput, imageFilename?: string): Promise<Event> => {
-	const childPrice = Number(input.child);
-	const normalPrice = Number(input.normal);
-	const vipPrice = Number(input.vip);
+	const childPrice: number = Number(input.child);
+	const normalPrice: number = Number(input.normal);
+	const vipPrice: number = Number(input.vip);
 
 	validatePositiveNumber(childPrice, 'Cena biletu dziecięcego');
 	validatePositiveNumber(normalPrice, 'Cena biletu normalnego');

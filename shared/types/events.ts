@@ -6,12 +6,14 @@ import type { EVENT_TYPES } from '#enums/eventTypes';
 export type Event = InferSchemaType<typeof eventSchema> & { _id: Types.ObjectId };
 export type EventType = (typeof EVENT_TYPES)[number];
 
-export interface EventDto extends Omit<Event, '_id'> {
+export interface EventDto extends Omit<Event, '_id' | 'createdAt' | 'updatedAt'> {
 	_id: string;
+	/** Rabat zależny od liczby dni do wydarzenia. */
+	discount?: number;
 }
 
 export interface EventIdParams {
-	eventId: Event["_id"];
+	eventId: string;
 }
 
 export interface EventFilter {

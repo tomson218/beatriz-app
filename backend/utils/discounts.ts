@@ -1,5 +1,5 @@
 export const calcDiscountPrice = (eventDate: Date): number => {
-	const daysUntilEvent = Math.floor((new Date(eventDate) - Date.now()) / (1000 * 60 * 60 * 24));
+	const daysUntilEvent = Math.floor((new Date(eventDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
 	if (daysUntilEvent >= 90) {
 		return 0.25;
@@ -18,7 +18,7 @@ export const calcDiscountPrice = (eventDate: Date): number => {
 	return 0;
 };
 
-export const calcPricesAfterDiscount = (discount: number, prices: any) => {
+export const calcPricesAfterDiscount = (discount: number, prices: Record<string, number>): Record<string, number> => {
 	const discountedEntries = Object.entries(prices).map(([key, value]) => {
 		if (discount >= 1) {
 			return [key, Math.ceil(value * discount)];

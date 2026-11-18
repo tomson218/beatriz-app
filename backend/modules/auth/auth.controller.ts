@@ -1,6 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
 import { toUserDto } from '../users/users.mapper.ts';
-import { clearRefreshTokenCookie, createSendToken, getRefreshTokenFromRequest } from '../../utils/authTokens.ts';
+import {
+	clearRefreshTokenCookie,
+	createAuthTokens,
+	getRefreshTokenFromRequest,
+	setRefreshTokenCookie,
+	type AuthTokens,
+} from '../../utils/authTokens.ts';
 import {
 	authenticateUser,
 	getUserFromRefreshToken,
@@ -9,12 +15,10 @@ import {
 	registerUser,
 	sendWelcomeEmail,
 } from './auth.service.ts';
-import type {
-	AuthUserRequest,
-	FacebookLoginRequest,
-	GoogleLoginRequest,
-	LoginRequest,
-} from './auth.type.ts';
+import type { AuthUserRequest, FacebookLoginRequest, GoogleLoginRequest, LoginRequest } from '@beatriz/shared/auth';
+import type { UserDto } from '@beatriz/shared/users';
+import type { UserDocument } from '../users/users.type.ts';
+import type { SocialLoginResult } from './auth.type.ts';
 
 export const logout = (req: Request, res: Response, next: NextFunction): void => {
 	try {
@@ -32,12 +36,15 @@ export const signup = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const user = await registerUser(req.body);
+		const user: UserDocument = await registerUser(req.body);
+		const userDto: UserDto = toUserDto(user);
+		const { accessToken, refreshToken }: AuthTokens = createAuthTokens(userDto._id);
 
-		createSendToken(toUserDto(user), 201, res);
+		setRefreshTokenCookie(res, refreshToken);
+		res.status(201).json({ status: 'success', data: { accessToken, user: userDto } });
 
 		// Odpowiedź 201 już poszła, więc błąd wysyłki powitalnego maila możemy tylko zalogować.
-		await sendWelcomeEmail(user).catch(error => console.error('Welcome email could not be sent:', error));
+		await sendWelcomeEmail(user).catch((error: unknown) => console.error('Welcome email could not be sent:', error));
 	} catch (error) {
 		next(error);
 	}
@@ -49,9 +56,12 @@ export const login = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const user = await authenticateUser(req.body.email, req.body.password);
+		const user: UserDocument = await authenticateUser(req.body.email, req.body.password);
+		const userDto: UserDto = toUserDto(user);
+		const { accessToken, refreshToken }: AuthTokens = createAuthTokens(userDto._id);
 
-		createSendToken(toUserDto(user), 200, res);
+		setRefreshTokenCookie(res, refreshToken);
+		res.status(200).json({ status: 'success', data: { accessToken, user: userDto } });
 	} catch (error) {
 		next(error);
 	}
@@ -59,9 +69,12 @@ export const login = async (
 
 export const refreshAccessToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const user = await getUserFromRefreshToken(getRefreshTokenFromRequest(req));
+		const user: UserDocument = await getUserFromRefreshToken(getRefreshTokenFromRequest(req));
+		const userDto: UserDto = toUserDto(user);
+		const { accessToken, refreshToken }: AuthTokens = createAuthTokens(userDto._id);
 
-		createSendToken(toUserDto(user), 200, res);
+		setRefreshTokenCookie(res, refreshToken);
+		res.status(200).json({ status: 'success', data: { accessToken, user: userDto } });
 	} catch (error) {
 		next(error);
 	}
@@ -73,10 +86,12 @@ export const googleLogin = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const { user, isNewUser } = await loginWithGoogle(req.body.authCode);
-		const statusCode = isNewUser ? 201 : 200;
+		const { user, isNewUser }: SocialLoginResult = await loginWithGoogle(req.body.authCode);
+		const userDto: UserDto = toUserDto(user);
+		const { accessToken, refreshToken }: AuthTokens = createAuthTokens(userDto._id);
 
-		createSendToken(toUserDto(user), statusCode, res);
+		setRefreshTokenCookie(res, refreshToken);
+		res.status(isNewUser ? 201 : 200).json({ status: 'success', data: { accessToken, user: userDto } });
 	} catch (error) {
 		next(error);
 	}
@@ -89,10 +104,12 @@ export const facebookLogin = async (
 ): Promise<void> => {
 	try {
 		const { tokens, userProfile } = req.body;
-		const { user, isNewUser } = await loginWithFacebook(tokens, userProfile);
-		const statusCode = isNewUser ? 201 : 200;
+		const { user, isNewUser }: SocialLoginResult = await loginWithFacebook(tokens, userProfile);
+		const userDto: UserDto = toUserDto(user);
+		const { accessToken, refreshToken }: AuthTokens = createAuthTokens(userDto._id);
 
-		createSendToken(toUserDto(user), statusCode, res);
+		setRefreshTokenCookie(res, refreshToken);
+		res.status(isNewUser ? 201 : 200).json({ status: 'success', data: { accessToken, user: userDto } });
 	} catch (error) {
 		next(error);
 	}

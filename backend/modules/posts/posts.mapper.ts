@@ -1,11 +1,12 @@
-import type { ForumPost, ForumPostDto } from './posts.type.ts';
+import type { ForumPostDto } from '@beatriz/shared/forums';
+import type { PostDocument } from './posts.type.ts';
 
-export const toForumDto = (forum: ForumPost): ForumPostDto => ({
-	_id: forum._id,
-	date: forum.date,
-	userId: forum.userId,
-	user: forum.user,
-	eventId: forum.eventId,
-	event: forum.event,
-	message: forum.message,
+export const toForumDto = (post: PostDocument): ForumPostDto => ({
+	_id: post._id.toString(),
+	date: post.date,
+	userId: post.userId,
+	user: post.get('user'),
+	eventId: post.eventId,
+	event: post.get('event'),
+	message: post.message,
 });

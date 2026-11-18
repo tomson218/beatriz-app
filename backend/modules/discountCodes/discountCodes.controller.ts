@@ -1,19 +1,17 @@
 import type { NextFunction, Request, Response } from 'express';
 import { toDiscountCodeDto } from './discountCodes.mapper.ts';
-import {
-	applyDiscountCode as applyCode,
-	createDiscountCode,
-	getAllDiscountCodes as findAllCodes,
-} from './discountCodes.service.ts';
-import type { ApplyDiscountCodeRequest, DiscountCodeDto } from './discountCodes.type.ts';
+import { applyDiscountCode as applyCode, createDiscountCode, findAllDiscountCodes } from './discountCodes.service.ts';
+import type { ApplyDiscountCodeRequest, DiscountCodeDto, DiscountCodeRequest } from '@beatriz/shared/discountCodes';
+import type { DiscountCodeDocument } from './discountCodes.type.ts';
 
 export const getAllDiscountCodes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const discountCodes = await findAllCodes();
+		const discountCodes: DiscountCodeDocument[] = await findAllDiscountCodes();
+		const discountCodesDto: DiscountCodeDto[] = discountCodes.map(toDiscountCodeDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: discountCodes.length, discountCodes: discountCodes.map(toDiscountCodeDto) },
+			data: { results: discountCodesDto.length, discountCodes: discountCodesDto },
 		});
 	} catch (error) {
 		next(error);
@@ -27,7 +25,7 @@ export const applyDiscountCode = async (
 ): Promise<void> => {
 	try {
 		const { enteredCode, totalPrice } = req.body;
-		const discount = await applyCode(req.user.id, enteredCode, totalPrice);
+		const discount: number = await applyCode(String(req.user._id), enteredCode, totalPrice);
 
 		res.status(200).json({ status: 'success', data: { discount } });
 	} catch (error) {
@@ -36,16 +34,17 @@ export const applyDiscountCode = async (
 };
 
 export const addDiscountCode = async (
-	req: Request<{}, unknown, DiscountCodeDto>,
+	req: Request<{}, unknown, DiscountCodeRequest>,
 	res: Response,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const discountCode = await createDiscountCode(req.body);
+		const discountCode: DiscountCodeDocument = await createDiscountCode(req.body);
+		const discountCodeDto: DiscountCodeDto = toDiscountCodeDto(discountCode);
 
 		res.status(201).json({
 			status: 'success',
-			data: { newDiscountCode: toDiscountCodeDto(discountCode) },
+			data: { newDiscountCode: discountCodeDto },
 		});
 	} catch (error) {
 		next(error);

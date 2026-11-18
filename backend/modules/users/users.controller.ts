@@ -1,27 +1,30 @@
 import type { NextFunction, Request, Response } from 'express';
 import { toUserDto } from './users.mapper.ts';
+import { toEventDto } from '../events/events.mapper.ts';
 import {
 	addFavouriteEvent,
 	deactivateAccount,
 	deleteUserById,
-	getAllUsers as findAllUsers,
-	getFavouriteEvents,
-	getUserById,
+	findAllUsers,
+	findFavouriteEvents,
+	findUserById,
 	removeFavouriteEvent,
 	saveCart,
 	updateOwnProfile,
 	updateUserByAdmin,
 } from './users.service.ts';
-import type { AddCartRequest, UpdateMeRequest, UpdateUserRequest, UserIdParams } from './users.type.ts';
-import type { EventIdParams } from '../events/events.type.ts';
+import type { AddCartRequest, UpdateMeRequest, UpdateUserRequest, UserDto, UserIdParams } from '@beatriz/shared/users';
+import type { Event, EventDto, EventIdParams } from '@beatriz/shared/events';
+import type { UserDocument } from './users.type.ts';
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const users = await findAllUsers();
+		const users: UserDocument[] = await findAllUsers();
+		const usersDto: UserDto[] = users.map(toUserDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: users.length, users: users.map(toUserDto) },
+			data: { results: usersDto.length, users: usersDto },
 		});
 	} catch (error) {
 		next(error);
@@ -30,11 +33,26 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 
 export const getUser = async (req: Request<UserIdParams>, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const user = await getUserById(req.params.id);
+		const user: UserDocument = await findUserById(req.params.id);
+		const userDto: UserDto = toUserDto(user);
 
 		res.status(200).json({
 			status: 'success',
-			data: { user: toUserDto(user) },
+			data: { user: userDto },
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const user: UserDocument = await findUserById(String(req.user._id));
+		const userDto: UserDto = toUserDto(user);
+
+		res.status(200).json({
+			status: 'success',
+			data: { user: userDto },
 		});
 	} catch (error) {
 		next(error);
@@ -47,11 +65,12 @@ export const updateMe = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const user = await updateOwnProfile(req.user.id, req.body);
+		const user: UserDocument = await updateOwnProfile(String(req.user._id), req.body);
+		const userDto: UserDto = toUserDto(user);
 
 		res.status(200).json({
 			status: 'success',
-			data: { user: toUserDto(user) },
+			data: { user: userDto },
 		});
 	} catch (error) {
 		next(error);
@@ -60,7 +79,7 @@ export const updateMe = async (
 
 export const deleteMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		await deactivateAccount(req.user.id);
+		await deactivateAccount(String(req.user._id));
 
 		res.status(204).send();
 	} catch (error) {
@@ -70,11 +89,12 @@ export const deleteMe = async (req: Request, res: Response, next: NextFunction):
 
 export const getUserFavoriteEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const events = await getFavouriteEvents(req.user.id);
+		const events: Event[] = await findFavouriteEvents(String(req.user._id));
+		const eventsDto: EventDto[] = events.map(toEventDto);
 
 		res.status(200).json({
 			status: 'success',
-			data: { results: events.length, events },
+			data: { results: eventsDto.length, events: eventsDto },
 		});
 	} catch (error) {
 		next(error);
@@ -87,7 +107,7 @@ export const addEventToFavourite = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		await addFavouriteEvent(req.user.id, req.body.eventId);
+		await addFavouriteEvent(String(req.user._id), req.body.eventId);
 
 		res.status(201).json({ status: 'success', message: 'Wydarzenie dodane do ulubionych' });
 	} catch (error) {
@@ -97,7 +117,7 @@ export const addEventToFavourite = async (
 
 export const removeEventFromFavourite = async (req: Request<EventIdParams>, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		await removeFavouriteEvent(req.user.id, req.params.eventId);
+		await removeFavouriteEvent(String(req.user._id), req.params.eventId);
 
 		res.status(204).send();
 	} catch (error) {
@@ -111,7 +131,7 @@ export const replaceCart = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const userId = String(req.user.id);
+		const userId: string = String(req.user._id);
 		const { cart } = req.body;
 
 		await saveCart(userId, cart);
@@ -129,11 +149,12 @@ export const updateUser = async (
 ): Promise<void> => {
 	try {
 		const { id } = req.params;
-		const user = await updateUserByAdmin(id, req.body);
+		const user: UserDocument = await updateUserByAdmin(id, req.body);
+		const userDto: UserDto = toUserDto(user);
 
 		res.status(200).json({
 			status: 'success',
-			data: { user: toUserDto(user) },
+			data: { user: userDto },
 			message: `User ${id} updated!`,
 		});
 	} catch (error) {

@@ -18,9 +18,9 @@ export interface AppliedDiscountCode {
 	code?: string;
 }
 
-export interface UserDto extends Omit<User, '_id' | 'password' | 'passwordConfirm' | 'myCart'> {
+export type UserDto = Pick<User, 'username' | 'email' | 'firstName' | 'lastName' | 'photo' | 'favouriteEventIds' | 'cart' | 'appliedDiscountCodes' | 'role'> & {
 	_id: string;
-}
+};
 
 export type UserRequest = Pick<User, 'username' | 'firstName' | 'lastName' | 'email' | 'photo'>;
 

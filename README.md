@@ -85,11 +85,9 @@ beatriz-app/
 │   └── tests/        # Testy jednostkowe
 ├── frontend/         # Aplikacja React
 │   └── src/
-│       ├── api/      # Hooki React Query (zapytania i mutacje)
-│       ├── components/ # Komponenty UI
-│       ├── context/  # Konteksty (User, Order)
-│       ├── pages/    # Strony aplikacji
-│       └── utils/    # Funkcje pomocnicze
+│       ├── app/      # Start aplikacji, trasy i layout
+│       ├── features/ # Funkcje aplikacji (api, components, pages, context, utils)
+│       └── shared/   # Kod wspólny
 ├── shared/           # Wspólny moduł
 │   ├── types/        # Typy TypeScript
 │   ├── schemas/      # Schematy Mongoose

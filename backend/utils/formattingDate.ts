@@ -1,6 +1,6 @@
-export const formattedDate = (date: any): any => date.toLocaleDateString('pl-PL');
+export const formattedDate = (date: Date): string => date.toLocaleDateString('pl-PL');
 
-export const formattedTime = (time: any): any =>
+export const formattedTime = (time: Date): string =>
 	time.toLocaleTimeString('pl-PL', {
 		hour: '2-digit',
 		minute: '2-digit',

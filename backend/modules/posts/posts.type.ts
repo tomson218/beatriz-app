@@ -1,13 +1,7 @@
-// Kontrakt API współdzielony z frontendem: encje, DTO, requesty i response'y.
-export type {
-	AddNewPostToForumRequest,
-	AddNewPostToForumResponse,
-	ForumMessageParams,
-	ForumPost,
-	ForumPostDto,
-	ForumPostRequest,
-	GetAllForumPostsResponse,
-} from '@beatriz/shared/forums';
+import type { HydratedDocumentFromSchema } from 'mongoose';
+import type { forumSchema } from '@beatriz/shared/schemas/forumSchema';
+
+export type PostDocument = HydratedDocumentFromSchema<typeof forumSchema>;
 
 export interface PostsByEventParams {
 	eventId: string;

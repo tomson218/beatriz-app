@@ -1,37 +1,37 @@
 import type { NextFunction, Request, Response } from 'express';
+import type Stripe from 'stripe';
 import { fulfillCheckoutSession } from '../payments/payments.service.ts';
 import { stripe } from '../payments/payments.stripe.ts';
 
-const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
-
 /** Odbiera zdarzenia Stripe: weryfikuje podpis (wymaga surowego body) i przekazuje opłacone sesje do realizacji. */
-export const listenWebhook = async (request: Request, response: Response, next: NextFunction) => {
-	const signature = request.headers['stripe-signature'];
+export const listenWebhook = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+	const signature = request.headers['stripe-signature'] as string;
+	const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET as string;
 
-	let event;
+	let event: Stripe.Event;
 
 	try {
 		event = stripe.webhooks.constructEvent(request.body, signature, endpointSecret);
-	} catch (err) {
-		response.status(400).send(`Webhook Error: ${err.message}`);
+	} catch (error) {
+		response.status(400).send(`Webhook Error: ${(error as Error).message}`);
 		return;
 	}
 
-	switch (event.type) {
-		case 'checkout.session.completed':
-			try {
-				await fulfillCheckoutSession(event.data.object);
-			} catch (error) {
-				const isEmailError = (error as { statusCode?: number }).statusCode === 500;
+	if (event.type === 'checkout.session.completed') {
+		try {
+			await fulfillCheckoutSession(event.data.object);
+		} catch (error) {
+			const isEmailError: boolean = (error as { statusCode?: number }).statusCode === 500;
 
-				if (isEmailError) return next(error);
-
-				console.error('Error handling checkout.session.completed:', error);
+			if (isEmailError) {
+				next(error);
+				return;
 			}
-			break;
 
-		default:
-			console.log(`Unhandled event type ${event.type}`);
+			console.error('Error handling checkout.session.completed:', error);
+		}
+	} else {
+		console.log(`Unhandled event type ${event.type}`);
 	}
 
 	response.send();
