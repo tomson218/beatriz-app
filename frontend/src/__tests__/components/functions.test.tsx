@@ -1,4 +1,4 @@
-import { getNameBlock, getNameTypeTicket } from '@/utils/namingTicket';
+import { getNameBlock, getNameTypeTicket } from '@/features/tickets/utils/namingTicket';
 
 describe('BLOCKS AND TYPE TICKETS', () => {
 	test('Get name block', () => {

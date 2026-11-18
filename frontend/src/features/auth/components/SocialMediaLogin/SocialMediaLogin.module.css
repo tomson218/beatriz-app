@@ -1,0 +1,13 @@
+.facebook-login-container {
+	padding: 1rem 0;
+}
+
+.facebook-button {
+	background-color: #4267b2;
+	color: #fff;
+	font-size: 16px;
+	padding: 12px 24px;
+	border: none;
+	border-radius: 4px;
+	width: 400px;
+}

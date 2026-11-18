@@ -1,0 +1,11 @@
+.error-message {
+	color: var(--error-color);
+	font-size: 0.875rem;
+	margin-top: 0.25rem;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}

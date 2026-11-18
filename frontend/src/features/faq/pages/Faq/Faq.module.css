@@ -1,0 +1,30 @@
+.page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	max-width: 56rem;
+	margin: 0 auto;
+	padding: 2.5rem 1rem;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.eyebrow {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 500;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: #d97706;
+}
+
+.title {
+	font-size: 1.875rem;
+	line-height: 2.25rem;
+	font-weight: 700;
+	color: #0f172a;
+}

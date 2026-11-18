@@ -2,13 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Hall from '../../pages/Hall/Hall';
+import Hall from '@/features/tickets/pages/Hall/Hall';
 import { vi } from 'vitest';
 
 const queryClient = new QueryClient();
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-vi.mock('../../api/queries/useGetEventByIdQuery', () => ({
+vi.mock('@/features/events/api/queries/useGetEventByIdQuery', () => ({
 	default: (eventId: string) => ({
 		data: eventId ? { seatRequired: true, sectors: ['A', 'B'] } : null,
 		isLoading: false,

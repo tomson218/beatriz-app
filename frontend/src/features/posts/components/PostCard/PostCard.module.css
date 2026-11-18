@@ -1,0 +1,66 @@
+.comment {
+	padding: var(--mantine-spacing-lg) var(--mantine-spacing-xl);
+}
+
+.body {
+	padding-left: rem(54px);
+	padding-top: var(--mantine-spacing-sm);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.content {
+	& > p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.card {
+	margin: 1rem;
+	max-width: 42rem;
+	border-radius: 1rem;
+	border: 1px solid hsl(var(--border));
+	background-color: white;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card--my {
+	margin: 1rem 2rem 1rem auto;
+	border-left: 5px solid orange;
+	align-self: flex-end;
+}
+
+.card--other {
+	margin: 1rem auto 1rem 2rem;
+	border-left: 5px solid black;
+	align-self: flex-start;
+}
+
+.avatar {
+	height: 2.5rem;
+	width: 2.5rem;
+	border-radius: 0.75rem;
+	object-fit: cover;
+}
+
+.author {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.author-email {
+	font-size: 1rem;
+	line-height: 1.5rem;
+	font-weight: 600;
+}
+
+.post-date {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	color: hsl(var(--muted-foreground));
+}
+
+.message {
+	font-size: 1rem;
+	line-height: 2rem;
+}
