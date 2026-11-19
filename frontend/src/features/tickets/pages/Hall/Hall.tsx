@@ -85,16 +85,40 @@ const Hall = () => {
 				</figure>
 			</section>
 
-			<nav className={classes['hall-nav']}>
-				<Link to={nextUrl}>
-					<Button
-						className={classes['hall-button']}
-						variant='ghost'
-						onClick={handleChooseBlocksClick}>
-						Wybierz strefę
-					</Button>
-				</Link>
-			</nav>
+			<footer className={classes['hall-footer']}>
+				<ul className={classes.legend} aria-label='Legenda'>
+					<li className={classes['legend-item']}>
+						<span className={`${classes['legend-dot']} ${classes['legend-dot--available']}`} />
+						Dostępny
+					</li>
+					<li className={classes['legend-item']}>
+						<span className={`${classes['legend-dot']} ${classes['legend-dot--selected']}`} />
+						Wybrany
+					</li>
+					<li className={classes['legend-item']}>
+						<span className={`${classes['legend-dot']} ${classes['legend-dot--disabled']}`} />
+						Niedostępny
+					</li>
+				</ul>
+
+				<p className={classes['selected-info']}>
+					{selectedSector ? (
+						<>
+							Wybrany sektor: <strong>{selectedSector}</strong>
+						</>
+					) : (
+						'Nie wybrano jeszcze sektora'
+					)}
+				</p>
+
+				<nav className={classes['hall-nav']}>
+					<Link to={nextUrl}>
+						<Button className={classes['hall-button']} size='lg' onClick={handleChooseBlocksClick}>
+							Wybierz strefę
+						</Button>
+					</Link>
+				</nav>
+			</footer>
 
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogContent className='sm:max-w-md'>

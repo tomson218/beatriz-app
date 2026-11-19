@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Event } from '@beatriz/shared/events';
 import type { BlockType } from '@beatriz/shared/tickets';
 import useGetEventByIdQuery from '@/features/events/api/queries/useGetEventByIdQuery';
+import { getBlockLabel } from '@/features/tickets/utils/blockLabels';
 import Block from '@/features/tickets/components/Block/Block';
 import {
 	Dialog,
@@ -35,6 +36,7 @@ const Blocks = () => {
 	if (isEventDetailsLoading) return <div>Ładowanie...</div>;
 
 	const isBlockNotSelected = !selectedBlock;
+	const hasSelection = !isBlockNotSelected;
 	const isSeatRequired = eventDetails.seatRequired;
 	const needsSeatSelection = selectedBlock && isSeatRequired;
 
@@ -64,15 +66,27 @@ const Blocks = () => {
 			<h1 className={classes.heading}>Wybierz strefę</h1>
 
 			<section className={classes.blocks}>
-				<Block block='blue' onSelect={handleSelectBlock} isSelected={selectedBlock === 'blue'} />
-				<Block block='green' onSelect={handleSelectBlock} isSelected={selectedBlock === 'green'} />
-				<Block block='yellow' onSelect={handleSelectBlock} isSelected={selectedBlock === 'yellow'} />
-				<Block block='black' onSelect={handleSelectBlock} isSelected={selectedBlock === 'black'} />
+				<Block block='blue' onSelect={handleSelectBlock} isSelected={selectedBlock === 'blue'} isDimmed={hasSelection && selectedBlock !== 'blue'} />
+				<Block block='green' onSelect={handleSelectBlock} isSelected={selectedBlock === 'green'} isDimmed={hasSelection && selectedBlock !== 'green'} />
+				<Block block='yellow' onSelect={handleSelectBlock} isSelected={selectedBlock === 'yellow'} isDimmed={hasSelection && selectedBlock !== 'yellow'} />
+				<Block block='black' onSelect={handleSelectBlock} isSelected={selectedBlock === 'black'} isDimmed={hasSelection && selectedBlock !== 'black'} />
 			</section>
 
-			<Button onClick={handleChoosePage} className={classes.link}>
-				{isSeatRequired ? 'Wybierz konkretne miejsce' : 'Przejdź do wyboru biletów'}
-			</Button>
+			<footer className={classes.footer}>
+				<p className={classes['selected-info']}>
+					{selectedBlock ? (
+						<>
+							Wybrano: <strong>{getBlockLabel(selectedBlock)}</strong>
+						</>
+					) : (
+						'Nie wybrano jeszcze strefy'
+					)}
+				</p>
+
+				<Button size='lg' onClick={handleChoosePage} className={classes.link}>
+					{isSeatRequired ? 'Wybierz konkretne miejsce' : 'Przejdź do wyboru biletów'}
+				</Button>
+			</footer>
 
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogContent className='sm:max-w-md'>

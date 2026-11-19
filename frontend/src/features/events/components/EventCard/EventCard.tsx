@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { Button } from '@/shared/components/ui/Button/Button';
 import type { Event } from '@beatriz/shared/events';
 import { ASSET_BASE_URL } from '@/shared/api/apiConfig';
+import { EVENT_TYPE_OPTIONS } from '@beatriz/shared/constants/eventTypes';
 
 interface EventProps {
 	event: Event;
@@ -22,6 +23,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 	const eventDate = parseEventDate(event.date);
 	const [isEventFavourite, setIsEventFavourite] = useState<boolean>(isFavourite);
 	const isNewEvent = checkEventIsNew(eventDate);
+	const eventTypeLabel = EVENT_TYPE_OPTIONS.find(option => option.value === event.type)?.label ?? event.type;
 
 	const handleClickFavourite = (id: Event['_id']): void => {
 		const nextValue = !isEventFavourite;
@@ -39,7 +41,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 
 	return (
 		<Card className={classes.container}>
-			<CardContent className='p-0'>
+			<CardContent className={`p-0 ${classes['card-content']}`}>
 				<article className={classes['clickable-card']} aria-label={`Wydarzenie ${event.name}`}>
 					<section className={classes['article-wrapper']}>
 						{isNewEvent && <span className={classes.label}>NOWE</span>}
@@ -54,6 +56,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 
 						<section className={classes['article-body']} aria-labelledby={`event-${event._id}`}>
 							<header>
+								<p className={classes['event-type']}>{eventTypeLabel}</p>
 								<h2 id={`event-${event._id}`}>{event.name}</h2>
 							</header>
 

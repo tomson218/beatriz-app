@@ -42,7 +42,7 @@ const Register = () => {
 				<aside className={classes.image}></aside>
 				<section className={classes.forms}>
 					<h1 className={classes.title}>Zarejestruj się</h1>
-					<Form onSubmit={handleSubmit(onSubmit)} className={classes.loginForm}>
+					<Form onSubmit={handleSubmit(onSubmit)} className={classes['login-form']}>
 						<Form.Input
 							labelText='Nazwa użytkownika'
 							inputId='username'
@@ -132,7 +132,7 @@ const Register = () => {
 							}}
 						/>
 
- 					<Form.Button content='Utwórz konto' />
+ 					<Form.Button content='Utwórz konto' className='w-full mt-6' />
  				</Form>
 
  				<Divider

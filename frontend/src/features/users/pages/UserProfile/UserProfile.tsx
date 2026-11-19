@@ -17,7 +17,8 @@ const UserProfile = () => {
 
 	return (
 		<main className={classes['user-profile-page']}>
-			<figure>
+			<h1 className={classes.title}>Profil użytkownika</h1>
+			<figure className={classes['user-photo-wrapper']}>
 				<img
 					src={`${ASSET_BASE_URL}/images/users/${userDetails?.photo}`}
 					alt='Zdjęcie profilu'
