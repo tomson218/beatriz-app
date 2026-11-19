@@ -58,7 +58,7 @@ const Login = () => {
 							},
 						}}
 					/>
- 				<Form.Button content='Zaloguj się' />
+ 				<Form.Button content='Zaloguj się' className='w-full mt-6' />
  			</Form>
  			<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
  				<span className={classes['divider-span']}>LUB</span>

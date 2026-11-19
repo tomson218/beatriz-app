@@ -11,10 +11,12 @@
 }
 
 .list {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 2rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 22rem));
+	justify-content: start;
+	align-items: start;
+	column-gap: 2rem;
+	row-gap: 0;
 	max-width: 1920px;
 	margin: 0;
 	padding: 1rem;
@@ -22,7 +24,11 @@
 }
 
 .item {
-	display: flex;
+	display: grid;
+	grid-row: span 5;
+	grid-template-rows: subgrid;
+	row-gap: 0;
+	min-width: 0;
 }
 
 .loading {
