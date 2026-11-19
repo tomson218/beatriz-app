@@ -20,7 +20,7 @@ interface OrderProps {
 }
 
 const Order = ({ ticket, eventDetails, onChangePrice, price, isChoice, isSummary, type }: OrderProps) => {
-	const isEventDetailsMissing = !eventDetails || !eventDetails.prices;
+	const isEventDetailsMissing = !eventDetails || !eventDetails.prices || price == null;
 	if (isEventDetailsMissing) {
 		return <p>Ładowanie szczegółów zamówienia...</p>;
 	}

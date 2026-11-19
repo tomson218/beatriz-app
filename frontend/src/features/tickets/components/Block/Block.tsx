@@ -1,18 +1,23 @@
-import { Button } from '@/shared/components/ui/Button/Button';
 import classes from './Block.module.css';
+import { getBlockLabel } from '@/features/tickets/utils/blockLabels';
 import type { BlockType } from '@beatriz/shared/tickets';
 
 interface BlockProps {
 	onSelect: (block: BlockType) => void;
 	isSelected: boolean;
+	isDimmed?: boolean;
 	block: BlockType;
 }
 
-const Block = ({ onSelect, isSelected, block }: BlockProps) => {
+const Block = ({ onSelect, isSelected, isDimmed = false, block }: BlockProps) => {
 	return (
-		<Button
-			className={`${classes.block} ${classes[block]} ${isSelected ? classes.selected : ''}`}
-			onClick={() => onSelect(block)}></Button>
+		<button
+			type='button'
+			className={`${classes.block} ${classes[block]} ${isSelected ? classes.selected : ''} ${isDimmed ? classes.dimmed : ''}`}
+			aria-pressed={isSelected}
+			onClick={() => onSelect(block)}>
+			{getBlockLabel(block)}
+		</button>
 	);
 };
 

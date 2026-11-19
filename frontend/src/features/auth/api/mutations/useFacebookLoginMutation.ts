@@ -1,3 +1,4 @@
+import { setItemLocalStorage } from '@/shared/utils/localStorage';
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { isSuccessResponse } from '@/shared/utils/response';
@@ -22,7 +23,7 @@ const useFacebookLoginMutation = () => {
 			console.log(data);
 
 			if (isSuccessResponse(data)) {
-				localStorage.setItem('user-id', data.data.user._id);
+				setItemLocalStorage('user-id', data.data.user._id);
 				localStorage.setItem('token', data.data.accessToken);
 			}
 

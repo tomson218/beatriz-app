@@ -90,9 +90,8 @@
 }
 
 .login-form {
-	border: 1px solid var(--border-color);
-	padding: 2rem;
-	border-radius: 10px;
+	width: 400px;
+	max-width: 100%;
 }
 
 .google-login,

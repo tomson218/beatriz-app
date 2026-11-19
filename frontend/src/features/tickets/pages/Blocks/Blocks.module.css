@@ -1,18 +1,35 @@
 .heading {
 	composes: page-title from global;
-	padding: 1rem;
+	padding: 1.5rem 1rem 0;
 }
 
 .blocks {
 	display: grid;
-	gap: 1rem;
-	padding: 1rem;
 	grid-template-columns: 1fr;
+	gap: 1.5rem;
+	width: min(calc(100% - 2rem), 800px);
+	margin: 2rem auto 0;
+	padding: 2rem;
+	background: radial-gradient(circle, #bbb, #888);
+	border-radius: 10px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.footer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem 1rem 2rem;
+}
+
+.selected-info {
+	margin: 0;
+	color: #555;
 }
 
 .link {
-	padding: 1rem;
-	margin: 1rem;
+	min-width: 16rem;
 }
 
 @media (min-width: 40rem) {

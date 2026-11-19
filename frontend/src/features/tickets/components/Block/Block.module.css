@@ -1,40 +1,60 @@
 .block {
-	padding: 5rem !important;
-	border: 5px solid white;
-	border-radius: 1rem;
-	background-color: #444;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-	transition: all 0.1s;
-}
-
-.selected {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-	border-color: #800080;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 9rem;
+	padding: 1rem;
+	border: none;
+	border-radius: 15px;
+	color: #fff;
+	font-size: 1.25rem;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+	cursor: pointer;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
 }
 
 .block:hover {
-	background-color: #666;
-	transform: scale(1.01);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	transform: scale(1.04);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.block:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: 3px;
+}
+
+.selected,
+.selected:hover {
+	transform: scale(1.08);
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+.dimmed {
+	opacity: 0.45;
+	filter: saturate(0.6);
+}
+
+.dimmed:hover {
+	opacity: 0.8;
 }
 
 .blue {
-	background-color: blue !important;
+	background: linear-gradient(145deg, #2f5bff, #1636c9);
 }
 
 .green {
-	background-color: green !important;
+	background: linear-gradient(145deg, #2e9e4f, #1b6e34);
 }
 
 .yellow {
-	background-color: yellow !important;
+	background: linear-gradient(145deg, #ffe34d, #f2c200);
+	color: #222;
+	text-shadow: none;
 }
 
 .black {
-	background-color: black !important;
-}
-
-.title {
-	text-transform: uppercase;
-	letter-spacing: 3px;
+	background: linear-gradient(145deg, #3a3a3a, #000);
 }

@@ -17,7 +17,8 @@ const UserProfile = () => {
 
 	return (
 		<main className={classes['user-profile-page']}>
-			<figure>
+			<h1 className={classes.title}>Profil użytkownika</h1>
+			<figure className={classes['user-photo-wrapper']}>
 				<img
 					src={`${ASSET_BASE_URL}/images/users/${userDetails?.photo}`}
 					alt='Zdjęcie profilu'
@@ -31,8 +32,10 @@ const UserProfile = () => {
 				<li className={classes['list-item']}>E-mail: {userDetails?.email}</li>
 			</ul>
  			<nav className={classes['button-group']}>
- 				<Button>Edytuj</Button>
- 				<Button variant='destructive'>Usuń</Button>
+ 				<Button className={classes['profile-button']}>Edytuj</Button>
+ 				<Button variant='destructive' className={classes['profile-button']}>
+					Usuń
+				</Button>
  			</nav>
 		</main>
 	);
