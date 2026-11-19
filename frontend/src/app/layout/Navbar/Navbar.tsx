@@ -41,6 +41,9 @@ const Navbar = () => {
 				<Link to='/tickets'>
 					<li>Bilety</li>
 				</Link>
+				<Link to='/user-orders'>
+					<li>Zamówienia</li>
+				</Link>
 				<Link to='/user-profile'>
 					<li>Profil</li>
 				</Link>

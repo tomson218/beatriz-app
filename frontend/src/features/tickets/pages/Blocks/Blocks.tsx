@@ -89,13 +89,17 @@ const Blocks = () => {
 			</footer>
 
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
-				<DialogContent className='sm:max-w-md'>
+				<DialogContent className='sm:max-w-md border-red-700 bg-red-600 text-white'>
 					<DialogHeader>
-						<DialogTitle>Brak wybranej strefy!!!</DialogTitle>
-						<DialogDescription>Żeby przejść dalej, musisz najpierw wybrać daną strefę.</DialogDescription>
+						<DialogTitle className='text-white'>Brak wybranej strefy!!!</DialogTitle>
+						<DialogDescription className='text-red-50'>Żeby przejść dalej, musisz najpierw wybrać daną strefę.</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
-						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+						<Button
+							type='button'
+							variant='outline'
+							className='border-white bg-white text-red-700 hover:bg-red-50'
+							onClick={() => setIsOpen(false)}>
 							OK
 						</Button>
 					</DialogFooter>

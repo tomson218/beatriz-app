@@ -86,7 +86,7 @@ const DiscountCodeForm = () => {
 
 	return (
 		<form onSubmit={handleSubmitDiscount} className={classes.form}>
-			<Label htmlFor='discountCode'>
+			<Label htmlFor='discountCode' className={classes.label}>
 				Podaj kod zniżkowy:
 			</Label>
 			<Input
@@ -96,7 +96,7 @@ const DiscountCodeForm = () => {
 				required
 				minLength={5}
 			/>
-			<Button>
+			<Button type='submit'>
 				Użyj kodu
 			</Button>
 			{discountError.visible && (

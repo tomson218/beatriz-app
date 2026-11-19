@@ -1,10 +1,11 @@
 .container {
-	--container-margin: 1rem;
+	--container-margin: 2rem;
 
 	container-type: inline-size;
 	display: flex;
 	flex-direction: column;
-	background-color: #d4e157;
+	background-color: #f7f7f7;
+	border: 1px solid hsl(var(--border));
 
 	width: calc(100% - 2 * var(--container-margin));
 	margin: var(--container-margin) auto;
@@ -37,11 +38,13 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 1rem;
-	background-color: #282c34;
-	padding: 10px 2rem;
+	background-color: white;
+	padding: 1rem 2rem;
+	border: 1px solid hsl(var(--border));
 	border-radius: 1rem;
-	margin: 1rem 0;
-	color: white;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	margin: 0.75rem 0;
+	color: #333;
 }
 
 @container (min-width: 1025px) {
