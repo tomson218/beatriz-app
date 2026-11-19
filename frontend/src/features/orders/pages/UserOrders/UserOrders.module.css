@@ -1,43 +1,158 @@
 .orders-container {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-	padding: 1rem;
-}
-
-.order {
-	background-color: #f9f9f9;
-	border: 2px solid orange;
-	border-radius: 1rem;
-	padding: 1rem;
+	gap: 1.5rem;
+	width: 100%;
+	padding: 1.5rem 2rem 2rem;
 }
 
 .heading {
 	composes: page-title from global;
 }
 
-.order h3 {
-	margin-top: 0;
+.empty {
+	text-align: center;
+	color: #666;
 }
 
-.order p {
-	margin: 0.5rem 0;
+.order {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid hsl(var(--border));
+	border-left: 5px solid orange;
+	border-radius: 1rem;
+	background-color: #fff;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.order-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+}
+
+.order-id {
+	margin: 0;
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #555;
+	word-break: break-all;
+}
+
+.status {
+	padding: 0.35rem 0.85rem;
+	border-radius: 999px;
+	background-color: #e5e7eb;
+	color: #333;
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+
+.status-paid {
+	background-color: #16a34a;
+	color: #fff;
+}
+
+.status-pending {
+	background-color: #f59e0b;
+	color: #222;
+}
+
+.status-rejected,
+.status-expired {
+	background-color: #dc2626;
+	color: #fff;
+}
+
+.details {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 1rem;
+	margin: 0;
+}
+
+.details dt {
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: #777;
+}
+
+.details dd {
+	margin: 0.15rem 0 0;
+	font-size: 1.05rem;
+	font-weight: 600;
+	color: #222;
+}
+
+.muted {
+	margin: 0;
+	color: #777;
+}
+
+.toggle-button {
+	align-self: flex-start;
 }
 
 .tickets {
-	margin-top: 1rem;
-	border-top: 1px solid #eee;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 1rem;
 	padding-top: 1rem;
+	border-top: 1px solid #eee;
 }
 
 .ticket {
-	background-color: #fff;
-	border: 1px solid #ccc;
-	border-radius: 1rem;
-	padding: 0.75rem;
-	margin-bottom: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	padding: 0.9rem 1rem;
+	border: 1px solid #ddd;
+	border-radius: 0.75rem;
+	background-color: #fafafa;
 }
 
 .ticket p {
-	margin: 0.25rem 0;
+	margin: 0;
+	font-size: 0.9rem;
+	color: #444;
+}
+
+.ticket-name {
+	margin: 0 0 0.25rem;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.ticket-price {
+	margin-top: 0.25rem !important;
+	font-weight: 700;
+	color: #222 !important;
+}
+
+.countdown,
+.countdown-urgent,
+.countdown-expired {
+	font-size: 0.9rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.countdown {
+	color: #b45309;
+}
+
+.countdown-urgent,
+.countdown-expired {
+	color: #dc2626;
+}
+
+@media (max-width: 600px) {
+	.orders-container {
+		padding: 1rem;
+	}
 }

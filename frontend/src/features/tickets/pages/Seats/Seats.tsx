@@ -12,6 +12,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/shared/components/ui/Dialog/Dialog';
+import { getBlockLabel } from '@/features/tickets/utils/blockLabels';
 import Seat from '@/features/tickets/components/Seat/Seat';
 import {
 	parseInitialSelectedSeats,
@@ -64,69 +65,88 @@ const Seats = () => {
 	return (
 		<section>
 			<h1 className={classes.title}>
-				Wybierz miejsca dla sektora: {sector} i strefy {block}
+				Wybierz miejsca
+				<small className={classes.subtitle}>
+					{sector} · {getBlockLabel(block)}
+				</small>
 			</h1>
 
-			<section className={classes['seats-container']}>
-				{Array.from({ length: 100 }, (_, index) => {
-					const seatNumber = index + 1;
-					return (
-						<Seat
-							key={seatNumber}
-							isSelected={isSeatSelected(seatNumber, selectedSeats)}
-							isOccupied={isSeatOccupied(seatNumber, occupiedSeats)}
-							onAddSeats={handleAddSeats}
-							index={index}
-						/>
-					);
-				})}
+			<section className={classes.plan}>
+				<p className={classes.stage}>Scena</p>
+
+				<section className={classes['seats-container']}>
+					{Array.from({ length: 100 }, (_, index) => {
+						const seatNumber = index + 1;
+						return (
+							<Seat
+								key={seatNumber}
+								isSelected={isSeatSelected(seatNumber, selectedSeats)}
+								isOccupied={isSeatOccupied(seatNumber, occupiedSeats)}
+								onAddSeats={handleAddSeats}
+								index={index}
+							/>
+						);
+					})}
+				</section>
 			</section>
 
-			<aside className={classes['legend']}>
-				<h3 className={classes['legend-title']}>Legenda</h3>
-				<div className={classes['legend-row']}>
-					<article className={classes['legend-item']}>
-						<div className={`${classes['legend-seat']} ${classes['free']}`}></div>
-						<span>wolne</span>
-					</article>
+			<footer className={classes.footer}>
+				<ul className={classes.legend} aria-label='Legenda'>
+					<li className={classes['legend-item']}>
+						<span className={`${classes['legend-seat']} ${classes.free}`} />
+						Wolne
+					</li>
+					<li className={classes['legend-item']}>
+						<span className={`${classes['legend-seat']} ${classes.selected}`} />
+						Wybrane
+					</li>
+					<li className={classes['legend-item']}>
+						<span className={`${classes['legend-seat']} ${classes.occupied}`} />
+						Zajęte
+					</li>
+				</ul>
 
-					<article className={classes['legend-item']}>
-						<div className={`${classes['legend-seat']} ${classes['selected']}`}></div>
+				<p className={classes['selected-info']}>
+					{hasNoSelectedSeats(selectedSeats) ? (
+						'Nie wybrano jeszcze miejsc'
+					) : (
+						<>
+							Wybrano miejsca: <strong>{sortedSelectedSeats.join(', ')}</strong>
+						</>
+					)}
+				</p>
 
-						<span>wybrane</span>
-					</article>
-
-					<article className={classes['legend-item']}>
-						<div className={`${classes['legend-seat']} ${classes['occupied']}`}></div>
-						<span>zajęte</span>
-					</article>
-				</div>
-			</aside>
-
-			<nav className={classes['seats-nav']}>
-				<Link to={ticketChoiceUrl}>
-					<Button
-						onClick={() => {
-							localStorage.setItem('seats', JSON.stringify(selectedSeats));
-							if (hasNoSelectedSeats(selectedSeats)) {
-								setIsOpen(true);
-							}
-						}}>
-						Przejdź do wyboru biletów
-					</Button>
-				</Link>
-			</nav>
+				<nav className={classes['seats-nav']}>
+					<Link to={ticketChoiceUrl}>
+						<Button
+							size='lg'
+							className={classes.next}
+							onClick={() => {
+								localStorage.setItem('seats', JSON.stringify(selectedSeats));
+								if (hasNoSelectedSeats(selectedSeats)) {
+									setIsOpen(true);
+								}
+							}}>
+							Przejdź do wyboru biletów
+						</Button>
+					</Link>
+				</nav>
+			</footer>
 
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
-				<DialogContent className='sm:max-w-md'>
+				<DialogContent className='sm:max-w-md border-red-700 bg-red-600 text-white'>
 					<DialogHeader>
-						<DialogTitle>Brak wybranego miejsca!!!</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className='text-white'>Brak wybranego miejsca!!!</DialogTitle>
+						<DialogDescription className='text-red-50'>
 							Żeby przejść dalej, musisz najpierw wybrać przynajmniej jedno miejsce siedzące.
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
-						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+						<Button
+							type='button'
+							variant='outline'
+							className='border-white bg-white text-red-700 hover:bg-red-50'
+							onClick={() => setIsOpen(false)}>
 							OK
 						</Button>
 					</DialogFooter>

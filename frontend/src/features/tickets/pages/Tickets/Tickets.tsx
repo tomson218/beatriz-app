@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import useGetTicketsByUserQuery from '@/features/tickets/api/queries/useGetTicketsByUserQuery';
 import Ticket from '@/features/tickets/components/Ticket/Ticket';
 import classes from './Tickets.module.css';
@@ -7,6 +7,13 @@ import UserContext, { type UserContextType } from '@/features/auth/context/UserC
 import useGetUserByIdQuery from '@/features/users/api/queries/useGetUserByIdQuery';
 import type { Ticket as ITicket } from '@beatriz/shared/tickets';
 
+type TicketFilter = 'all' | 'upcoming';
+
+const TICKET_FILTERS: { value: TicketFilter; label: string; title: string; empty: string }[] = [
+	{ value: 'upcoming', label: 'Nadchodzące', title: 'Nadchodzące bilety', empty: 'Brak nadchodzących biletów' },
+	{ value: 'all', label: 'Wszystkie', title: 'Wszystkie bilety', empty: 'Brak zakupionych biletów' },
+];
+
 const Tickets = () => {
 	const { userId } = useContext<UserContextType>(UserContext);
 
@@ -14,26 +21,16 @@ const Tickets = () => {
 
 	const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserByIdQuery(userId);
 
-	const [tickets, setTickets] = useState<ITicket[]>([]);
+	const [ticketFilter, setTicketFilter] = useState<TicketFilter>('all');
 
-	useEffect(() => {
-		if (ticketsUser) {
-			setTickets(ticketsUser);
-		}
-	}, [ticketsUser]);
+	const tickets = useMemo<ITicket[]>(() => {
+		const allTickets: ITicket[] = ticketsUser ?? [];
 
-	const handleUpcomingTickets = () => {
-		const upcomingEvents = ticketsUser.filter((ticket: ITicket) => {
-			const eventDate = new Date(ticket.event?.date as string);
-			const currentDate = new Date();
-			return eventDate > currentDate;
-		});
-		setTickets(upcomingEvents);
-	};
+		if (ticketFilter === 'all') return allTickets;
 
-	const handleAllTickets = () => {
-		setTickets(ticketsUser);
-	};
+		const now = new Date();
+		return allTickets.filter(ticket => new Date(ticket.event?.date as unknown as string) > now);
+	}, [ticketsUser, ticketFilter]);
 
 	const isAnyDataLoading = isTicketsUserLoading || isUserDetailsLoading;
 
@@ -42,19 +39,26 @@ const Tickets = () => {
 	}
 
 	const hasNoTickets = tickets.length === 0;
+	const activeFilter = TICKET_FILTERS.find(({ value }) => value === ticketFilter) ?? TICKET_FILTERS[1];
 
 	return (
 		<main>
-			<nav className={classes.buttons}>
-				<button className={classes.upcoming} onClick={handleUpcomingTickets}>
-					Nadchodzące
-				</button>
-				<button className={classes.all} onClick={handleAllTickets}>
-					Wszystkie
-				</button>
+			<h1 className={classes.title}>{activeFilter.title}</h1>
+
+			<nav className={classes.buttons} aria-label='Filtr biletów'>
+				{TICKET_FILTERS.map(({ value, label }) => (
+					<button
+						key={value}
+						type='button'
+						className={`${classes['filter-button']} ${ticketFilter === value ? classes.active : ''}`}
+						aria-pressed={ticketFilter === value}
+						onClick={() => setTicketFilter(value)}>
+						{label}
+					</button>
+				))}
 			</nav>
 
-			{hasNoTickets && <p>Brak zakupionych biletów</p>}
+			{hasNoTickets && <p className={classes.empty}>{activeFilter.empty}</p>}
 
 			<section className={classes.tickets}>
 				{tickets.map(ticket => (

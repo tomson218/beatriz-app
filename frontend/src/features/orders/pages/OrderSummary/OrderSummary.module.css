@@ -1,55 +1,31 @@
 .title {
 	composes: page-title from global;
-	padding: 1rem 0 0;
-}
-
-.total-amount {
-	background-color: #fff;
-	padding: 1rem 2rem;
-	margin: 1rem;
-	border-radius: 1rem;
-	text-align: right;
-	font-weight: 600;
-}
-
-.buttons {
-	display: flex;
-	margin: 1rem;
-	gap: 1rem;
-	padding: 0 0 1rem;
-}
-
-.button {
-	color: red;
+	padding: 2rem 0.5rem 1rem;
 }
 
 .grid-container {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 1.5rem;
+	padding: 1rem 2rem;
+}
+
+.buttons {
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
 	gap: 1rem;
-	padding: 0 1rem;
+	padding: 0 2rem 2rem;
 }
 
-@media (max-width: 1400px) {
-	.grid-container {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-@media (max-width: 800px) {
+@media (max-width: 600px) {
 	.grid-container {
 		grid-template-columns: 1fr;
+		padding: 1rem;
 	}
-}
 
-@media (min-width: 1400px) and (max-width: 1920px) {
-	.grid-container {
-		grid-template-columns: repeat(3, 1fr);
-	}
-}
-
-@media (min-width: 1920px) {
-	.grid-container {
-		grid-template-columns: repeat(4, 1fr);
+	.buttons {
+		flex-direction: column;
+		padding: 0 1rem 2rem;
 	}
 }

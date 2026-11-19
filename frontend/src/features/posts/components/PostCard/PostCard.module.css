@@ -15,8 +15,9 @@
 }
 
 .card {
-	margin: 1rem;
-	max-width: 42rem;
+	align-self: stretch;
+	margin: 1rem 2rem;
+	max-width: none;
 	border-radius: 1rem;
 	border: 1px solid hsl(var(--border));
 	background-color: white;
@@ -24,15 +25,11 @@
 }
 
 .card--my {
-	margin: 1rem 2rem 1rem auto;
-	border-left: 5px solid orange;
-	align-self: flex-end;
+	border: 2px solid orange;
 }
 
 .card--other {
-	margin: 1rem auto 1rem 2rem;
 	border-left: 5px solid black;
-	align-self: flex-start;
 }
 
 .avatar {

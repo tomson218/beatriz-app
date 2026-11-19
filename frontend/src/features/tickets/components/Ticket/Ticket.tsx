@@ -38,11 +38,11 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 		<section className={classes['clickable-card']}>
 			<article>
 				<header className={classes['article-wrapper']}>
-					<figure>
+					<figure className={classes['event-figure']}>
 						<img
 							className={classes['event-image']}
 							src={`${ASSET_BASE_URL}/images/events/${ticket.event.image}`}
-							alt={ticket.event.image}
+							alt={ticket.event.name}
 						/>
 					</figure>
 				</header>
@@ -59,82 +59,79 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 					<section className={classes['event-seating']}>
 						<img src={chairIcon} alt='Ikona krzesła' />
 						<p className={classes['seating-row']}>
-							<span className={classes.section}>{sector}</span>
-							<span className={getBlockBadgeClass(block, classes)}>
-								{getNameBlock(block)}
-							</span>
+							<span className={classes.section}>Sektor {sector}</span>
+							<span className={getBlockBadgeClass(block, classes)}>{getNameBlock(block)}</span>
 
-							{seat && <span className={classes.seat}>{seat}</span>}
+							{seat && <span className={classes.seat}>Miejsce {seat}</span>}
 						</p>
 					</section>
 
 					<section className={classes['details-section']}>
-						<Button
-							onClick={() => {
-								setTimeout(
-									setIsShow(prevState => !prevState),
-									5000,
-								);
-							}}>
-							{isShow ? 'Ukryj' : 'Pokaż'} szczegóły biletu
+						<Button className='w-full' onClick={() => setIsShow(true)}>
+							Pokaż szczegóły biletu
 						</Button>
 					</section>
-
-					{isShow && (
-						<aside className={classes['modal-overlay']} onClick={() => setIsShow(false)}>
-							<Button
-								variant='ghost'
-								size='icon'
-								className={classes['modal-close']}
-								onClick={() => setIsShow(false)}
-								aria-label='Zamknij'>
-								&times;
-							</Button>
-
-							<h3 className={classes['modal-title']}>
-								Szczegóły Biletu
-							</h3>
-
-							<dl className={classes['modal-content']}>
-								<div className={classes['modal-row']}>
-									<strong>Sektor:</strong> <span>{sector}</span>
-								</div>
-								<div className={classes['modal-row']}>
-									<strong>Strefa:</strong> <span>{getNameBlock(block)}</span>
-								</div>
-
-								{seat && (
-									<div className={classes['modal-row']}>
-										<strong>Miejsce:</strong> <span>{seat}</span>
-									</div>
-								)}
-
-								<div className={classes['modal-row']}>
-									<strong>Typ biletu:</strong> <span>{getNameTypeTicket(ticket.type)}</span>
-								</div>
-								<div className={classes['modal-row']}>
-									<strong>Cena biletu:</strong> <span>{ticket.price} PLN</span>
-								</div>
-								<div className={classes['modal-row']}>
-									<strong>Zakupiono: </strong>
-									<span>
-										{formattedDate(purchasedDate)} {formattedTime(purchasedDate)}
-									</span>
-								</div>
-							</dl>
-
-							<figure className={classes['qr-code']}>
-								<QRCode
-									size={256}
-									value={qrValue}
-									viewBox={`0 0 256 256`}
-									onClick={() => console.log(qrValue)}
-								/>
-							</figure>
-						</aside>
-					)}
 				</section>
 			</article>
+
+			{isShow && (
+				<aside className={classes['modal-backdrop']} onClick={() => setIsShow(false)}>
+					<div
+						className={classes['modal-overlay']}
+						role='dialog'
+						aria-modal='true'
+						onClick={e => e.stopPropagation()}>
+						<Button
+							variant='ghost'
+							size='icon'
+							className={classes['modal-close']}
+							onClick={() => setIsShow(false)}
+							aria-label='Zamknij'>
+							&times;
+						</Button>
+
+						<h3 className={classes['modal-title']}>Szczegóły biletu</h3>
+						<p className={classes['modal-event']}>{ticket.event.name}</p>
+
+						<dl className={classes['modal-content']}>
+							<div className={classes['modal-row']}>
+								<dt>Sektor</dt>
+								<dd>{sector}</dd>
+							</div>
+							<div className={classes['modal-row']}>
+								<dt>Strefa</dt>
+								<dd>{getNameBlock(block)}</dd>
+							</div>
+
+							{seat && (
+								<div className={classes['modal-row']}>
+									<dt>Miejsce</dt>
+									<dd>{seat}</dd>
+								</div>
+							)}
+
+							<div className={classes['modal-row']}>
+								<dt>Typ biletu</dt>
+								<dd>{getNameTypeTicket(ticket.type)}</dd>
+							</div>
+							<div className={classes['modal-row']}>
+								<dt>Cena biletu</dt>
+								<dd>{ticket.price} PLN</dd>
+							</div>
+							<div className={classes['modal-row']}>
+								<dt>Zakupiono</dt>
+								<dd>
+									{formattedDate(purchasedDate)} {formattedTime(purchasedDate)}
+								</dd>
+							</div>
+						</dl>
+
+						<figure className={classes['qr-code']}>
+							<QRCode size={256} value={qrValue} viewBox={`0 0 256 256`} />
+						</figure>
+					</div>
+				</aside>
+			)}
 		</section>
 	);
 };
