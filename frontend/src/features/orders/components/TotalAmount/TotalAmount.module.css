@@ -1,12 +1,19 @@
 .total-amount {
-	background-color: orange;
+	margin: 1rem 2rem;
 	padding: 1rem 2rem;
-	margin: 1rem;
 	border-radius: 1rem;
-	text-align: right;
-	font-weight: 600;
-	color: #333;
+	background-color: orange;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	font-size: 1.25rem;
+	font-weight: 600;
 	letter-spacing: 0.05rem;
+	text-align: right;
+	color: #333;
+}
+
+@media (max-width: 600px) {
+	.total-amount {
+		margin: 1rem;
+		text-align: center;
+	}
 }

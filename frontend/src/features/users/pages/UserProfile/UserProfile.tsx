@@ -32,8 +32,10 @@ const UserProfile = () => {
 				<li className={classes['list-item']}>E-mail: {userDetails?.email}</li>
 			</ul>
  			<nav className={classes['button-group']}>
- 				<Button>Edytuj</Button>
- 				<Button variant='destructive'>Usuń</Button>
+ 				<Button className={classes['profile-button']}>Edytuj</Button>
+ 				<Button variant='destructive' className={classes['profile-button']}>
+					Usuń
+				</Button>
  			</nav>
 		</main>
 	);

@@ -8,16 +8,19 @@ interface SeatProps {
 }
 
 const Seat = ({ isOccupied, isSelected, index, onAddSeats }: SeatProps) => {
-	const cssClasses = `
-    ${classes.seat}
-    ${isOccupied ? classes.occupied : ''}
-    ${isSelected ? classes.selected : ''}
-  `;
+	const seatNumber = index + 1;
+	const cssClasses = `${classes.seat} ${isOccupied ? classes.occupied : ''} ${isSelected ? classes.selected : ''}`;
 
 	return (
-		<div className={cssClasses} onClick={() => onAddSeats(index + 1)}>
-			{index + 1}
-		</div>
+		<button
+			type='button'
+			className={cssClasses}
+			disabled={isOccupied}
+			aria-pressed={isSelected}
+			aria-label={`Miejsce ${seatNumber}${isOccupied ? ' (zajęte)' : ''}`}
+			onClick={() => onAddSeats(seatNumber)}>
+			{seatNumber}
+		</button>
 	);
 };
 

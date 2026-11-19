@@ -56,6 +56,10 @@
 	gap: 1rem;
 }
 
+.profile-button {
+	min-width: 10rem;
+}
+
 .user-photo-wrapper {
 	margin: 0;
 	width: 200px;

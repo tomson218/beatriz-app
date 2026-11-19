@@ -91,7 +91,11 @@ const TicketChoice = () => {
 	useEffect(() => {
 		if (eventDetails) {
 			setOrder(prevOrder => {
-				const newOrder = seatsArray.map(seat => ({
+				const newOrder = seatsArray.map(seat => {
+					// ticketsPrice jest ustawiane w osobnym efekcie, więc przy pierwszym renderze może być jeszcze puste.
+					const seatPrice = ticketsPrice[seat] ?? eventDetails.prices?.normal;
+
+					return {
 					eventId,
 					sector,
 					block,
@@ -99,9 +103,10 @@ const TicketChoice = () => {
 					date: eventDetails.date,
 					images: [`${ASSET_BASE_URL}/images/events/${eventDetails.image}`],
 					seating: isNoSeatPlaceholder(seat) ? undefined : seat,
-					price: ticketsPrice[seat],
-					type: getTicketTypeByPrice(eventDetails.prices, ticketsPrice[seat]),
-				}));
+					price: seatPrice,
+					type: getTicketTypeByPrice(eventDetails.prices, seatPrice),
+				};
+				});
 
 				localStorage.setItem('ORDERS', JSON.stringify(newOrder));
 				// Zamówienie budowane od nowa nie ma już rabatu, więc zapamiętany kod rabatowy przestaje być aktualny.
@@ -207,6 +212,7 @@ const TicketChoice = () => {
 			<footer className={classes.buttons}>
 				<Link to={canGoToSummary ? `/summary?eventId=${eventId}` : currentUrl}>
 					<Button
+						size='lg'
 						onClick={() => {
 							if (isError) {
 								setIsOpen(true);
@@ -217,15 +223,19 @@ const TicketChoice = () => {
 				</Link>
 			</footer>
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
-				<DialogContent className='sm:max-w-md'>
+				<DialogContent className='sm:max-w-md border-red-700 bg-red-600 text-white'>
 					<DialogHeader>
-						<DialogTitle>Błąd!</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className='text-white'>Błąd!</DialogTitle>
+						<DialogDescription className='text-red-50'>
 							Łączna liczba wybranych biletów ma być równa sumie liczby typów biletów.
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
-						<Button type='button' variant='outline' onClick={() => setIsOpen(false)}>
+						<Button
+							type='button'
+							variant='outline'
+							className='border-white bg-white text-red-700 hover:bg-red-50'
+							onClick={() => setIsOpen(false)}>
 							OK
 						</Button>
 					</DialogFooter>
