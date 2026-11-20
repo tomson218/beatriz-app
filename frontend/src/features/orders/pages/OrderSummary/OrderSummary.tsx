@@ -67,8 +67,18 @@ const OrderSummary = () => {
 			<TotalAmount />
 
 			<section className={classes.buttons}>
-				<Button onClick={sendData}>Zapłać teraz</Button>
-				<Button variant='secondary' disabled={isOfflineOrderPending} onClick={payOffline}>
+				<Button
+					size='lg'
+					className='bg-orange-500 text-black hover:bg-orange-600 hover:text-white'
+					onClick={sendData}>
+					Zapłać teraz
+				</Button>
+				<Button
+					size='lg'
+					variant='outline'
+					className='border-2 border-black bg-white text-black hover:border-orange-500 hover:bg-orange-100 hover:text-black'
+					disabled={isOfflineOrderPending}
+					onClick={payOffline}>
 					Zapłać offline
 				</Button>
 			</section>

@@ -2,28 +2,37 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: var(--free);
-	color: white;
-	font-size: 1.2em;
-	border-radius: 5px;
+	aspect-ratio: 1 / 1;
+	padding: 0;
+	border: none;
+	border-radius: 8px;
+	background: linear-gradient(145deg, #4caf50, #3e8e41);
+	color: #fff;
+	font-size: 0.95rem;
+	font-weight: 600;
 	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.seat:hover {
-	transform: scale(1.1);
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+.seat:hover:not(:disabled) {
+	transform: scale(1.12);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
-.free {
-	background-color: var(--free);
+.seat:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: 2px;
 }
 
 .selected {
 	background: #ff6347;
+	transform: scale(1.08);
 }
 
 .occupied {
 	background: #808080;
+	color: #d0d0d0;
 	cursor: not-allowed;
+	box-shadow: none;
 }

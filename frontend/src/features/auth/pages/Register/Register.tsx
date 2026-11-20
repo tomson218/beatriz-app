@@ -42,14 +42,13 @@ const Register = () => {
 				<aside className={classes.image}></aside>
 				<section className={classes.forms}>
 					<h1 className={classes.title}>Zarejestruj się</h1>
-					<Form onSubmit={handleSubmit(onSubmit)} className={classes.loginForm}>
+					<Form onSubmit={handleSubmit(onSubmit)} className={classes['login-form']}>
 						<Form.Input
 							labelText='Nazwa użytkownika'
 							inputId='username'
  						placeholder='Nazwa użytkownika'
 							register={register}
 							errorMessage={errors.username && errors.username.message}
-							{...register('username')}
 							validation={{
 								required: 'Nazwa użytkownika jest wymagana',
 								minLength: {
@@ -65,7 +64,6 @@ const Register = () => {
  						placeholder='Imię'
 							register={register}
 							errorMessage={errors.firstName && errors.firstName.message}
-							{...register('firstName')}
 							validation={{
 								required: 'Imię jest wymagane',
 								minLength: {
@@ -81,7 +79,6 @@ const Register = () => {
  						placeholder='Nazwisko'
 							register={register}
 							errorMessage={errors.lastName && errors.lastName.message}
-							{...register('lastName')}
 							validation={{
 								required: 'Nazwisko jest wymagane',
 								minLength: {
@@ -98,7 +95,6 @@ const Register = () => {
 							placeholder='E-mail'
 							register={register}
 							errorMessage={errors.email && errors.email.message}
-							{...register('email')}
 							validation={{
 								required: 'Adres e-mail jest wymaggany',
 								minLength: {
@@ -114,7 +110,6 @@ const Register = () => {
 							placeholder='Hasło'
 							register={register}
 							errorMessage={errors.password && errors.password.message}
-							{...register('password')}
 							validation={{
 								required: 'Hasło jest wymagane',
 								minLength: {
@@ -135,10 +130,9 @@ const Register = () => {
 								required: 'Potwierdzenie hasła jest wymagane',
 								validate: value => value === watch('password') || 'Hasła nie są takie same',
 							}}
-							{...register('passwordConfirm')}
 						/>
 
- 					<Form.Button content='Utwórz konto' />
+ 					<Form.Button content='Utwórz konto' className='w-full mt-6' />
  				</Form>
 
  				<Divider

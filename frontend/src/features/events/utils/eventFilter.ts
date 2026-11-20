@@ -32,8 +32,9 @@ const matchesType = (event: EventDto, filter: EventFilter): boolean => {
 };
 
 const matchesStar = (event: EventDto, filter: EventFilter): boolean => {
-	const isStarFilterEmpty = !filter.star;
-	const isStarPerforming = event.star.includes(filter.star);
+	const query = filter.star.trim().toLowerCase();
+	const isStarFilterEmpty = !query;
+	const isStarPerforming = event.star.some(star => star.toLowerCase().includes(query));
 
 	return isStarFilterEmpty || isStarPerforming;
 };

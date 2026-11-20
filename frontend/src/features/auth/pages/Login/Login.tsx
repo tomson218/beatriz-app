@@ -27,7 +27,7 @@ const Login = () => {
 			<aside className={classes.image}></aside>
 			<section className={classes.forms}>
 				<h1 className={classes.title}>Zaloguj się</h1>
-				<Form onSubmit={handleSubmit(onSubmit)} className={classes.loginForm}>
+				<Form onSubmit={handleSubmit(onSubmit)} className={classes['login-form']}>
 					<Form.Input
 						labelText='Email'
 						inputId='email'
@@ -35,7 +35,6 @@ const Login = () => {
 						placeholder='E-mail'
 						register={register}
 						errorMessage={errors.email && errors.email.message}
-						{...register('email')}
 						validation={{
 							required: 'Email is required',
 							minLength: {
@@ -51,7 +50,6 @@ const Login = () => {
 						placeholder='Hasło'
 						register={register}
 						errorMessage={errors.password && errors.password.message}
-						{...register('password')}
 						validation={{
 							required: 'Hasło jest wymagane',
 							minLength: {
@@ -60,7 +58,7 @@ const Login = () => {
 							},
 						}}
 					/>
- 				<Form.Button content='Zaloguj się' />
+ 				<Form.Button content='Zaloguj się' className='w-full mt-6' />
  			</Form>
  			<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
  				<span className={classes['divider-span']}>LUB</span>

@@ -1,3 +1,5 @@
+import { getItemLocalStorage } from '@/shared/utils/localStorage';
+
 /**
  * Sprawdza czy lista postów forum jest pusta.
  */
@@ -20,5 +22,5 @@ export function isPostAuthor(userPostId: string): boolean {
 	const hasNoStoredUserId = !storedUserId;
 
 	if (hasNoStoredUserId) return false;
-	return userPostId === JSON.parse(storedUserId);
+	return userPostId === getItemLocalStorage<string>('user-id');
 }
