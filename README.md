@@ -110,10 +110,6 @@ beatriz-app/
 |:---:|:---:|
 | <img src="screenshots/01-home.jpg" width="420" alt="Home page with the list of events"> | <img src="screenshots/02-event-details.jpg" width="420" alt="Event details"> |
 
-| Forum | |
-|:---:|:---:|
-| <img src="screenshots/15-forum.jpg" width="420" alt="Event forum"> | |
-
 ### Buying tickets
 
 | 1. Choose a sector | 2. Sector A selected |
