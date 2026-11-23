@@ -36,17 +36,21 @@ const loadCheckoutEvents = async (eventIds: string[]): Promise<Map<string, Check
 const assertSeatsAreFree = async (tickets: RequestedTicket[]): Promise<void> => {
 	const seatedTickets: RequestedTicket[] = tickets.filter(ticket => ticket.seating !== '');
 
-	for (const { eventId, sector, block, seating } of seatedTickets) {
-		const isTaken = await TicketModel.exists({
-			eventId,
-			'seating.sector': sector,
-			'seating.block': block,
-			'seating.seat': Number(seating),
-		});
+	const takenFlags = await Promise.all(
+		seatedTickets.map(({ eventId, sector, block, seating }) =>
+			TicketModel.exists({
+				eventId,
+				'seating.sector': sector,
+				'seating.block': block,
+				'seating.seat': Number(seating),
+			}),
+		),
+	);
 
-		if (isTaken) {
-			throw Object.assign(new Error(`Miejsce ${seating} w sektorze ${sector} jest już zajęte`), { statusCode: 409 });
-		}
+	const takenTicket: RequestedTicket | undefined = seatedTickets.find((_, index) => takenFlags[index]);
+
+	if (takenTicket) {
+		throw Object.assign(new Error(`Miejsce ${takenTicket.seating} w sektorze ${takenTicket.sector} jest już zajęte`), { statusCode: 409 });
 	}
 };
 

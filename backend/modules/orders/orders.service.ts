@@ -117,19 +117,19 @@ export const expireOverdueOfflineOrders = async (): Promise<number> => {
 		date: { $lte: getOverdueOrderDate() },
 	}).select('_id');
 
-	let expiredCount: number = 0;
+	const expiredFlags: boolean[] = await Promise.all(
+		overdueOrders.map(async ({ _id: orderId }): Promise<boolean> => {
+			// Warunek na status chroni przed wygaszeniem zamówienia, które admin właśnie zatwierdził.
+			const expiredOrder = await OrderModel.findOneAndUpdate({ _id: orderId, status: 'pending' }, { status: 'expired' });
 
-	for (const { _id: orderId } of overdueOrders) {
-		// Warunek na status chroni przed wygaszeniem zamówienia, które admin właśnie zatwierdził.
-		const expiredOrder = await OrderModel.findOneAndUpdate({ _id: orderId, status: 'pending' }, { status: 'expired' });
+			if (!expiredOrder) return false;
 
-		if (expiredOrder) {
 			await TicketModel.deleteMany({ orderId });
-			expiredCount += 1;
-		}
-	}
+			return true;
+		}),
+	);
 
-	return expiredCount;
+	return expiredFlags.filter(Boolean).length;
 };
 
 /** Zatwierdza albo odrzuca wpłatę offline. Odrzucenie zwalnia zarezerwowane miejsca. */
