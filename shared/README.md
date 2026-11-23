@@ -1,106 +1,106 @@
-# @beatriz/shared — Wspólne Typy i Schematy
+# @beatriz/shared — Shared Types and Schemas
 
-Moduł współdzielony między backendem a frontendem, zawierający typy TypeScript, schematy Mongoose, enumy i stałe.
+A module shared by the backend and the frontend, containing TypeScript types, Mongoose schemas, enums and constants.
 
-## Opis
+## Overview
 
-Moduł `@beatriz/shared` stanowi **jedno źródło prawdy** dla typów danych używanych w całej aplikacji. Dzięki temu backend i frontend korzystają z tych samych definicji, co eliminuje błędy wynikające z niezgodności typów.
+The `@beatriz/shared` module is the **single source of truth** for the data types used across the whole app. Thanks to it, the backend and the frontend use the same definitions, which eliminates bugs caused by mismatched types.
 
-## Struktura
+## Structure
 
-```
+```text
 shared/
-├── types/            # Typy TypeScript
-│   ├── auth.ts       # Typy związane z uwierzytelnianiem
-│   ├── common.ts     # Typy ogólne (SuccessItem, SuccessList)
-│   ├── discountCodes.ts # Typy kodów rabatowych
-│   ├── events.ts     # Typy wydarzeń
-│   ├── forums.ts     # Typy forów
-│   ├── orders.ts     # Typy zamówień
-│   ├── payments.ts   # Typy płatności
-│   ├── tickets.ts    # Typy biletów
-│   ├── users.ts      # Typy użytkowników
-│   ├── webhooks.ts   # Typy webhooków
-│   └── index.ts      # Agregacja eksportów
-├── schemas/          # Schematy Mongoose
+├── types/            # TypeScript types
+│   ├── auth.ts       # Authentication types
+│   ├── common.ts     # General types (SuccessItem, SuccessList)
+│   ├── discountCodes.ts # Discount code types
+│   ├── events.ts     # Event types
+│   ├── forums.ts     # Forum types
+│   ├── orders.ts     # Order types
+│   ├── payments.ts   # Payment types
+│   ├── tickets.ts    # Ticket types
+│   ├── users.ts      # User types
+│   ├── webhooks.ts   # Webhook types
+│   └── index.ts      # Aggregated exports
+├── schemas/          # Mongoose schemas
 │   ├── userSchema.ts
 │   ├── eventSchema.ts
 │   ├── orderSchema.ts
 │   ├── ticketSchema.ts
 │   ├── forumSchema.ts
 │   ├── discountCodeSchema.ts
-│   └── utils.ts      # Pod-schematy (seating, prices, sector, itp.)
-├── enums/            # Enumy
-│   ├── blockTypes.ts    # Bloki: blue, green, yellow, black
-│   ├── currencies.ts    # Waluty: PLN
-│   ├── eventTypes.ts    # Typy wydarzeń: koncert, warsztat, konferencja, festiwal
-│   ├── sectors.ts       # Sektory hali
-│   ├── ticketTypes.ts   # Typy biletów: normal, child, VIP
-│   └── userRoles.ts     # Role: user, worker, admin
-├── constants/        # Stałe
-│   ├── eventTypes.ts    # Opcje UI z polskimi labelami
-│   ├── faq.ts           # Pytania FAQ
-│   ├── hallCapacity.ts  # Pojemność hali (COUNT_BLOCKS, COUNT_SEAT)
-│   └── misc.ts          # Inne stałe
-├── package.json      # Konfiguracja modułu npm
-└── tsconfig.json     # Konfiguracja TypeScript
+│   └── utils.ts      # Sub-schemas (seating, prices, sector, etc.)
+├── enums/            # Enums
+│   ├── blockTypes.ts    # Blocks: blue, green, yellow, black
+│   ├── currencies.ts    # Currencies: PLN
+│   ├── eventTypes.ts    # Event types: concert, workshop, conference, festival
+│   ├── sectors.ts       # Hall sectors
+│   ├── ticketTypes.ts   # Ticket types: normal, child, VIP
+│   └── userRoles.ts     # Roles: user, worker, admin
+├── constants/        # Constants
+│   ├── eventTypes.ts    # UI options with Polish labels
+│   ├── faq.ts           # FAQ questions
+│   ├── hallCapacity.ts  # Hall capacity (COUNT_BLOCKS, COUNT_SEAT)
+│   └── misc.ts          # Other constants
+├── package.json      # npm module configuration
+└── tsconfig.json     # TypeScript configuration
 ```
 
-## Typy i Interfejsy
+## Types and Interfaces
 
-### Strategia `type` vs `interface`
+### `type` vs `interface` strategy
 
-- **`type`** — dla aliasów, typów z utility types (`Pick`, `Omit`, `Partial`), `InferSchemaType` z Mongoose, union types
-- **`interface`** — dla typów rozszerzalnych (DTO z `extends Omit<Model, ...>`, requesty z dodatkowymi polami)
+- **`type`** — for aliases, types built with utility types (`Pick`, `Omit`, `Partial`), Mongoose `InferSchemaType`, union types
+- **`interface`** — for extensible types (DTOs with `extends Omit<Model, ...>`, requests with extra fields)
 
-### Główne Modele
+### Main Models
 
-| Model | Opis |
-|-------|------|
-| `User` | Użytkownik (inferowany z Mongoose) |
-| `Event` | Wydarzenie (inferowany z Mongoose) |
-| `Order` | Zamówienie (inferowany z Mongoose) |
-| `Ticket` | Bilet (inferowany z Mongoose) |
-| `ForumPost` | Post na forum (inferowany z Mongoose) |
-| `DiscountCode` | Kod rabatowy (inferowany z Mongoose) |
+| Model | Description |
+|-------|-------------|
+| `User` | User (inferred from Mongoose) |
+| `Event` | Event (inferred from Mongoose) |
+| `Order` | Order (inferred from Mongoose) |
+| `Ticket` | Ticket (inferred from Mongoose) |
+| `ForumPost` | Forum post (inferred from Mongoose) |
+| `DiscountCode` | Discount code (inferred from Mongoose) |
 
-### DTO
+### DTOs
 
-| DTO | Opis |
-|-----|------|
-| `UserDto` | Dane użytkownika do odpowiedzi API |
-| `EventDto` | Dane wydarzenia do odpowiedzi API |
-| `OrderDto` | Dane zamówienia do odpowiedzi API |
-| `TicketDto` | Dane biletu do odpowiedzi API |
-| `ForumPostDto` | Dane posta do odpowiedzi API |
-| `DiscountCodeDto` | Dane kodu rabatowego do odpowiedzi API |
+| DTO | Description |
+|-----|-------------|
+| `UserDto` | User data for API responses |
+| `EventDto` | Event data for API responses |
+| `OrderDto` | Order data for API responses |
+| `TicketDto` | Ticket data for API responses |
+| `ForumPostDto` | Post data for API responses |
+| `DiscountCodeDto` | Discount code data for API responses |
 
-## Schematy Mongoose
+## Mongoose Schemas
 
-Schematy definiują strukturę dokumentów w MongoDB i są używane przez backend do tworzenia modeli:
+The schemas define the structure of MongoDB documents and are used by the backend to create models:
 
-- **`userSchema`** — dane użytkownika, hasło, role, logowanie społecznościowe
-- **`eventSchema`** — szczegóły wydarzenia, ceny, sektory, wymagane miejsca
-- **`orderSchema`** — zamówienie z biletami, kwotą, walutą
-- **`ticketSchema`** — bilet z typem, ceną, miejscem
-- **`forumSchema`** — post na forum wydarzenia
-- **`discountCodeSchema`** — kod rabatowy z procentem, limitem, datami
+- **`userSchema`** — user data, password, roles, social login
+- **`eventSchema`** — event details, prices, sectors, required seats
+- **`orderSchema`** — order with tickets, amount and currency
+- **`ticketSchema`** — ticket with type, price and seat
+- **`forumSchema`** — event forum post
+- **`discountCodeSchema`** — discount code with percentage, limit and dates
 
-### Pod-schematy (`schemas/utils.ts`)
+### Sub-schemas (`schemas/utils.ts`)
 
-- **`seatingSchema`** — sektor, blok, miejsce
-- **`pricesSchema`** — ceny biletów po typach
-- **`sectorSchema`** — sektor hali z pojemnością
-- **`ticketTypeSchema`** — typ biletu z ceną
-- **`ticketSubSchema`** — podstruktura biletu
-- **`appliedDiscountCodeSchema`** — zastosowany kod rabatowy
+- **`seatingSchema`** — sector, block, seat
+- **`pricesSchema`** — ticket prices by type
+- **`sectorSchema`** — hall sector with capacity
+- **`ticketTypeSchema`** — ticket type with price
+- **`ticketSubSchema`** — ticket sub-structure
+- **`appliedDiscountCodeSchema`** — an applied discount code
 
-## Użycie
+## Usage
 
-Moduł jest importowany przez alias `@beatriz/shared/*`:
+The module is imported via the `@beatriz/shared/*` alias:
 
 ```typescript
-// Przykłady importów
+// Example imports
 import type { User, UserDto } from '@beatriz/shared/users';
 import type { Event, EventDto } from '@beatriz/shared/events';
 import { SECTORS } from '@beatriz/shared/enums/sectors';
@@ -108,15 +108,15 @@ import { userSchema } from '@beatriz/shared/schemas/userSchema';
 import type { SuccessItem, SuccessList } from '@beatriz/shared/common';
 ```
 
-## Zależności
+## Dependencies
 
-- **mongoose** — schematy i typy bazy danych
-- **bcryptjs** — hashowanie haseł
-- **validator** — walidacja danych
-- **axios** — typy HTTP
+- **mongoose** — database schemas and types
+- **bcryptjs** — password hashing
+- **validator** — data validation
+- **axios** — HTTP types
 
-## Skrypty
+## Scripts
 
 ```bash
-npm run typecheck  # Sprawdzenie typów TypeScript
+npm run typecheck  # TypeScript type check
 ```
