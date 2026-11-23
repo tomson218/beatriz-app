@@ -69,11 +69,23 @@ describe('calcPricesAfterDiscount', () => {
 		expect(result).toEqual(expected);
 	});
 
-	// Znany błąd: 100 * 1.1 = 110.00000000000001 w arytmetyce zmiennoprzecinkowej, więc Math.ceil daje 111 zamiast 110.
-	// Gdy błąd zostanie naprawiony, ten test zacznie "nie failować": wtedy zamień `it.fails` na `it`.
-	it.fails('BUG: a 10% surcharge on 100 PLN should give 110 PLN, not 111 PLN', () => {
-		const result = calcPricesAfterDiscount(1.1, { normal: 100, VIP: 200 });
-		const expected = { normal: 110, VIP: 220 };
+	// 100 * 1.1 = 110.00000000000001 w arytmetyce zmiennoprzecinkowej; bez zaokrąglenia do groszy Math.ceil dałby 111.
+	it.each([
+		[50, 55],
+		[90, 99],
+		[100, 110],
+		[110, 121],
+		[170, 187],
+		[200, 220],
+	])('does not overcharge because of float errors: 10%% surcharge on %s PLN -> %s PLN', (price, expected) => {
+		const result = calcPricesAfterDiscount(1.1, { normal: price }).normal;
+
+		expect(result).toBe(expected);
+	});
+
+	it('still rounds a real fraction up to whole PLN', () => {
+		const result = calcPricesAfterDiscount(1.1, { normal: 55, VIP: 33.33 });
+		const expected = { normal: 61, VIP: 37 };
 
 		expect(result).toEqual(expected);
 	});
