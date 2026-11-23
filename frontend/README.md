@@ -1,387 +1,409 @@
-# Frontend — Aplikacja React
+# Frontend — React App
 
-Aplikacja kliencka zbudowana w React + TypeScript do rezerwacji biletów na wydarzenia.
+A client application built with React + TypeScript for booking event tickets.
 
-## Szybki Start
+## Quick Start
 
-### Wymagania
+### Requirements
 
 - **Node.js** 18+
-- **Backend** — uruchomiony serwer API (patrz `backend/README.md`)
+- **Backend** — a running API server (see `backend/README.md`)
 
-### Instalacja
+### Installation
 
-Z katalogu głównego projektu:
+From the project root:
 
 ```bash
 npm install
 ```
 
-### Konfiguracja
+### Configuration
 
-Stwórz plik `frontend/.env`:
+Create a `frontend/.env` file:
 
 ```env
-VITE_GOOGLE_CLIENT_ID=twoj_google_client_id
-VITE_FACEBOOK_APP_ID=twoj_facebook_app_id
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_FACEBOOK_APP_ID=your_facebook_app_id
 ```
 
-### Uruchomienie
+### Running
 
 ```bash
-# Z katalogu głównego projektu
+# From the project root
 npm run dev:frontend
 
-# Lub z katalogu frontend/
+# Or from frontend/
 npm run dev
 ```
 
-Aplikacja będzie dostępna pod adresem `http://localhost:5173`.
+The app will be available at `http://localhost:5173`.
 
-### Build produkcyjny
+### Production build
 
 ```bash
 npm run build
 ```
 
-### Testy
+### Tests
 
 ```bash
 npm test
 ```
 
-Testy są napisane w Vitest z Testing Library.
+Tests are written with Vitest and Testing Library.
 
-## Architektura
+## Architecture
 
-Aplikacja jest zbudowana w **React + TypeScript** z następującymi kluczowymi technologiami:
+The app is built with **React + TypeScript** and the following key technologies:
 
-- **React Router DOM** — routowanie stron
-- **React Query (TanStack Query)** — zarządzanie zapytaniami i mutacjami API
-- **React Context API** — globalny stan (użytkownik, zamówienie)
-- **localStorage** — persistencja stanu między odświeżeniami
-- **Mantine + Shadcn/ui** — komponenty UI
-- **TailwindCSS** — stylowanie
-- **React Hot Toast** — powiadomienia
+- **React Router DOM** — page routing
+- **React Query (TanStack Query)** — API queries and mutations
+- **React Context API** — global state (user, order)
+- **localStorage** — state persistence across page reloads
+- **Mantine + Shadcn/ui** — UI components
+- **TailwindCSS** — styling
+- **React Hot Toast** — notifications
 
-## Struktura
+## Structure
 
-```
+```text
 frontend/src/
-├── app/                # Start aplikacji
-│   ├── App.tsx         # Providery
-│   ├── Router.tsx      # Trasy
-│   ├── layout/         # Navbar i LayoutWrapper
+├── app/                # App bootstrap
+│   ├── App.tsx         # Providers
+│   ├── Router.tsx      # Routes
+│   ├── layout/         # Navbar and LayoutWrapper
 │   └── pages/          # Error404
-├── features/           # Funkcje aplikacji (odpowiedniki modułów backendu)
-│   ├── auth/           # Logowanie, rejestracja, ochrona tras, UserContext
-│   ├── users/          # Profil i zarządzanie użytkownikami
-│   ├── events/         # Wydarzenia i ulubione
-│   ├── orders/         # Koszyk, płatność, historia zamówień, OrderContext
-│   ├── tickets/        # Bilety, hala, sektory, strefy i miejsca
-│   ├── posts/          # Forum wydarzeń
-│   ├── discountCodes/  # Kody rabatowe
-│   ├── admin/          # Panel administratora
-│   └── faq/            # Pytania i odpowiedzi
-├── shared/             # Kod niezależny od funkcji
-│   ├── api/            # Klient HTTP i klucze zapytań
+├── features/           # App features (counterparts of the backend modules)
+│   ├── auth/           # Login, sign-up, route protection, UserContext
+│   ├── users/          # Profile and user management
+│   ├── events/         # Events and favourites
+│   ├── orders/         # Cart, payment, order history, OrderContext
+│   ├── tickets/        # Tickets, hall, sectors, zones and seats
+│   ├── posts/          # Event forum
+│   ├── discountCodes/  # Discount codes
+│   ├── admin/          # Admin panel
+│   └── faq/            # Questions and answers
+├── shared/             # Feature-independent code
+│   ├── api/            # HTTP client and query keys
 │   ├── components/     # ui (shadcn), libs, Form, FormInput, FormButton
-│   ├── lib/            # Funkcja cn
-│   ├── types/          # Typy wspólne
-│   └── utils/          # localStorage, daty, odpowiedzi API
-├── assets/             # Obrazy i ikony
-├── test/               # Konfiguracja testów
-└── __tests__/          # Testy
+│   ├── lib/            # The cn function
+│   ├── types/          # Shared types
+│   └── utils/          # localStorage, dates, API responses
+├── assets/             # Images and icons
+├── test/               # Test setup
+└── __tests__/          # Tests
 
-Każda funkcja w features/ może mieć katalogi:
-api/mutations/, api/queries/ (hooki React Query), components/, pages/, context/ i utils/.
+Each feature in features/ may contain the folders:
+api/mutations/, api/queries/ (React Query hooks), components/, pages/, context/ and utils/.
 ```
 
-## Konteksty i Zarządzanie Stanem
+## Contexts and State Management
 
 ### UserContext
-**Plik:** `context/UserContext.tsx`
 
-Zarządza danymi użytkownika:
-- `userId` — identyfikator zalogowanego użytkownika (z localStorage)
-- `userProgress` — postęp w procesie zakupu
+**File:** `context/UserContext.tsx`
+
+Manages user data:
+
+- `userId` — ID of the logged-in user (from localStorage)
+- `userProgress` — progress in the purchase process
 
 ### OrderContext
-**Plik:** `context/OrderContext.tsx`
 
-Zarządza koszykiem i zamówieniem:
-- `order: CartTicket[]` — tablica biletów w koszyku (persistowana w localStorage jako `ORDERS`)
-- `totalPrice: number` — łączna cena (persistowana w localStorage jako `totalPrice`)
-- `discountCode: string | number` — zastosowany kod rabatowy
+**File:** `context/OrderContext.tsx`
+
+Manages the cart and the order:
+
+- `order: CartTicket[]` — array of tickets in the cart (persisted in localStorage as `ORDERS`)
+- `totalPrice: number` — total price (persisted in localStorage as `totalPrice`)
+- `discountCode: string | number` — the applied discount code
 
 ## Routing
 
-```
+```text
 /                    → Login
-/register            → Rejestracja
-/home                → Strona główna (lista wydarzeń)
-/event-details/:id   → Szczegóły wydarzenia
-/hall                → Wybór sektora hali
-/blocks              → Wybór strefy (bloku)
-/seats               → Wybór miejsc (opcjonalnie)
-/ticket-choice       → Wybór typu biletów
-/summary             → Podsumowanie zamówienia
-/success             → Sukces płatności
-/cancel              → Anulowanie płatności
-/tickets             → Moje bilety
-/favourite           → Ulubione wydarzenia
-/user-profile        → Profil użytkownika
-/forum/:id           → Forum wydarzenia
-/calendar            → Kalendarz wydarzeń
+/register            → Sign-up
+/home                → Home page (list of events)
+/event-details/:id   → Event details
+/hall                → Hall sector selection
+/blocks              → Zone (block) selection
+/seats               → Seat selection (optional)
+/ticket-choice       → Ticket type selection
+/summary             → Order summary
+/success             → Payment success
+/cancel              → Payment cancelled
+/tickets             → My tickets
+/favourite           → Favourite events
+/user-profile        → User profile
+/forum/:id           → Event forum
+/calendar            → Event calendar
 ```
 
-## Proces Zakupu Biletów — Krok po Kroku
+## Ticket Purchase Process — Step by Step
 
-### Krok 1: Strona Główna — Lista Wydarzeń
+### Step 1: Home Page — List of Events
 
 **Route:** `/home`
-**Komponent:** `Home.tsx`
-**API:** `useGetAllEventsQuery()` — pobiera wszystkie wydarzenia z backendu
+**Component:** `Home.tsx`
+**API:** `useGetAllEventsQuery()` — fetches all events from the backend
 
-Strona główna wyświetla listę wydarzeń jako karty `EventCard`. Każda karta zawiera:
-- Obrazek wydarzenia
-- Nazwę, gatunki (gwiazdy), datę i godzinę
-- Przycisk „Szczegóły" → przekierowuje do `/event-details/:eventId`
-- Przycisk „Forum" → przekierowuje do `/forum/:eventId`
-- Przycisk „Ulubione" → dodaje/usuwa z ulubionych
+The home page shows the events as `EventCard` cards. Each card contains:
 
-**Filtrowanie:** Użytkownik może filtrować wydarzenia po:
-- Dacie, nazwie, kategorii (koncert, warsztat, konferencja, festiwal)
-- Gwiazdzie wydarzenia, zakresie cenowym, wymaganiu miejsc numerowanych
+- The event image
+- Name, genres (stars), date and time
+- A "Szczegóły" (Details) button → navigates to `/event-details/:eventId`
+- A "Forum" button → navigates to `/forum/:eventId`
+- A "Ulubione" (Favourites) button → adds to / removes from favourites
 
-Filtrowanie odbywa się po stronie klienta na podstawie pobranych danych.
+**Filtering:** the user can filter events by:
+
+- Date, name, category (concert, workshop, conference, festival)
+- Event star, price range, whether numbered seats are required
+
+Filtering happens on the client, based on the fetched data.
 
 ---
 
-### Krok 2: Szczegóły Wydarzenia
+### Step 2: Event Details
 
 **Route:** `/event-details/:eventId`
-**Komponent:** `EventDetails.tsx`
-**API:** `useGetEventByIdQuery(eventId)` — pobiera szczegóły wybranego wydarzenia
+**Component:** `EventDetails.tsx`
+**API:** `useGetEventByIdQuery(eventId)` — fetches the details of the selected event
 
-Strona wyświetla:
-- Obrazek, nazwę, gatunki, datę, godzinę, opis wydarzenia
-- Cenę biletów („Bilety już od: X PLN")
-- Przycisk „Dodaj/Usuń z ulubionych"
-- Przycisk „Przejdź na forum"
-- **Przycisk „Wybierz sektor hali"** → przekierowuje do `/hall?eventId=${eventId}`
+The page shows:
 
-`eventId` jest zapisywany w localStorage jako `eventDetails`.
+- The event image, name, genres, date, time and description
+- The ticket price ("Bilety już od: X PLN" — tickets from X PLN)
+- An "Add to / Remove from favourites" button
+- A "Przejdź na forum" (Go to the forum) button
+- **A "Wybierz sektor hali" (Choose a hall sector) button** → navigates to `/hall?eventId=${eventId}`
+
+The `eventId` is saved in localStorage as `eventDetails`.
 
 ---
 
-### Krok 3: Wybór Sektora Hali
+### Step 3: Hall Sector Selection
 
 **Route:** `/hall?eventId=...`
-**Komponent:** `Hall.tsx`
-**API:** `useGetEventByIdQuery(eventId)` — pobiera dostępne sektory wydarzenia
+**Component:** `Hall.tsx`
+**API:** `useGetEventByIdQuery(eventId)` — fetches the sectors available for the event
 
-Strona wyświetla wizualizację hali z sektorami (z enum `SECTORS`). Każdy sektor:
-- Jest klikalny, jeśli jest dostępny dla danego wydarzenia
-- Po kliknięciu: sektor jest zapisywany w URL (`?eventId=...&sector=...`) i w localStorage
-- Niedostępne sektory są zablokowane (szare)
+The page shows a visualization of the hall with its sectors (from the `SECTORS` enum). Each sector:
 
-**Przycisk „Wybierz strefę"** przekierowuje do `/blocks?eventId=...&sector=...`.
-Jeśli sektor nie został wybrany, wyświetla się dialog ostrzegawczy.
+- Is clickable if it is available for the event
+- When clicked, is saved in the URL (`?eventId=...&sector=...`) and in localStorage
+- Is disabled (grey) if it is not available
+
+**The "Wybierz strefę" (Choose a zone) button** navigates to `/blocks?eventId=...&sector=...`.
+If no sector has been selected, a warning dialog is shown.
 
 ---
 
-### Krok 4: Wybór Strefy (Bloku)
+### Step 4: Zone (Block) Selection
 
 **Route:** `/blocks?eventId=...&sector=...`
-**Komponent:** `Blocks.tsx`
-**API:** `useGetEventByIdQuery(eventId)` — sprawdza czy wydarzenie wymaga miejsc
+**Component:** `Blocks.tsx`
+**API:** `useGetEventByIdQuery(eventId)` — checks whether the event requires seats
 
-Strona wyświetla 4 bloki (strefy): **blue, green, yellow, black**.
-Po kliknięciu blok jest zapisywany w URL (`?eventId=...&sector=...&block=...`).
+The page shows 4 blocks (zones): **blue, green, yellow, black**.
+When clicked, the block is saved in the URL (`?eventId=...&sector=...&block=...`).
 
-**Kluczowa logika:**
-- Jeśli `eventDetails.seatRequired === true` → przycisk „Wybierz konkretne miejsce" → `/seats`
-- Jeśli `eventDetails.seatRequired === false` → przycisk „Przejdź do wyboru biletów" → `/ticket-choice`
+**Key logic:**
+
+- If `eventDetails.seatRequired === true` → the "Wybierz konkretne miejsce" (Choose a specific seat) button → `/seats`
+- If `eventDetails.seatRequired === false` → the "Przejdź do wyboru biletów" (Go to ticket selection) button → `/ticket-choice`
 
 ---
 
-### Krok 5: Wybór Miejsc (Opcjonalnie)
+### Step 5: Seat Selection (Optional)
 
 **Route:** `/seats?eventId=...&sector=...&block=...`
-**Komponent:** `Seats.tsx`
-**API:** `useGetOccupiedSeatsQuery(eventId, sector, block)` — pobiera zajęte miejsca
+**Component:** `Seats.tsx`
+**API:** `useGetOccupiedSeatsQuery(eventId, sector, block)` — fetches occupied seats
 
-Strona wyświetla siatkę 100 miejsc z legendą:
-- 🟢 **Wolne** — można wybrać
-- 🔵 **Wybrane** — zaznaczone przez użytkownika
-- 🔴 **Zajęte** — już zakupione (z API)
+The page shows a grid of 100 seats with a legend:
 
-Użytkownik klika na wolne miejsca, które są:
-- Zapisywane w URL (`?seats=1,5,12`)
-- Zapisywane w localStorage jako `selected-seats`
+- 🟢 **Free** — can be selected
+- 🔵 **Selected** — chosen by the user
+- 🔴 **Occupied** — already purchased (from the API)
 
-**Przycisk „Przejdź do wyboru biletów"** przekierowuje do `/ticket-choice?eventId=...&sector=...&block=...&seats=...`.
-Jeśli żadne miejsce nie zostało wybrane, wyświetla się dialog ostrzegawczy.
+The user clicks free seats, which are:
+
+- Saved in the URL (`?seats=1,5,12`)
+- Saved in localStorage as `selected-seats`
+
+**The "Przejdź do wyboru biletów" (Go to ticket selection) button** navigates to `/ticket-choice?eventId=...&sector=...&block=...&seats=...`.
+If no seat has been selected, a warning dialog is shown.
 
 ---
 
-### Krok 6: Wybór Typu Biletów
+### Step 6: Ticket Type Selection
 
 **Route:** `/ticket-choice?eventId=...&sector=...&block=...&seats=...`
-**Komponent:** `TicketChoice.tsx`
+**Component:** `TicketChoice.tsx`
 
-Strona ma **dwa tryby** w zależności od tego, czy wydarzenie wymaga miejsc:
+The page has **two modes**, depending on whether the event requires seats:
 
-#### Tryb A: Z miejscami (`seats` jest zdefiniowany)
-Dla każdego wybranego miejsca wyświetlany jest komponent `Order` z:
-- Informacjami o wydarzeniu (nazwa, data, obrazek)
-- Informacjami o miejscu (sektor, strefa, numer miejsca)
-- **Selektorem typu biletu** — użytkownik wybiera: Normalny, Dziecięcy, VIP
-- Cena biletu jest aktualizowana w `OrderContext` po zmianie typu
+#### Mode A: With seats (`seats` is defined)
 
-#### Tryb B: Bez miejsc (`seats` nie jest zdefiniowany)
-Wyświetlany jest komponent `OrderWithOutSeats` z:
-- **Licznikiem całkowitej liczby biletów** — przyciski „Zwiększ" / „Zmniejsz"
-- **Przydziałem biletów po typach** — dla każdego typu (normal, child, VIP) użytkownik ustawia liczbę
-- Walidacja: suma biletów po typach musi równać się całkowitej liczbie biletów
+For each selected seat an `Order` component is shown with:
 
-**Zapis stanu:**
-- `order` (tablica `CartTicket`) → localStorage jako `ORDERS`
-- `totalPrice` → localStorage jako `totalPrice`
+- Event information (name, date, image)
+- Seat information (sector, zone, seat number)
+- **A ticket type selector** — the user chooses Normal, Child or VIP
+- The ticket price is updated in `OrderContext` when the type changes
 
-**Przycisk „Przejdź do podsumowania"** przekierowuje do `/summary?eventId=...`.
+#### Mode B: Without seats (`seats` is not defined)
+
+An `OrderWithOutSeats` component is shown with:
+
+- **A counter for the total number of tickets** — "Increase" / "Decrease" buttons
+- **Ticket allocation by type** — for each type (normal, child, VIP) the user sets a count
+- Validation: the sum of tickets by type must equal the total number of tickets
+
+**State persistence:**
+
+- `order` (an array of `CartTicket`) → localStorage as `ORDERS`
+- `totalPrice` → localStorage as `totalPrice`
+
+**The "Przejdź do podsumowania" (Go to summary) button** navigates to `/summary?eventId=...`.
 
 ---
 
-### Krok 7: Podsumowanie Zamówienia
+### Step 7: Order Summary
 
 **Route:** `/summary?eventId=...`
-**Komponent:** `OrderSummary.tsx`
+**Component:** `OrderSummary.tsx`
 
-Strona wyświetla:
-- **Listę biletów** — każdy jako komponent `Order` (tylko do odczytu, bez zmiany typu)
-- **Formularz kodu rabatowego** — komponent `DiscountCodeForm`
-- **Łączną kwotę** — komponent `TotalAmount` (czyta z `OrderContext`)
-- **Przycisk „Zapłać teraz"** — tworzy sesję płatności Stripe
+The page shows:
 
-#### Kod Rabatowy
+- **The list of tickets** — each as an `Order` component (read-only, the type cannot be changed)
+- **The discount code form** — the `DiscountCodeForm` component
+- **The total amount** — the `TotalAmount` component (reads from `OrderContext`)
+- **A "Zapłać teraz" (Pay now) button** — creates a Stripe checkout session
 
-**Komponent:** `DiscountCodeForm.tsx`
+#### Discount Code
+
+**Component:** `DiscountCodeForm.tsx`
 **API:** `useApplyDiscountCodeMutation()` → `POST /api/v2/discount-codes/apply`
 
-Użytkownik wpisuje kod i klika „Użyj kodu". Backend zwraca procent rabatu. Frontend:
-1. Obniża ceny wszystkich biletów w `OrderContext` o podany procent
-2. Aktualizuje `totalPrice`
-3. Zapisuje kod w localStorage jako `code`
+The user enters a code and clicks "Użyj kodu" (Use code). The backend returns the discount percentage. The frontend:
 
-**Obsługa błędów:**
-- `400` — kod wygasł lub wartość zamówienia za mała
-- `409` — kod już użyty
-- `404` — kod niepoprawny
+1. Lowers the price of every ticket in `OrderContext` by that percentage
+2. Updates `totalPrice`
+3. Saves the code in localStorage as `code`
+
+**Error handling:**
+
+- `400` — the code has expired or the order value is too low
+- `409` — the code has already been used
+- `404` — the code is invalid
 
 ---
 
-### Krok 8: Płatność Stripe
+### Step 8: Stripe Payment
 
 **API:** `useCreateCheckoutSessionMutation()` → `POST /api/v2/checkout-sessions`
 
-Przycisk „Zapłać teraz" wysyła tablicę biletów (`CartTicket[]`) do backendu.
+The "Zapłać teraz" (Pay now) button sends the array of tickets (`CartTicket[]`) to the backend.
 
 **Backend:**
-1. Zapisuje bilety w `user.cart` w bazie danych
-2. Tworzy sesję Stripe Checkout z produktami (biletami)
-3. Ustawia `success_url` → `/success`
-4. Ustawia `cancel_url` → `/cancel`
-5. Zwraca URL sesji Stripe
 
-**Frontend** przekierowuje użytkownika do strony płatności Stripe (zewnętrzna strona).
+1. Saves the tickets in `user.cart` in the database
+2. Creates a Stripe Checkout session with the products (tickets)
+3. Sets `success_url` → `/success`
+4. Sets `cancel_url` → `/cancel`
+5. Returns the Stripe session URL
+
+**The frontend** redirects the user to the Stripe payment page (an external site).
 
 ---
 
-### Krok 9: Wynik Płatności
+### Step 9: Payment Result
 
-#### Sukces
+#### Success
 
 **Route:** `/success`
-**Komponent:** `Success.tsx`
+**Component:** `Success.tsx`
 
-Wyświetla komunikat: „Płatność została pomyślnie zakończona!" z informacją o emailu z potwierdzeniem. Przycisk „Powróć do ekranu głównego" → `/home`.
+Shows the message "Płatność została pomyślnie zakończona!" (The payment was completed successfully!) with information about the confirmation email. The "Powróć do ekranu głównego" (Back to the home screen) button → `/home`.
 
-#### Anulowanie
+#### Cancellation
 
 **Route:** `/cancel`
-**Komponent:** `Cancel.tsx`
+**Component:** `Cancel.tsx`
 
-Wyświetla komunikat: „Wysyłanie nieudane" z prośbą o sprawdzenie danych.
-
----
-
-### Krok 10: Webhook Stripe — Finalizacja Zamówienia
-
-Po pomyślnej płatności Stripe wysyła event `checkout.session.completed` do webhooka backendu:
-
-1. **Pobranie użytkownika** — po `userId` z metadata sesji
-2. **Oznaczenie kodu rabatowego** jako użytego
-3. **Tworzenie zamówienia** z danymi biletów
-4. **Tworzenie biletów** dla każdego biletu
-5. **Generowanie PDF** z biletami
-6. **Wysłanie emaila** z potwierdzeniem i załącznikiem PDF
-7. **Wyczyszczenie koszyka**
+Shows the message "Wysyłanie nieudane" (Sending failed) and asks the user to check their details.
 
 ---
 
-### Krok 11: Moje Bilety
+### Step 10: Stripe Webhook — Finalizing the Order
+
+After a successful payment, Stripe sends the `checkout.session.completed` event to the backend webhook:
+
+1. **Load the user** — by `userId` from the session metadata
+2. **Mark the discount code** as used
+3. **Create the order** with the ticket data
+4. **Create the tickets** for each ticket
+5. **Generate a PDF** with the tickets
+6. **Send an email** with the confirmation and the PDF attached
+7. **Clear the cart**
+
+---
+
+### Step 11: My Tickets
 
 **Route:** `/tickets`
-**Komponent:** `Tickets.tsx`
-**API:** `useGetTicketsByUserQuery(userId)` — pobiera bilety użytkownika
+**Component:** `Tickets.tsx`
+**API:** `useGetTicketsByUserQuery(userId)` — fetches the user's tickets
 
-Strona wyświetla zakupione bilety jako komponenty `Ticket` z:
-- Informacjami o wydarzeniu, typem biletu, ceną
-- Sektorem, strefą, miejscem (jeśli dotyczy)
+The page shows the purchased tickets as `Ticket` components with:
 
-**Filtry:**
-- **„Nadchodzące"** — tylko bilety na wydarzenia w przyszłości
-- **„Wszystkie"** — wszystkie zakupione bilety
+- Event information, ticket type and price
+- Sector, zone and seat (if applicable)
+
+**Filters:**
+
+- **"Nadchodzące" (Upcoming)** — only tickets for future events
+- **"Wszystkie" (All)** — all purchased tickets
 
 ---
 
-## Podsumowanie — Pełna Ścieżka Użytkownika
+## Summary — The Full User Journey
 
+```text
+1.  /home                          → Browses and filters events
+2.  /event-details/:eventId        → Sees the details, clicks "Choose a hall sector"
+3.  /hall?eventId=...              → Picks a sector on the hall visualization
+4.  /blocks?eventId=...&sector=... → Picks a zone (block)
+5.  /seats?eventId=...&sector=...&block=...  → (Optional) Picks seats
+6.  /ticket-choice?eventId=...     → Picks ticket types (Normal/Child/VIP)
+7.  /summary?eventId=...           → Summary, discount code, "Pay now"
+8.  Stripe Checkout (external)     → Card payment
+9.  /success                       → Success confirmation
+10. /tickets                       → Sees the purchased tickets
 ```
-1.  /home                          → Przegląda wydarzenia, filtruje
-2.  /event-details/:eventId        → Widzi szczegóły, klika „Wybierz sektor hali"
-3.  /hall?eventId=...              → Wybiera sektor na wizualizacji hali
-4.  /blocks?eventId=...&sector=... → Wybiera strefę (blok)
-5.  /seats?eventId=...&sector=...&block=...  → (Opcjonalnie) Wybiera miejsca
-6.  /ticket-choice?eventId=...     → Wybiera typ biletów (Normalny/Dziecięcy/VIP)
-7.  /summary?eventId=...           → Podsumowanie, kod rabatowy, „Zapłać teraz"
-8.  Stripe Checkout (zewnętrzne)   → Płatność kartą
-9.  /success                       → Potwierdzenie sukcesu
-10. /tickets                       → Widzi zakupione bilety
-```
 
-### Kluczowe Mechanizmy
+### Key Mechanisms
 
-- **OrderContext** — przenosi koszyk przez cały proces zakupu
-- **localStorage** — persistuje stan między odświeżeniami (`ORDERS`, `totalPrice`, `sector`, `selected-seats`)
-- **URL params** — przenoszą `eventId`, `sector`, `block`, `seats` między krokami
-- **Stripe Checkout** — zewnętrzna płatność z webhookiem do finalizacji
-- **Webhook** — tworzy zamówienie, bilety, wysyła email z PDF
+- **OrderContext** — carries the cart through the whole purchase process
+- **localStorage** — persists state across reloads (`ORDERS`, `totalPrice`, `sector`, `selected-seats`)
+- **URL params** — carry `eventId`, `sector`, `block` and `seats` between steps
+- **Stripe Checkout** — external payment with a webhook for finalization
+- **Webhook** — creates the order and tickets, sends an email with a PDF
 
-## Zależności
+## Dependencies
 
-- **react** + **react-dom** — framework UI
-- **react-router-dom** — routowanie
-- **@tanstack/react-query** — zarządzanie zapytaniami API
-- **react-hook-form** — formularze
-- **@mantine/core** + **@mantine/hooks** — komponenty UI
-- **@radix-ui/** — komponenty Shadcn/ui
-- **tailwindcss** — stylowanie
-- **react-hot-toast** — powiadomienia
-- **@react-oauth/google** — logowanie przez Google
-- **@fortawesome/** — ikony
-- **react-qr-code** — kody QR na bilety
-- **vitest** + **@testing-library/** — testy
-- **@beatriz/shared** — wspólne typy i schematy
+- **react** + **react-dom** — UI framework
+- **react-router-dom** — routing
+- **@tanstack/react-query** — API query management
+- **react-hook-form** — forms
+- **@mantine/core** + **@mantine/hooks** — UI components
+- **@radix-ui/** — Shadcn/ui components
+- **tailwindcss** — styling
+- **react-hot-toast** — notifications
+- **@react-oauth/google** — Google login
+- **@fortawesome/** — icons
+- **react-qr-code** — QR codes on tickets
+- **vitest** + **@testing-library/** — tests
+- **@beatriz/shared** — shared types and schemas
