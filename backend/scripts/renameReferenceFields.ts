@@ -16,18 +16,23 @@ const MIGRATIONS = [
 	{ model: UserModel, fields: { favouriteEvents: 'favouriteEventIds' } },
 ];
 
-const renameReferenceFields = async (): Promise<void> => {
-	for (const { model, fields } of MIGRATIONS) {
-		for (const [oldField, newField] of Object.entries(fields)) {
-			// Natywna kolekcja omija hooki modelu, więc migracja obejmuje też konta nieaktywne.
-			const { modifiedCount } = await model.collection.updateMany(
-				{ [oldField]: { $exists: true } },
-				{ $rename: { [oldField]: newField } },
-			);
+const MIGRATION_STEPS = MIGRATIONS.flatMap(({ model, fields }) =>
+	Object.entries(fields).map(([oldField, newField]) => ({ model, oldField, newField })),
+);
 
-			console.log(`${model.collection.name}: ${oldField} -> ${newField} (${modifiedCount})`);
-		}
-	}
+/** Kroki wykonujemy po kolei (łańcuch obietnic), żeby nie obciążać bazy i zachować czytelną kolejność logów. */
+const renameReferenceFields = async (): Promise<void> => {
+	await MIGRATION_STEPS.reduce(async (previousStep: Promise<void>, { model, oldField, newField }): Promise<void> => {
+		await previousStep;
+
+		// Natywna kolekcja omija hooki modelu, więc migracja obejmuje też konta nieaktywne.
+		const { modifiedCount } = await model.collection.updateMany(
+			{ [oldField]: { $exists: true } },
+			{ $rename: { [oldField]: newField } },
+		);
+
+		console.log(`${model.collection.name}: ${oldField} -> ${newField} (${modifiedCount})`);
+	}, Promise.resolve());
 };
 
 await connectDB();

@@ -18,13 +18,14 @@ export const calcDiscountPrice = (eventDate: Date): number => {
 	return 0;
 };
 
+/** Najpierw zaokrąglamy do groszy (usuwa błędy typu 110.00000000000001), potem w górę do pełnych złotych. */
+const ceilToWholePln = (amount: number): number => Math.ceil(Math.round(amount * 100) / 100);
+
 export const calcPricesAfterDiscount = (discount: number, prices: Record<string, number>): Record<string, number> => {
 	const discountedEntries = Object.entries(prices).map(([key, value]) => {
-		if (discount >= 1) {
-			return [key, Math.ceil(value * discount)];
-		} else {
-			return [key, Math.ceil(value - value * discount)];
-		}
+		const amount: number = discount >= 1 ? value * discount : value - value * discount;
+
+		return [key, ceilToWholePln(amount)];
 	});
 
 	return Object.fromEntries(discountedEntries);
