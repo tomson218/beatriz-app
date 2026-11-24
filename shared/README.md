@@ -50,50 +50,50 @@ shared/
 
 ### `type` vs `interface` strategy
 
-- **`type`** — for aliases, types built with utility types (`Pick`, `Omit`, `Partial`), Mongoose `InferSchemaType`, union types
-- **`interface`** — for extensible types (DTOs with `extends Omit<Model, ...>`, requests with extra fields)
+-   **`type`** — for aliases, types built with utility types (`Pick`, `Omit`, `Partial`), Mongoose `InferSchemaType`, union types
+-   **`interface`** — for extensible types (DTOs with `extends Omit<Model, ...>`, requests with extra fields)
 
 ### Main Models
 
-| Model | Description |
-|-------|-------------|
-| `User` | User (inferred from Mongoose) |
-| `Event` | Event (inferred from Mongoose) |
-| `Order` | Order (inferred from Mongoose) |
-| `Ticket` | Ticket (inferred from Mongoose) |
-| `ForumPost` | Forum post (inferred from Mongoose) |
+| Model          | Description                            |
+| -------------- | -------------------------------------- |
+| `User`         | User (inferred from Mongoose)          |
+| `Event`        | Event (inferred from Mongoose)         |
+| `Order`        | Order (inferred from Mongoose)         |
+| `Ticket`       | Ticket (inferred from Mongoose)        |
+| `Post`         | Forum post (inferred from Mongoose)    |
 | `DiscountCode` | Discount code (inferred from Mongoose) |
 
 ### DTOs
 
-| DTO | Description |
-|-----|-------------|
-| `UserDto` | User data for API responses |
-| `EventDto` | Event data for API responses |
-| `OrderDto` | Order data for API responses |
-| `TicketDto` | Ticket data for API responses |
-| `ForumPostDto` | Post data for API responses |
+| DTO               | Description                          |
+| ----------------- | ------------------------------------ |
+| `UserDto`         | User data for API responses          |
+| `EventDto`        | Event data for API responses         |
+| `OrderDto`        | Order data for API responses         |
+| `TicketDto`       | Ticket data for API responses        |
+| `PostDto`         | Post data for API responses          |
 | `DiscountCodeDto` | Discount code data for API responses |
 
 ## Mongoose Schemas
 
 The schemas define the structure of MongoDB documents and are used by the backend to create models:
 
-- **`userSchema`** — user data, password, roles, social login
-- **`eventSchema`** — event details, prices, sectors, required seats
-- **`orderSchema`** — order with tickets, amount and currency
-- **`ticketSchema`** — ticket with type, price and seat
-- **`forumSchema`** — event forum post
-- **`discountCodeSchema`** — discount code with percentage, limit and dates
+-   **`userSchema`** — user data, password, roles, social login
+-   **`eventSchema`** — event details, prices, sectors, required seats
+-   **`orderSchema`** — order with tickets, amount and currency
+-   **`ticketSchema`** — ticket with type, price and seat
+-   **`forumSchema`** — event forum post
+-   **`discountCodeSchema`** — discount code with percentage, limit and dates
 
 ### Sub-schemas (`schemas/utils.ts`)
 
-- **`seatingSchema`** — sector, block, seat
-- **`pricesSchema`** — ticket prices by type
-- **`sectorSchema`** — hall sector with capacity
-- **`ticketTypeSchema`** — ticket type with price
-- **`ticketSubSchema`** — ticket sub-structure
-- **`appliedDiscountCodeSchema`** — an applied discount code
+-   **`seatingSchema`** — sector, block, seat
+-   **`pricesSchema`** — ticket prices by type
+-   **`sectorSchema`** — hall sector with capacity
+-   **`ticketTypeSchema`** — ticket type with price
+-   **`ticketSubSchema`** — ticket sub-structure
+-   **`appliedDiscountCodeSchema`** — an applied discount code
 
 ## Usage
 
@@ -110,10 +110,10 @@ import type { SuccessItem, SuccessList } from '@beatriz/shared/common';
 
 ## Dependencies
 
-- **mongoose** — database schemas and types
-- **bcryptjs** — password hashing
-- **validator** — data validation
-- **axios** — HTTP types
+-   **mongoose** — database schemas and types
+-   **bcryptjs** — password hashing
+-   **validator** — data validation
+-   **axios** — HTTP types
 
 ## Scripts
 

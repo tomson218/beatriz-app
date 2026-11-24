@@ -23,13 +23,21 @@ const validProduct = (overrides: Record<string, unknown> = {}) => ({
 	...overrides,
 });
 
-const seatedProducts = (count: number) => Array.from({ length: count }, (_, index) => validProduct({ seating: String(index + 1) }));
+const seatedProducts = (count: number) =>
+	Array.from({ length: count }, (_, index) => validProduct({ seating: String(index + 1) }));
 
 describe('parseRequestedTickets', () => {
 	it('returns a normalized ticket for a valid product', () => {
 		const result = parseRequestedTickets([validProduct()]);
 		const expected = [
-			{ eventId: EVENT_ID, type: 'normal', sector: 'A', block: 'blue', seating: '12', images: ['https://example.com/a.jpg'] },
+			{
+				eventId: EVENT_ID,
+				type: 'normal',
+				sector: 'A',
+				block: 'blue',
+				seating: '12',
+				images: ['https://example.com/a.jpg'],
+			},
 		];
 
 		expect(result).toEqual(expected);
@@ -37,7 +45,14 @@ describe('parseRequestedTickets', () => {
 
 	it('ignores fields the client should not control (e.g. price)', () => {
 		const [result] = parseRequestedTickets([validProduct({ price: 1, name: 'Hacked' })]);
-		const expected = { eventId: EVENT_ID, type: 'normal', sector: 'A', block: 'blue', seating: '12', images: ['https://example.com/a.jpg'] };
+		const expected = {
+			eventId: EVENT_ID,
+			type: 'normal',
+			sector: 'A',
+			block: 'blue',
+			seating: '12',
+			images: ['https://example.com/a.jpg'],
+		};
 
 		expect(result).toStrictEqual(expected);
 	});
@@ -102,7 +117,9 @@ describe('parseRequestedTickets', () => {
 	});
 
 	it('rejects the same seat chosen twice', () => {
-		const result = catchError(() => parseRequestedTickets([validProduct({ seating: '5' }), validProduct({ seating: 5 })]));
+		const result = catchError(() =>
+			parseRequestedTickets([validProduct({ seating: '5' }), validProduct({ seating: 5 })]),
+		);
 		const expected = { statusCode: 400, message: 'Bilet 2: to samo miejsce zostało wybrane dwa razy' };
 
 		expect(result).toMatchObject(expected);
@@ -162,7 +179,7 @@ describe('priceTickets', () => {
 
 	const event = (overrides: Partial<CheckoutEvent> = {}): CheckoutEvent => ({
 		name: 'Koncert',
-		date: new Date(NOW.getTime() + 40 * DAY_MS), // 30-59 dni -> rabat 10%
+		date: new Date(NOW.getTime() + 40 * DAY_MS), // 30-59 days -> 10% discount
 		prices: { normal: 100, VIP: 300, child: 50 },
 		sectors: ['A', 'B'],
 		seatRequired: true,
@@ -181,7 +198,10 @@ describe('priceTickets', () => {
 	});
 
 	it('prices tickets from the event data with the time-based discount', () => {
-		const result = priceTickets([ticket(), ticket({ type: 'VIP', seating: '2' }), ticket({ type: 'child', seating: '3' })], eventsMap());
+		const result = priceTickets(
+			[ticket(), ticket({ type: 'VIP', seating: '2' }), ticket({ type: 'child', seating: '3' })],
+			eventsMap(),
+		);
 		const expected = [
 			{ ...ticket(), name: 'Koncert', date: event().date, price: 90 },
 			{ ...ticket({ type: 'VIP', seating: '2' }), name: 'Koncert', date: event().date, price: 270 },

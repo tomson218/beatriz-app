@@ -24,16 +24,11 @@ import Form from '@/shared/components/Form/Form';
 const UpdateUserDetails = () => {
 	const userId: string | null = getItemLocalStorage<string>('user-id');
 
-	const { data: userDetails, isUserDetailsLoading } = useGetUserByIdQuery(userId ?? '');
+	const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserByIdQuery(userId);
 
 	const { mutate: updatedUser } = useUpdateUserDetailsMutation();
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<UpdateMeRequest>();
+	const { register, handleSubmit, reset } = useForm<UpdateMeRequest>();
 
 	useEffect(() => {
 		if (userDetails) {
@@ -56,93 +51,93 @@ const UpdateUserDetails = () => {
 
 	return (
 		<>
- 		<form onSubmit={handleSubmit(onSubmit)}>
-			<Form.PolishInput
-				labelText='Nazwa użytkownika'
-				inputId='username'
-				placeholder='Nazwa użytkownika'
-				register={register}
-				validation={{
-					required: true,
-					minLength: { value: 8 },
-				}}
-				className={classes['input-form']}
-			/>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Form.PolishInput
+					labelText='Nazwa użytkownika'
+					inputId='username'
+					placeholder='Nazwa użytkownika'
+					register={register}
+					validation={{
+						required: true,
+						minLength: { value: 8 },
+					}}
+					className={classes['input-form']}
+				/>
 
-			<Form.PolishInput
-				labelText='Imię'
-				inputId='firstName'
-				placeholder='Imię'
-				register={register}
-				validation={{
-					required: true,
-					minLength: { value: 8 },
-				}}
-				className={classes['input-form']}
-			/>
+				<Form.PolishInput
+					labelText='Imię'
+					inputId='firstName'
+					placeholder='Imię'
+					register={register}
+					validation={{
+						required: true,
+						minLength: { value: 8 },
+					}}
+					className={classes['input-form']}
+				/>
 
-			<Form.PolishInput
-				labelText='Nazwisko'
-				inputId='lastName'
-				placeholder='Nazwisko'
-				register={register}
-				validation={{
-					required: true,
-					minLength: { value: 8 },
-				}}
-				className={classes['input-form']}
-			/>
-			<Form.PolishInput
-				labelText='Email'
-				inputId='email'
-				placeholder='Adres e-mail'
-				type='email'
-				register={register}
-				validation={{
-					required: true,
-					minLength: { value: 8 },
-				}}
-				className={classes['input-form']}
-			/>
+				<Form.PolishInput
+					labelText='Nazwisko'
+					inputId='lastName'
+					placeholder='Nazwisko'
+					register={register}
+					validation={{
+						required: true,
+						minLength: { value: 8 },
+					}}
+					className={classes['input-form']}
+				/>
+				<Form.PolishInput
+					labelText='Email'
+					inputId='email'
+					placeholder='Adres e-mail'
+					type='email'
+					register={register}
+					validation={{
+						required: true,
+						minLength: { value: 8 },
+					}}
+					className={classes['input-form']}
+				/>
 
-			<Button type='submit'>Zaktualizuj</Button>
-		</form>
-		<Link to='/'>
-			<p>Mam już konto. Zaloguj się</p>
-		</Link>
+				<Button type='submit'>Zaktualizuj</Button>
+			</form>
+			<Link to='/'>
+				<p>Mam już konto. Zaloguj się</p>
+			</Link>
 
-		<Dialog>
-			<DialogTrigger asChild>
-				<Button variant='outline'>Edytuj profil</Button>
-			</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]'>
-				<DialogHeader>
-					<DialogTitle>Edytuj profil</DialogTitle>
-					<DialogDescription>
-						Wprowadź zmiany w swoim profilu. Kliknij Zapisz, gdy skończysz.
-					</DialogDescription>
-				</DialogHeader>
-			<div className={classes['dialog-body']}>
-				<FormField label='Nazwa użytkownika' htmlFor='name'>
-					<Input id='name' value={userDetails?.username} />
-				</FormField>
-				<FormField label='Imię' htmlFor='firstName'>
-					<Input id='firstName' value={userDetails?.firstName} />
-				</FormField>
-				<FormField label='Nazwisko' htmlFor='lastName'>
-					<Input id='lastName' value={userDetails?.lastName} />
-				</FormField>
-				<FormField label='Email' htmlFor='email'>
-					<Input id='email' value={userDetails?.email} />
-				</FormField>
-			</div>
+			<Dialog>
+				<DialogTrigger asChild>
+					<Button variant='outline'>Edytuj profil</Button>
+				</DialogTrigger>
+				<DialogContent className='sm:max-w-[425px]'>
+					<DialogHeader>
+						<DialogTitle>Edytuj profil</DialogTitle>
+						<DialogDescription>
+							Wprowadź zmiany w swoim profilu. Kliknij Zapisz, gdy skończysz.
+						</DialogDescription>
+					</DialogHeader>
+					<div className={classes['dialog-body']}>
+						<FormField label='Nazwa użytkownika' htmlFor='name'>
+							<Input id='name' value={userDetails?.username} />
+						</FormField>
+						<FormField label='Imię' htmlFor='firstName'>
+							<Input id='firstName' value={userDetails?.firstName} />
+						</FormField>
+						<FormField label='Nazwisko' htmlFor='lastName'>
+							<Input id='lastName' value={userDetails?.lastName} />
+						</FormField>
+						<FormField label='Email' htmlFor='email'>
+							<Input id='email' value={userDetails?.email} />
+						</FormField>
+					</div>
 
-				<DialogFooter>
-					<Button type='submit'>Zapisz zmiany</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
-	</>
+					<DialogFooter>
+						<Button type='submit'>Zapisz zmiany</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 };
 

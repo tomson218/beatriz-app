@@ -51,4 +51,3 @@ export const ticketSchemaDef = new Schema({
 
 ticketSchemaDef.virtual('user', { ref: 'User', localField: 'userId', foreignField: '_id', justOne: true });
 ticketSchemaDef.virtual('event', { ref: 'Event', localField: 'eventId', foreignField: '_id', justOne: true });
-

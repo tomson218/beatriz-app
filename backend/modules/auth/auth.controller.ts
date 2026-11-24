@@ -44,7 +44,9 @@ export const signup = async (
 		res.status(201).json({ status: 'success', data: { accessToken, user: userDto } });
 
 		// Odpowiedź 201 już poszła, więc błąd wysyłki powitalnego maila możemy tylko zalogować.
-		await sendWelcomeEmail(user).catch((error: unknown) => console.error('Welcome email could not be sent:', error));
+		await sendWelcomeEmail(user).catch((error: unknown) =>
+			console.error('Welcome email could not be sent:', error),
+		);
 	} catch (error) {
 		next(error);
 	}

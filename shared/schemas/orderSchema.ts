@@ -49,4 +49,3 @@ export const orderSchema = new Schema({
 
 orderSchema.virtual('user', { ref: 'User', localField: 'userId', foreignField: '_id', justOne: true });
 orderSchema.virtual('event', { ref: 'Event', localField: 'eventId', foreignField: '_id', justOne: true });
-

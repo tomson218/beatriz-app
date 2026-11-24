@@ -105,7 +105,9 @@
 	font-size: 1em;
 	cursor: pointer;
 	border-radius: 15px;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition:
+		transform 0.3s ease,
+		box-shadow 0.3s ease;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 	padding: 10px;
 }

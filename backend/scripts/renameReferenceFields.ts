@@ -1,6 +1,6 @@
 /**
- * Jednorazowa migracja: przenosi referencje do pól `userId`, `eventId` i `favouriteEventIds`.
- * Można ją uruchomić ponownie: dokumenty już zmigrowane są pomijane.
+ * One-off migration: moves references to the `userId`, `eventId` and `favouriteEventIds` fields.
+ * Safe to run again: documents that are already migrated are skipped.
  */
 import mongoose from 'mongoose';
 import connectDB from '../database.ts';
@@ -20,12 +20,12 @@ const MIGRATION_STEPS = MIGRATIONS.flatMap(({ model, fields }) =>
 	Object.entries(fields).map(([oldField, newField]) => ({ model, oldField, newField })),
 );
 
-/** Kroki wykonujemy po kolei (łańcuch obietnic), żeby nie obciążać bazy i zachować czytelną kolejność logów. */
+/** Runs the steps one after another (a promise chain) to avoid loading the database and keep the logs in order. */
 const renameReferenceFields = async (): Promise<void> => {
 	await MIGRATION_STEPS.reduce(async (previousStep: Promise<void>, { model, oldField, newField }): Promise<void> => {
 		await previousStep;
 
-		// Natywna kolekcja omija hooki modelu, więc migracja obejmuje też konta nieaktywne.
+		// The native collection bypasses model hooks, so the migration also covers inactive accounts.
 		const { modifiedCount } = await model.collection.updateMany(
 			{ [oldField]: { $exists: true } },
 			{ $rename: { [oldField]: newField } },

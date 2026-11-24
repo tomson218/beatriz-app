@@ -6,7 +6,6 @@ import { Button } from '@/shared/components/ui/Button/Button';
 import classes from './OrderSummary.module.css';
 import { NO_SEAT } from '@/features/tickets/utils/seats';
 import Order from '@/features/orders/components/Order/Order';
-import useAddUserCartMutation from '@/features/orders/api/mutations/useAddUserCartMutation';
 import useGetEventByIdQuery from '@/features/events/api/queries/useGetEventByIdQuery';
 import DiscountCodeForm from '@/features/discountCodes/components/DiscountCodeForm/DiscountCodeForm';
 import OrderContext, { type OrderContextType } from '@/features/orders/context/OrderContext';
@@ -23,8 +22,6 @@ const OrderSummary = () => {
 	const { mutate: createCheckoutSession } = useCreateCheckoutSessionMutation();
 
 	const { mutate: createOfflineOrder, isPending: isOfflineOrderPending } = useCreateOfflineOrderMutation();
-
-	const { mutate: addCart } = useAddUserCartMutation();
 
 	const navigate = useNavigate();
 
@@ -44,7 +41,7 @@ const OrderSummary = () => {
 		<main>
 			<h2 className={classes.title}>Podsumowanie Zamówienia</h2>
 			<section className={classes['grid-container']}>
-				{order.map((orderItem, index) => (
+				{order.map(orderItem => (
 					<Order
 						key={`${orderItem.seating || NO_SEAT}-${orderItem.price}`}
 						ticket={{
@@ -55,7 +52,6 @@ const OrderSummary = () => {
 						}}
 						eventDetails={eventDetails}
 						price={orderItem.price}
-						onChangePrice={null}
 						type={orderItem.type}
 						isSummary
 					/>

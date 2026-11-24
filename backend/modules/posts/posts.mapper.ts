@@ -1,7 +1,7 @@
-import type { ForumPostDto } from '@beatriz/shared/forums';
+import type { PostDto } from '@beatriz/shared/forums';
 import type { PostDocument } from './posts.type.ts';
 
-export const toForumDto = (post: PostDocument): ForumPostDto => ({
+export const toPostDto = (post: PostDocument): PostDto => ({
 	_id: post._id.toString(),
 	date: post.date,
 	userId: post.userId,

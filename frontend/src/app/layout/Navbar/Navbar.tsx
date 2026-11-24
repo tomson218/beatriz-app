@@ -7,11 +7,11 @@ import { Label } from '@/shared/components/ui/Label/Label';
 import { getItemLocalStorage } from '@/shared/utils/localStorage';
 
 const Navbar = () => {
-	const userId = getItemLocalStorage('user-id');
+	const userId = getItemLocalStorage<string>('user-id');
 
 	const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserByIdQuery(userId);
 	const { mutate: logout } = useLogoutUserMutation();
-	const token = getItemLocalStorage('token');
+	const token = getItemLocalStorage<string>('token');
 
 	const isAdmin = userDetails?.role === 'admin';
 

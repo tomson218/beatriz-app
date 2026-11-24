@@ -3,9 +3,16 @@ import DiscountCodeModel from '../../../../modules/discountCodes/discountCodes.m
 import UserModel from '../../../../modules/users/users.model.ts';
 import { mockQuery } from '../../../helpers/mockQuery.ts';
 import { catchAsyncError } from '../../../helpers/catchError.ts';
-import { applyDiscountCode, createDiscountCode, findAllDiscountCodes, getUsableDiscountCode } from '../../../../modules/discountCodes/discountCodes.service.ts';
+import {
+	applyDiscountCode,
+	createDiscountCode,
+	findAllDiscountCodes,
+	getUsableDiscountCode,
+} from '../../../../modules/discountCodes/discountCodes.service.ts';
 
-vi.mock('../../../../modules/discountCodes/discountCodes.model.ts', () => ({ default: { find: vi.fn(), create: vi.fn(), findOne: vi.fn() } }));
+vi.mock('../../../../modules/discountCodes/discountCodes.model.ts', () => ({
+	default: { find: vi.fn(), create: vi.fn(), findOne: vi.fn() },
+}));
 vi.mock('../../../../modules/users/users.model.ts', () => ({ default: { findById: vi.fn() } }));
 
 const DiscountCode = vi.mocked(DiscountCodeModel);
@@ -102,7 +109,13 @@ describe('getUsableDiscountCode', () => {
 
 	it.each([
 		['the code does not exist', null, 99999, [], { statusCode: 404, message: 'Discount code not found.' }],
-		['the code has expired', fakeCode({ expiration: pastDate() }), 100, [], { statusCode: 400, message: 'Discount code has expired.' }],
+		[
+			'the code has expired',
+			fakeCode({ expiration: pastDate() }),
+			100,
+			[],
+			{ statusCode: 400, message: 'Discount code has expired.' },
+		],
 		[
 			'the order total is below the usage condition',
 			fakeCode(),

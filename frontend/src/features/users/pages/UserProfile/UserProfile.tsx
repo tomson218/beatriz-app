@@ -31,12 +31,12 @@ const UserProfile = () => {
 				<li className={classes['list-item']}>Nazwisko: {userDetails?.lastName}</li>
 				<li className={classes['list-item']}>E-mail: {userDetails?.email}</li>
 			</ul>
- 			<nav className={classes['button-group']}>
- 				<Button className={classes['profile-button']}>Edytuj</Button>
- 				<Button variant='destructive' className={classes['profile-button']}>
+			<nav className={classes['button-group']}>
+				<Button className={classes['profile-button']}>Edytuj</Button>
+				<Button variant='destructive' className={classes['profile-button']}>
 					Usuń
 				</Button>
- 			</nav>
+			</nav>
 		</main>
 	);
 };

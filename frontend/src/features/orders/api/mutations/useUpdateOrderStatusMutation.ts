@@ -11,7 +11,10 @@ interface UpdateOrderStatusVariables extends UpdateOrderStatusRequest {
 const useUpdateOrderStatusMutation = () => {
 	const queryClient = useQueryClient();
 
-	const updateOrderStatus = async ({ orderId, status }: UpdateOrderStatusVariables): Promise<UpdateOrderStatusResponse> => {
+	const updateOrderStatus = async ({
+		orderId,
+		status,
+	}: UpdateOrderStatusVariables): Promise<UpdateOrderStatusResponse> => {
 		const payload: UpdateOrderStatusRequest = { status };
 		const response = await instance.patch<UpdateOrderStatusResponse>(`/orders/${orderId}`, payload);
 

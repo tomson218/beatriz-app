@@ -1,4 +1,9 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/Accordion/Accordion';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/shared/components/ui/Accordion/Accordion';
 import { FAQ_ITEMS } from '@beatriz/shared/constants/faq';
 import classes from './Faq.module.css';
 

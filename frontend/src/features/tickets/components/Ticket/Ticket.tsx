@@ -6,16 +6,16 @@ import QRCode from 'react-qr-code';
 import { useState } from 'react';
 import { Button } from '@/shared/components/ui/Button/Button';
 import { getNameBlock, getNameTypeTicket, getBlockBadgeClass } from '@/features/tickets/utils/namingTicket';
-import type { Ticket as ITicket } from '@beatriz/shared/tickets';
+import type { TicketDto } from '@beatriz/shared/tickets';
 import { ASSET_BASE_URL } from '@/shared/api/apiConfig';
 
 interface TicketProps {
-	ticket: ITicket;
+	ticket: TicketDto;
 	userEmail: string;
 }
 
 const Ticket = ({ ticket, userEmail }: TicketProps) => {
-	const eventDate = new Date(ticket.event?.date);
+	const eventDate = new Date(ticket.event?.date ?? '');
 	const purchasedDate = new Date(ticket.date);
 
 	const { sector, block, seat } = ticket.seating;
@@ -24,7 +24,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 
 	const qrValue = JSON.stringify({
 		id: ticket._id,
-		eventName: ticket.event.name,
+		eventName: ticket.event?.name,
 		date: `${formattedDate(eventDate)} ${formattedTime(eventDate)}`,
 		email: userEmail,
 		type: ticket.type,
@@ -41,13 +41,13 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 					<figure className={classes['event-figure']}>
 						<img
 							className={classes['event-image']}
-							src={`${ASSET_BASE_URL}/images/events/${ticket.event.image}`}
-							alt={ticket.event.name}
+							src={`${ASSET_BASE_URL}/images/events/${ticket.event?.image}`}
+							alt={ticket.event?.name}
 						/>
 					</figure>
 				</header>
 				<section className={classes['article-body']}>
-					<h2>{ticket.event.name}</h2>
+					<h2>{ticket.event?.name}</h2>
 
 					<time className={classes['event-date-time']}>
 						<img src={calendarIcon} alt='Ikona kalendarza' />
@@ -91,7 +91,7 @@ const Ticket = ({ ticket, userEmail }: TicketProps) => {
 						</Button>
 
 						<h3 className={classes['modal-title']}>Szczegóły biletu</h3>
-						<p className={classes['modal-event']}>{ticket.event.name}</p>
+						<p className={classes['modal-event']}>{ticket.event?.name}</p>
 
 						<dl className={classes['modal-content']}>
 							<div className={classes['modal-row']}>

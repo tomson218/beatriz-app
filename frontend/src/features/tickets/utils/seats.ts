@@ -39,7 +39,7 @@ export function buildSeatsUrl(
 	eventId: string,
 	sector: string,
 	block: string,
-	seats: number[]
+	seats: number[],
 ): string {
 	return `${pathname}?eventId=${eventId}&sector=${sector}&block=${block}&seats=${seats.join(',')}`;
 }

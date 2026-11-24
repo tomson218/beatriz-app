@@ -8,7 +8,9 @@
 	border-radius: 1rem;
 	background-color: var(--surface-background);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	transition: box-shadow 0.3s ease, transform 0.3s ease;
+	transition:
+		box-shadow 0.3s ease,
+		transform 0.3s ease;
 }
 
 .container:hover {
@@ -178,7 +180,9 @@
 .icon {
 	fill: none;
 	cursor: pointer;
-	transition: fill 0.3s ease, transform 0.3s ease;
+	transition:
+		fill 0.3s ease,
+		transform 0.3s ease;
 }
 
 .icon:hover {
@@ -189,7 +193,9 @@
 .favourite {
 	fill: red;
 	cursor: pointer;
-	transition: fill 0.3s ease, transform 0.3s ease;
+	transition:
+		fill 0.3s ease,
+		transform 0.3s ease;
 }
 
 .favourite:hover {

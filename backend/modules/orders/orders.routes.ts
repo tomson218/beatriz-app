@@ -13,10 +13,7 @@ const router = express.Router({ caseSensitive: true, strict: true });
 
 router.param('id', validateObjectId);
 
-router
-	.route('/')
-	.get(protect, restrictTo('admin'), getAllOrders)
-	.post(protect, createOfflineOrder);
+router.route('/').get(protect, restrictTo('admin'), getAllOrders).post(protect, createOfflineOrder);
 
 router.route('/:id').patch(protect, restrictTo('admin'), updateOrderStatus);
 

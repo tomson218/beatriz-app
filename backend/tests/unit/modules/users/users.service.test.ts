@@ -32,7 +32,14 @@ const userWithFavourites = (ids: string[]) => ({
 	save: vi.fn(),
 });
 
-const profileChanges = { username: 'jan', email: 'jan@x.pl', firstName: 'Jan', lastName: 'K', role: 'admin', password: 'x' };
+const profileChanges = {
+	username: 'jan',
+	email: 'jan@x.pl',
+	firstName: 'Jan',
+	lastName: 'K',
+	role: 'admin',
+	password: 'x',
+};
 
 describe('findAllUsers / findUserById', () => {
 	it('returns all users', async () => {

@@ -6,9 +6,9 @@ An API server built with Express.js + Mongoose that handles events, users, order
 
 ### Requirements
 
-- **Node.js** 22.18+ (the backend runs TypeScript natively, without compilation or Babel)
-- **MongoDB** — a local instance or MongoDB Atlas
-- **Stripe** — an account and API keys
+-   **Node.js** 22.18+ (the backend runs TypeScript natively, without compilation or Babel)
+-   **MongoDB** — a local instance or MongoDB Atlas
+-   **Stripe** — an account and API keys
 
 ### Installation
 
@@ -84,77 +84,89 @@ backend/
 └── tsconfig.json
 ```
 
+## API Documentation (Swagger)
+
+With the server running, open **<http://localhost:3000/api-docs>** (Swagger UI). The spec lives in [`swagger.ts`](./swagger.ts).
+
+Every endpoint can be called from the browser:
+
+1. Expand an endpoint and click **Try it out**. Endpoints that take a body come with a ready-to-send example; edit it if needed and click **Execute**.
+2. Most endpoints need a logged-in user. Call `POST /api/v2/auth/login`, copy `data.accessToken` from the response, click **Authorize** (top right) and paste the token. It is kept across page reloads.
+3. Endpoints marked with a role (e.g. _admin_, _admin, worker_) also need a user with that role, otherwise they return `403`.
+
+`tests/unit/swagger.test.ts` checks that every endpoint that reads a body has an example and that every protected endpoint asks for the token, so the documentation stays usable when endpoints change.
+
 ## API Endpoints
 
 ### Authentication (`/api/v2/auth`)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/auth/signup` | Register a new user |
-| POST | `/auth/login` | Log in |
-| POST | `/auth/refresh` | Refresh the access token |
-| POST | `/auth/logout` | Log out |
-| POST | `/auth/google` | Log in with Google |
-| POST | `/auth/facebook` | Log in with Facebook |
+| Method | Path             | Description              |
+| ------ | ---------------- | ------------------------ |
+| POST   | `/auth/signup`   | Register a new user      |
+| POST   | `/auth/login`    | Log in                   |
+| POST   | `/auth/refresh`  | Refresh the access token |
+| POST   | `/auth/logout`   | Log out                  |
+| POST   | `/auth/google`   | Log in with Google       |
+| POST   | `/auth/facebook` | Log in with Facebook     |
 
 ### Users (`/api/v2/users`)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/users` | Get all users (admin) |
-| GET | `/users/me` | Get your own profile |
-| PATCH | `/users/me` | Update your own details |
-| DELETE | `/users/me` | Deactivate your own account |
-| PUT | `/users/me/cart` | Replace your own cart |
-| GET | `/users/me/favourites` | Get favourite events |
-| POST | `/users/me/favourites` | Add an event to favourites |
-| DELETE | `/users/me/favourites/:eventId` | Remove an event from favourites |
-| GET | `/users/me/orders` | Get your own orders |
-| GET | `/users/me/tickets` | Get your own tickets |
-| GET | `/users/:id` | Get a user (owner or admin) |
-| PATCH | `/users/:id` | Edit a user (admin) |
-| DELETE | `/users/:id` | Delete a user (admin) |
-| GET | `/users/:id/orders` | Get a user's orders (owner or admin) |
-| GET | `/users/:id/tickets` | Get a user's tickets (owner, admin or employee) |
+| Method | Path                            | Description                                     |
+| ------ | ------------------------------- | ----------------------------------------------- |
+| GET    | `/users`                        | Get all users (admin)                           |
+| GET    | `/users/me`                     | Get your own profile                            |
+| PATCH  | `/users/me`                     | Update your own details                         |
+| DELETE | `/users/me`                     | Deactivate your own account                     |
+| PUT    | `/users/me/cart`                | Replace your own cart                           |
+| GET    | `/users/me/favourites`          | Get favourite events                            |
+| POST   | `/users/me/favourites`          | Add an event to favourites                      |
+| DELETE | `/users/me/favourites/:eventId` | Remove an event from favourites                 |
+| GET    | `/users/me/orders`              | Get your own orders                             |
+| GET    | `/users/me/tickets`             | Get your own tickets                            |
+| GET    | `/users/:id`                    | Get a user (owner or admin)                     |
+| PATCH  | `/users/:id`                    | Edit a user (admin)                             |
+| DELETE | `/users/:id`                    | Delete a user (admin)                           |
+| GET    | `/users/:id/orders`             | Get a user's orders (owner or admin)            |
+| GET    | `/users/:id/tickets`            | Get a user's tickets (owner, admin or employee) |
 
 ### Events (`/api/v2/events`)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/events` | Get upcoming events |
-| POST | `/events` | Create an event (admin, employee) |
-| GET | `/events/:id` | Get event details |
-| PATCH | `/events/:id` | Update an event (admin, employee) |
-| DELETE | `/events/:id` | Delete an event (admin, employee) |
-| GET | `/events/:eventId/posts` | Get the event's posts |
-| POST | `/events/:eventId/posts` | Add a post to the event |
-| GET | `/events/:eventId/availability` | Get free seats per sector |
-| GET | `/events/:eventId/occupied-seats?sector=&block=` | Get occupied seats |
+| Method | Path                                             | Description                       |
+| ------ | ------------------------------------------------ | --------------------------------- |
+| GET    | `/events`                                        | Get upcoming events               |
+| POST   | `/events`                                        | Create an event (admin, employee) |
+| GET    | `/events/:id`                                    | Get event details                 |
+| PATCH  | `/events/:id`                                    | Update an event (admin, employee) |
+| DELETE | `/events/:id`                                    | Delete an event (admin, employee) |
+| GET    | `/events/:eventId/posts`                         | Get the event's posts             |
+| POST   | `/events/:eventId/posts`                         | Add a post to the event           |
+| GET    | `/events/:eventId/availability`                  | Get free seats per sector         |
+| GET    | `/events/:eventId/occupied-seats?sector=&block=` | Get occupied seats                |
 
 ### Orders, tickets and posts
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/orders?status=` | Get orders, optionally filtered by status (admin) |
-| POST | `/orders` | Place an order with offline payment (expires if unpaid after 48 hours) |
-| PATCH | `/orders/:id` | Approve (`paid`) or reject (`rejected`) an offline payment (admin) |
-| GET | `/tickets` | Get all tickets (admin, employee) |
-| GET | `/posts` | Get all posts |
+| Method | Path              | Description                                                            |
+| ------ | ----------------- | ---------------------------------------------------------------------- |
+| GET    | `/orders?status=` | Get orders, optionally filtered by status (admin)                      |
+| POST   | `/orders`         | Place an order with offline payment (expires if unpaid after 48 hours) |
+| PATCH  | `/orders/:id`     | Approve (`paid`) or reject (`rejected`) an offline payment (admin)     |
+| GET    | `/tickets`        | Get all tickets (admin, employee)                                      |
+| GET    | `/posts`          | Get all posts                                                          |
 
 ### Discount Codes (`/api/v2/discount-codes`)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/discount-codes` | Get discount codes (admin) |
-| POST | `/discount-codes` | Add a discount code (admin) |
-| POST | `/discount-codes/apply` | Apply a discount code |
+| Method | Path                    | Description                 |
+| ------ | ----------------------- | --------------------------- |
+| GET    | `/discount-codes`       | Get discount codes (admin)  |
+| POST   | `/discount-codes`       | Add a discount code (admin) |
+| POST   | `/discount-codes/apply` | Apply a discount code       |
 
 ### Payments
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/checkout-sessions` | Create a Stripe checkout session |
-| POST | `/webhooks/stripe` | Stripe webhook (payment confirmation) |
+| Method | Path                 | Description                           |
+| ------ | -------------------- | ------------------------------------- |
+| POST   | `/checkout-sessions` | Create a Stripe checkout session      |
+| POST   | `/webhooks/stripe`   | Stripe webhook (payment confirmation) |
 
 ## Payment Flow
 
@@ -192,12 +204,12 @@ After receiving the `checkout.session.completed` event:
 
 ## Middleware
 
-- **`helmet`** — HTTP security headers
-- **`cors`** — Cross-Origin Resource Sharing
-- **`express-rate-limit`** — request rate limiting
-- **`morgan`** — request logging
-- **`body-parser`** — request body parsing
-- **`swagger-ui-express`** — API documentation
+-   **`helmet`** — HTTP security headers
+-   **`cors`** — Cross-Origin Resource Sharing
+-   **`express-rate-limit`** — request rate limiting
+-   **`morgan`** — request logging
+-   **`body-parser`** — request body parsing
+-   **`swagger-ui-express`** — API documentation
 
 ## Tests
 
@@ -205,27 +217,42 @@ After receiving the `checkout.session.completed` event:
 # From backend/
 npm test             # single run
 npm run test:watch   # watch mode
+npm run test:coverage # single run with a coverage report (HTML in coverage/index.html)
 npm run lint         # ESLint
 ```
 
 Unit tests are written with [Vitest](https://vitest.dev) and live in `tests/unit/`, mirroring the source layout:
 
-- `tests/unit/utils/*.test.ts` — pure functions: prices and discounts, cart validation, JWT tokens, PDF, etc.
-- `tests/unit/modules/<module>/<module>.service.test.ts` — service logic; Mongoose models are mocked (`vi.mock`), so the tests never touch the database, Stripe or email.
-- `tests/unit/modules/mappers.test.ts` — mapping documents to DTOs.
+-   `tests/unit/utils/*.test.ts` — pure functions: prices and discounts, cart validation, JWT tokens, PDF, etc.
+-   `tests/unit/modules/<module>/<module>.service.test.ts` — service logic; Mongoose models are mocked (`vi.mock`), so the tests never touch the database, Stripe or email.
+-   `tests/unit/modules/mappers.test.ts` — mapping documents to DTOs.
+-   `tests/unit/swagger.test.ts` — the Swagger spec stays usable (examples for request bodies, Bearer token on protected endpoints).
+
+### Coverage
+
+Results of `npm run test:coverage` (November 2026, 309 tests):
+
+| Area                                       |     Lines | Notes                                                                                                             |
+| ------------------------------------------ | --------: | ----------------------------------------------------------------------------------------------------------------- |
+| **Total**                                  | **50.9%** | Branches 90.7%, functions 77.3%                                                                                   |
+| `utils/`                                   |       84% | 100% for prices, discounts, checkout, JWT, PDF; `email.ts` and `images.ts` (Nodemailer, Multer config) not tested |
+| `modules/*/*.service.ts`                   |      100% | Every service, including payments and offline orders                                                              |
+| `modules/*/*.mapper.ts`                    |      100% |                                                                                                                   |
+| `modules/*/*.controller.ts`, `*.routes.ts` |        0% | Unit tests call the services directly; covering the Express layer needs integration tests (e.g. `supertest`)      |
+| `modules/webhooks/`, `app.ts`              |        0% | Same as above                                                                                                     |
 
 Each test computes a `result` and compares it with an `expected` value. Errors are captured with the `catchError` / `catchAsyncError` helpers from `tests/helpers/catchError.ts`, so they are asserted the same way.
 
-Environment variables for tests (e.g. `JWT_SECRET`) are set in `vitest.config.ts`, so `.env.local` is not needed.
+Environment variables for tests (e.g. `JWT_SECRET`) live in `.env.test` (fake values, committed to the repo). `vitest.config.ts` reads only that file, so tests never see the real secrets from `.env.local` and need no local setup.
 
 ## Dependencies
 
-- **express** — web framework
-- **mongoose** — ODM for MongoDB
-- **stripe** — Stripe payments integration
-- **jsonwebtoken** — JWT authorization
-- **nodemailer** — sending emails
-- **pdfkit** + **@react-pdf/renderer** — PDF generation
-- **multer** — file uploads
-- **bcryptjs** — password hashing
-- **@beatriz/shared** — shared types and schemas
+-   **express** — web framework
+-   **mongoose** — ODM for MongoDB
+-   **stripe** — Stripe payments integration
+-   **jsonwebtoken** — JWT authorization
+-   **nodemailer** — sending emails
+-   **pdfkit** + **@react-pdf/renderer** — PDF generation
+-   **multer** — file uploads
+-   **bcryptjs** — password hashing
+-   **@beatriz/shared** — shared types and schemas

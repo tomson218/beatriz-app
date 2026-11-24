@@ -9,7 +9,9 @@ import type { CreateOfflineOrderRequest, CreateOrderResponse } from '@beatriz/sh
 const useCreateOfflineOrderMutation = () => {
 	const queryClient = useQueryClient();
 
-	const createOfflineOrder = async (products: CreateOfflineOrderRequest['products']): Promise<CreateOrderResponse> => {
+	const createOfflineOrder = async (
+		products: CreateOfflineOrderRequest['products'],
+	): Promise<CreateOrderResponse> => {
 		const payload: CreateOfflineOrderRequest = { products, discountCode: getStoredDiscountCode() };
 		const response = await instance.post<CreateOrderResponse>('/orders', payload);
 

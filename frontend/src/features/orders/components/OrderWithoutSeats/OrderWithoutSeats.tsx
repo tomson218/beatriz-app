@@ -4,14 +4,14 @@ import { useState, useEffect, useContext } from 'react';
 import classes from './OrderWithoutSeats.module.css';
 import OrderContext, { type OrderContextType } from '@/features/orders/context/OrderContext';
 import { getNameTypeTicket } from '@/features/tickets/utils/namingTicket';
-import type { Event } from '@beatriz/shared/events';
+import type { EventDto } from '@beatriz/shared/events';
 import type { BlockType, TicketType } from '@beatriz/shared/tickets';
 import type { CartTicket } from '@beatriz/shared/orders';
 
 type TicketCounts = Record<TicketType, number>;
 
 interface OrderWithoutSeatsProps {
-	eventDetails: Event;
+	eventDetails: EventDto;
 	block: BlockType;
 	sector: string;
 	onChangeIsError: (value: boolean) => void;
@@ -22,6 +22,9 @@ const shouldMoveTicketFromNormal = (prevCounts: TicketCounts, type: TicketType) 
 };
 
 const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: OrderWithoutSeatsProps) => {
+	const prices = eventDetails.prices ?? {};
+	const priceOf = (type: TicketType): number => prices[type] ?? 0;
+
 	const [totalTickets, setTotalTickets] = useState<number>(1);
 	const [countTickets, setCountTickets] = useState<TicketCounts>({
 		normal: 1,
@@ -38,15 +41,15 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 		onChangeIsError(isError);
 	}, [isError, onChangeIsError]);
 
-	const { setOrder, totalPrice, setTotalPrice } = useContext<OrderContextType>(OrderContext);
+	const { setOrder, setTotalPrice } = useContext<OrderContextType>(OrderContext);
 
 	const handleTotalIncrement = () => {
 		setTotalTickets(prevTotal => prevTotal + 1);
 		setCountTickets(prevCounts => ({ ...prevCounts, normal: prevCounts.normal + 1 }));
 
 		setTotalPrice(prevTotalPrice => {
-			const newPrice = prevTotalPrice + eventDetails.prices.normal;
-			localStorage.setItem('totalPrice', newPrice);
+			const newPrice = prevTotalPrice + priceOf('normal');
+			localStorage.setItem('totalPrice', JSON.stringify(newPrice));
 			return newPrice;
 		});
 	};
@@ -93,7 +96,7 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 
 	useEffect(() => {
 		const newTotalPrice = (Object.entries(countTickets) as [TicketType, number][]).reduce(
-			(total, [key, count]) => total + count * (eventDetails.prices[key] || 0),
+			(total, [key, count]) => total + count * priceOf(key),
 			0,
 		);
 		setTotalPrice(newTotalPrice);
@@ -104,8 +107,8 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 		const newOrder: CartTicket[] = (Object.entries(countTickets) as [TicketType, number][]).flatMap(
 			([type, count]) =>
 				Array.from({ length: count }, () => ({
-					eventId: eventDetails?._id,
-					price: eventDetails.prices[type],
+					eventId: eventDetails._id,
+					price: priceOf(type),
 					sector: sector,
 					block: block,
 					type,
@@ -137,18 +140,16 @@ const OrderWithOutSeats = ({ eventDetails, block, sector, onChangeIsError }: Ord
 				</nav>
 			</article>
 
-			<h3 className={classes['section-title']}>
-				Wybierz liczbę danych typów biletów
-			</h3>
+			<h3 className={classes['section-title']}>Wybierz liczbę danych typów biletów</h3>
 
-			{(Object.entries(eventDetails.prices) as [TicketType, number][]).map(([key, price]) => {
+			{(Object.entries(prices) as [TicketType, number][]).map(([key, price]) => {
 				const typeTicket = getNameTypeTicket(key);
 
 				return (
-				<article key={key} className={classes['tickets-type']}>
-					<Label>
-						{typeTicket}: {price} PLN
-					</Label>
+					<article key={key} className={classes['tickets-type']}>
+						<Label>
+							{typeTicket}: {price} PLN
+						</Label>
 						<p className={classes['ticket-count']}>Liczba biletów: {countTickets[key]}</p>
 						<p className={classes['ticket-total']}>Łączna cena: {countTickets[key] * price} PLN</p>
 						<nav className={classes['ticket-buttons']}>

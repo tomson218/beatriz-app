@@ -5,7 +5,7 @@ import classes from './Tickets.module.css';
 import Loader from '@/shared/components/libs/Loader/Loader';
 import UserContext, { type UserContextType } from '@/features/auth/context/UserContext';
 import useGetUserByIdQuery from '@/features/users/api/queries/useGetUserByIdQuery';
-import type { Ticket as ITicket } from '@beatriz/shared/tickets';
+import type { TicketDto } from '@beatriz/shared/tickets';
 
 type TicketFilter = 'all' | 'upcoming';
 
@@ -23,8 +23,8 @@ const Tickets = () => {
 
 	const [ticketFilter, setTicketFilter] = useState<TicketFilter>('all');
 
-	const tickets = useMemo<ITicket[]>(() => {
-		const allTickets: ITicket[] = ticketsUser ?? [];
+	const tickets = useMemo<TicketDto[]>(() => {
+		const allTickets: TicketDto[] = ticketsUser ?? [];
 
 		if (ticketFilter === 'all') return allTickets;
 

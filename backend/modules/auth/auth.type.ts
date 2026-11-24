@@ -21,4 +21,7 @@ export interface SocialLoginResult {
 	isNewUser: boolean;
 }
 
-export type SignupInput = Pick<AuthUserRequest, 'username' | 'firstName' | 'lastName' | 'email' | 'password' | 'passwordConfirm'>;
+export type SignupInput = Pick<
+	AuthUserRequest,
+	'username' | 'firstName' | 'lastName' | 'email' | 'password' | 'passwordConfirm'
+>;

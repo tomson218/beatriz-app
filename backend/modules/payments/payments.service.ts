@@ -32,7 +32,7 @@ const loadCheckoutEvents = async (eventIds: string[]): Promise<Map<string, Check
 	return new Map(events.map(event => [event._id.toString(), event as unknown as CheckoutEvent]));
 };
 
-/** Odrzuca zamówienie, gdy któreś z miejsc jest już sprzedane albo zarezerwowane do wpłaty offline. */
+/** Rejects the order when any seat is already sold or reserved for an offline payment. */
 const assertSeatsAreFree = async (tickets: RequestedTicket[]): Promise<void> => {
 	const seatedTickets: RequestedTicket[] = tickets.filter(ticket => ticket.seating !== '');
 
@@ -50,11 +50,14 @@ const assertSeatsAreFree = async (tickets: RequestedTicket[]): Promise<void> => 
 	const takenTicket: RequestedTicket | undefined = seatedTickets.find((_, index) => takenFlags[index]);
 
 	if (takenTicket) {
-		throw Object.assign(new Error(`Miejsce ${takenTicket.seating} w sektorze ${takenTicket.sector} jest już zajęte`), { statusCode: 409 });
+		throw Object.assign(
+			new Error(`Miejsce ${takenTicket.seating} w sektorze ${takenTicket.sector} jest już zajęte`),
+			{ statusCode: 409 },
+		);
 	}
 };
 
-/** Sprawdza żądanie i wylicza ceny po stronie serwera. Wspólne dla płatności online i offline. */
+/** Validates the request and calculates prices on the server. Shared by online and offline payments. */
 export const prepareCheckout = async (user: UserDocument, body: CheckoutRequestBody): Promise<PreparedCheckout> => {
 	const requestedTickets: RequestedTicket[] = parseRequestedTickets(body.products);
 
@@ -133,9 +136,9 @@ const toStripeLineItem = ({ name, date, images, price, seating, sector, block }:
 };
 
 /**
- * Tworzy sesję płatności Stripe i zwraca jej adres.
- * Zatwierdzony koszyk trafia do `myCart`, którego klient nie może zmienić;
- * webhook po opłaceniu zamówienia czyta bilety wyłącznie stąd.
+ * Creates a Stripe checkout session and returns its URL.
+ * The approved cart is stored in `myCart`, which the client cannot change;
+ * after payment, the webhook reads the tickets only from there.
  */
 export const createCheckoutSession = async (user: UserDocument, body: CheckoutRequestBody): Promise<string | null> => {
 	const { items, discountCode }: PreparedCheckout = await prepareCheckout(user, body);
@@ -176,9 +179,9 @@ export const sendOrderConfirmation = async (
 };
 
 /**
- * Realizuje opłacone zamówienie: zapisuje zamówienie i bilety, wysyła potwierdzenie z PDF-em i czyści koszyk.
- * Gdy nie ma zatwierdzonego koszyka (np. powtórzone zdarzenie), nic nie robi.
- * Błąd wysyłki maila kończy się wyjątkiem ze `statusCode` 500.
+ * Fulfills a paid order: saves the order and tickets, emails a confirmation with a PDF and clears the cart.
+ * Does nothing when there is no approved cart (e.g. a repeated event).
+ * An email failure throws an error with `statusCode` 500.
  */
 export const fulfillCheckoutSession = async (session: Stripe.Checkout.Session): Promise<void> => {
 	const metadata = session.metadata as Record<string, string>;

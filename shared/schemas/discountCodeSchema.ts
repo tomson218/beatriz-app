@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema } from 'mongoose';
 import validator from 'validator';
 
 export const discountCodeSchema = new Schema({
@@ -29,4 +29,3 @@ export const discountCodeSchema = new Schema({
 		required: [true, 'Please enter a discount usage conditions'],
 	},
 });
-

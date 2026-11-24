@@ -4,22 +4,22 @@ import type { User } from '#types/users';
 import type { Types, InferSchemaType } from 'mongoose';
 import type { forumSchema } from '#schemas/forumSchema';
 
-/** `user` i `event` to pola wirtualne: mają wartość tylko po `populate`. */
-export type ForumPost = InferSchemaType<typeof forumSchema> & { _id: Types.ObjectId; user?: User; event?: Event };
+/** `user` and `event` are virtual fields: they only have a value after `populate`. */
+export type Post = InferSchemaType<typeof forumSchema> & { _id: Types.ObjectId; user?: User; event?: Event };
 
-export interface ForumPostDto extends Omit<ForumPost, '_id'> {
+export interface PostDto extends Omit<Post, '_id'> {
 	_id: string;
 }
 
-export type GetAllForumPostsResponse = ListResponse<'posts', ForumPostDto>;
+export type GetAllPostsResponse = ListResponse<'posts', PostDto>;
 
-export type ForumPostRequest = Pick<ForumPost, 'message'> & {
-	eventId: Event["_id"];
+export type PostRequest = Pick<Post, 'message'> & {
+	eventId: string;
 };
 
-export type AddNewPostToForumRequest = ForumPostRequest;
+export type AddNewPostToForumRequest = PostRequest;
 
-export type AddNewPostToForumResponse = ItemResponse<'post', ForumPostDto>;
+export type AddNewPostToForumResponse = ItemResponse<'post', PostDto>;
 
 export interface ForumMessageParams {
 	message: string;

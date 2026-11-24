@@ -63,9 +63,7 @@ const Hall = () => {
 
 	return (
 		<main>
-			<h1 className={classes.title}>
-				Wybierz odpowiedni sektor hali
-			</h1>
+			<h1 className={classes.title}>Wybierz odpowiedni sektor hali</h1>
 			<section className={classes.container}>
 				<figure className={classes['hala-container']}>
 					<div className={classes['hala-grid']}>
@@ -124,7 +122,9 @@ const Hall = () => {
 				<DialogContent className='sm:max-w-md border-red-700 bg-red-600 text-white'>
 					<DialogHeader>
 						<DialogTitle className='text-white'>Brak wybranego sektora hali!!!</DialogTitle>
-						<DialogDescription className='text-red-50'>Żeby przejść dalej, musisz najpierw wybrać sektor hali.</DialogDescription>
+						<DialogDescription className='text-red-50'>
+							Żeby przejść dalej, musisz najpierw wybrać sektor hali.
+						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
 						<Button

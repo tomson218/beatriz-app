@@ -7,9 +7,15 @@ module.exports = {
 	rules: {
 		'no-restricted-syntax': [
 			'warn',
-			{ selector: 'ForStatement', message: 'Use array methods (forEach, map, filter, reduce) instead of a for loop.' },
+			{
+				selector: 'ForStatement',
+				message: 'Use array methods (forEach, map, filter, reduce) instead of a for loop.',
+			},
 			{ selector: 'ForInStatement', message: 'Use Object.keys/entries with array methods instead of for...in.' },
-			{ selector: 'ForOfStatement', message: 'Use array methods (forEach, map, filter, reduce) instead of for...of.' },
+			{
+				selector: 'ForOfStatement',
+				message: 'Use array methods (forEach, map, filter, reduce) instead of for...of.',
+			},
 		],
 	},
 };

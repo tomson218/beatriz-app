@@ -2,10 +2,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import EventModel from '../../../../modules/events/events.model.ts';
 import { mockQuery } from '../../../helpers/mockQuery.ts';
 import { catchAsyncError } from '../../../helpers/catchError.ts';
-import { createEvent, deleteEventById, findEventById, findUpcomingEvents, updateEventDescription } from '../../../../modules/events/events.service.ts';
+import {
+	createEvent,
+	deleteEventById,
+	findEventById,
+	findUpcomingEvents,
+	updateEventDescription,
+} from '../../../../modules/events/events.service.ts';
 
 vi.mock('../../../../modules/events/events.model.ts', () => ({
-	default: { find: vi.fn(), findById: vi.fn(), create: vi.fn(), findByIdAndUpdate: vi.fn(), findByIdAndDelete: vi.fn() },
+	default: {
+		find: vi.fn(),
+		findById: vi.fn(),
+		create: vi.fn(),
+		findByIdAndUpdate: vi.fn(),
+		findByIdAndDelete: vi.fn(),
+	},
 }));
 
 const Event = vi.mocked(EventModel);

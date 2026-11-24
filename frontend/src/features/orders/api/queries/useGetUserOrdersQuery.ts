@@ -1,19 +1,20 @@
 import instance from '@/shared/api/apiConfig';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/shared/api/queryKeys';
-import type { User } from '@beatriz/shared/users';
+import type { UserDto } from '@beatriz/shared/users';
 
-const useGetUserOrdersQuery = (id: User['_id']) => {
+/** Fetches the orders of the logged-in user; does nothing while there is no user id. */
+const useGetUserOrdersQuery = (id: UserDto['_id'] | null) => {
 	const getUserOrders = async () => {
-		console.log(id);
 		const uri = '/users/me/orders';
 		const response = await instance.get(uri);
 		return response.data.data.orders;
 	};
 
 	return useQuery({
-		queryKey: queryKeys.orders.byUser(id),
+		queryKey: queryKeys.orders.byUser(id ?? ''),
 		queryFn: getUserOrders,
+		enabled: Boolean(id),
 	});
 };
 

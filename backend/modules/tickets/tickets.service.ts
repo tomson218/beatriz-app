@@ -20,7 +20,10 @@ export const findAllTickets = async (): Promise<TicketDocument[]> => {
 
 /** Bilety czekające na wpłatę offline nie są jeszcze ważne, więc użytkownik ich nie widzi. */
 export const findTicketsOfUser = async (userId: string): Promise<TicketDocument[]> => {
-	return TicketModel.find({ userId, status: { $ne: 'pending' } }).sort({ date: 1 }).populate('event').exec();
+	return TicketModel.find({ userId, status: { $ne: 'pending' } })
+		.sort({ date: 1 })
+		.populate('event')
+		.exec();
 };
 
 /** Liczy wolne miejsca w każdym sektorze wydarzenia (pojemność sektora minus sprzedane i zarezerwowane bilety). */
@@ -33,7 +36,10 @@ export const getFreeSectorsSummary = async (eventId: string): Promise<FreeSector
 	}
 
 	const occupiedBySector: SectorCounts = countTicketsBySector(tickets);
-	const freeEntries = event.sectors.map(sector => [sector, CAPACITY_PER_SECTOR - (occupiedBySector[String(sector)] ?? 0)]);
+	const freeEntries = event.sectors.map(sector => [
+		sector,
+		CAPACITY_PER_SECTOR - (occupiedBySector[String(sector)] ?? 0),
+	]);
 
 	return { ticketsCount: tickets.length, freeSectorsCount: Object.fromEntries(freeEntries) };
 };

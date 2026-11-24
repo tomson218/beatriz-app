@@ -27,15 +27,17 @@ const SocialMediaLogin = () => {
 				<GoogleLogin
 					width={'400px'}
 					onSuccess={response => {
+						if (!response.credential) return;
+
 						googleLogin({
 							authCode: response.credential,
 							clientId: response.clientId,
 							selectBy: response.select_by,
 						});
 					}}
- 				onError={() => {
- 					console.log('Logowanie nieudane');
- 				}}
+					onError={() => {
+						console.log('Logowanie nieudane');
+					}}
 					useOneTap
 				/>
 			</section>

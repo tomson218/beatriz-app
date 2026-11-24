@@ -49,16 +49,19 @@ const PendingOrders = () => {
 
 								return (
 									<li key={String(ticket._id)}>
-										{ticket.event?.name}, sektor {seating?.sector}, strefa {getNameBlock(seating?.block as BlockType)}
-										{seating?.seat ? `, miejsce ${seating.seat}` : ''}, {getNameTypeTicket(String(ticket.type))}: {ticket.price}{' '}
-										{order.currency}
+										{ticket.event?.name}, sektor {seating?.sector}, strefa{' '}
+										{getNameBlock(seating?.block as BlockType)}
+										{seating?.seat ? `, miejsce ${seating.seat}` : ''},{' '}
+										{getNameTypeTicket(String(ticket.type))}: {ticket.price} {order.currency}
 									</li>
 								);
 							})}
 						</ul>
 
 						<footer className={classes.actions}>
-							<Button disabled={isPending} onClick={() => updateOrderStatus({ orderId: order._id, status: 'paid' })}>
+							<Button
+								disabled={isPending}
+								onClick={() => updateOrderStatus({ orderId: order._id, status: 'paid' })}>
 								Zatwierdź wpłatę
 							</Button>
 							<Button

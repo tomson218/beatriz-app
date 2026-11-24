@@ -12,7 +12,7 @@ import { parseEventDate } from '@/features/events/utils/eventDate';
 import calendarIcon from '@/assets/svg/calendar-icon.svg';
 
 const EventDetails = () => {
-	const { eventId } = useParams();
+	const { eventId = '' } = useParams();
 
 	const { data: eventDetails, isLoading: isEventLoading } = useGetEventByIdQuery(eventId);
 	const { data: favouriteEvents, isLoading: isFavouriteEventsLoading, refetch } = useGetFavouriteEventsQuery();
@@ -50,7 +50,11 @@ const EventDetails = () => {
 		return <div>Ładowanie...</div>;
 	}
 
-	const eventDate = parseEventDate(eventDetails?.date);
+	if (!eventDetails) {
+		return <p>Nie udało się załadować szczegółów wydarzenia.</p>;
+	}
+
+	const eventDate = parseEventDate(eventDetails.date);
 	const favouriteBtnText = isAddedToFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych';
 	const favouriteBtnVariant = isAddedToFavourite ? 'destructive' : 'default';
 
@@ -80,7 +84,7 @@ const EventDetails = () => {
 						<p className={classes['event-description']}>{eventDetails.description}</p>
 						<p className={classes['event-ticket']}>
 							Bilety już od:{' '}
-							<span className={classes['discount-price']}>{eventDetails.prices.normal} PLN</span>
+							<span className={classes['discount-price']}>{eventDetails.prices?.normal} PLN</span>
 						</p>
 						<nav className={classes['action-buttons']}>
 							<Button variant={favouriteBtnVariant} onClick={handleToggleFavourite}>

@@ -134,7 +134,7 @@ const OrderCard = ({ order, date }: OrderCardProps) => {
 };
 
 const UserOrders = () => {
-	const userId = getItemLocalStorage('user-id');
+	const userId = getItemLocalStorage<string>('user-id');
 
 	const { data: userOrders, isLoading: isUserOrdersLoading } = useGetUserOrdersQuery(userId);
 

@@ -8,15 +8,15 @@ import { formattedDate, formattedTime } from '@/shared/utils/formatting-date';
 import OutlineHeartIcon from '@/assets/icons/OutlineHeartIcon';
 import { useState } from 'react';
 import { Button } from '@/shared/components/ui/Button/Button';
-import type { Event } from '@beatriz/shared/events';
+import type { EventDto } from '@beatriz/shared/events';
 import { ASSET_BASE_URL } from '@/shared/api/apiConfig';
 import { EVENT_TYPE_OPTIONS } from '@beatriz/shared/constants/eventTypes';
 
 interface EventProps {
-	event: Event;
+	event: EventDto;
 	isFavourite: boolean;
-	onAddToFavourite: (id: Event['_id']) => void;
-	onRemoveFromFavourite: (id: Event['_id']) => void;
+	onAddToFavourite: (id: EventDto['_id']) => void;
+	onRemoveFromFavourite: (id: EventDto['_id']) => void;
 }
 
 const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite }: EventProps) => {
@@ -25,7 +25,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 	const isNewEvent = checkEventIsNew(eventDate);
 	const eventTypeLabel = EVENT_TYPE_OPTIONS.find(option => option.value === event.type)?.label ?? event.type;
 
-	const handleClickFavourite = (id: Event['_id']): void => {
+	const handleClickFavourite = (id: EventDto['_id']): void => {
 		const nextValue = !isEventFavourite;
 		setIsEventFavourite(nextValue);
 
@@ -91,9 +91,7 @@ const EventCard = ({ event, isFavourite, onAddToFavourite, onRemoveFromFavourite
 									aria-label={isEventFavourite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
 									onClick={() => handleClickFavourite(event._id)}
 									className={classes.iconButton}>
-									<OutlineHeartIcon
-										className={favouriteIconClass}
-									/>
+									<OutlineHeartIcon className={favouriteIconClass} />
 								</Button>
 							</CardFooter>
 						</section>

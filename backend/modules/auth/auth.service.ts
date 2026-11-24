@@ -97,7 +97,10 @@ export const loginWithGoogle = async (authCode: string): Promise<SocialLoginResu
 	return { user: existingUser, isNewUser: false };
 };
 
-export const loginWithFacebook = async (tokens: FacebookTokens, profile: FacebookUserProfile): Promise<SocialLoginResult> => {
+export const loginWithFacebook = async (
+	tokens: FacebookTokens,
+	profile: FacebookUserProfile,
+): Promise<SocialLoginResult> => {
 	const isTokenValid: boolean = await verifyFacebookToken(tokens);
 
 	if (!isTokenValid) {

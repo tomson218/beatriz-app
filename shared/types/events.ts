@@ -30,14 +30,19 @@ export type GetAllEventsResponse = ListResponse<'events', EventDto>;
 
 export type EventResponse = ItemResponse<'event', EventDto>;
 
-export type EventRequest = Pick<Event, 'name' | 'star' | 'description' | 'seatRequired' | 'sectors' | 'prices' | 'type'> & {
+export type EventRequest = Pick<
+	Event,
+	'name' | 'star' | 'description' | 'seatRequired' | 'sectors' | 'prices' | 'type'
+> & {
 	date: string;
 	image?: string;
 };
 
 export type CreateEventRequest = EventRequest;
 
-export type UpdateEventRequest = Partial<Pick<Event, 'name' | 'date' | 'star' | 'description' | 'seatRequired' | 'sectors' | 'image' | 'prices' | 'type'>>;
+export type UpdateEventRequest = Partial<
+	Pick<Event, 'name' | 'date' | 'star' | 'description' | 'seatRequired' | 'sectors' | 'image' | 'prices' | 'type'>
+>;
 
 export interface DeleteEventResponse {
 	message: string;

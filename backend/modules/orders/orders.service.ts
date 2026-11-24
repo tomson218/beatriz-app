@@ -36,7 +36,7 @@ export const parseOrderDecision = (value: unknown): UpdateOrderStatusRequest['st
 };
 
 export const findAllOrders = async (status?: OrderStatus): Promise<OrderDocument[]> => {
-	// Zamówienia sprzed płatności offline nie mają statusu, a wszystkie były opłacone online.
+	// Orders created before offline payments existed have no status, and all of them were paid online.
 	const paidFilter = { status: { $in: ['paid', null] } };
 	const filter = status === 'paid' ? paidFilter : status ? { status } : {};
 
@@ -52,7 +52,7 @@ export const findOrdersOfUser = async (userId: string): Promise<OrderDocument[]>
 	return OrderModel.find({ userId }).select('-__v').populate('tickets.event').sort({ date: -1 }).exec();
 };
 
-/** Tworzy zamówienie czekające na wpłatę. Miejsca są zarezerwowane biletami o statusie `pending`. */
+/** Creates an order waiting for payment. Seats are reserved by tickets with the `pending` status. */
 export const createOfflineOrder = async (user: UserDocument, body: CheckoutRequestBody): Promise<OrderDocument> => {
 	const { items, discountCode }: PreparedCheckout = await prepareCheckout(user, body);
 
@@ -90,7 +90,7 @@ const toPdfTickets = (order: OrderDocument): PdfTicket[] => {
 	});
 };
 
-/** Po zatwierdzeniu wpłaty oznacza kod rabatowy jako użyty, czyści koszyk i wysyła bilety. */
+/** After the payment is approved, marks the discount code as used, clears the cart and emails the tickets. */
 const completeOfflinePayment = async (order: OrderDocument): Promise<void> => {
 	const user: UserDocument | null = await UserModel.findById(order.userId);
 
@@ -103,13 +103,13 @@ const completeOfflinePayment = async (order: OrderDocument): Promise<void> => {
 	user.cart = [];
 	await user.save({ validateBeforeSave: false });
 
-	// Wpłata jest już zatwierdzona, więc błąd wysyłki maila nie może cofnąć decyzji administratora.
-	await sendOrderConfirmation(user.email, order.totalAmount, order.currency, toPdfTickets(order)).catch((error: unknown) =>
-		console.error(`Order ${order._id}: confirmation email could not be sent:`, error),
+	// The payment is already approved, so an email failure must not undo the admin's decision.
+	await sendOrderConfirmation(user.email, order.totalAmount, order.currency, toPdfTickets(order)).catch(
+		(error: unknown) => console.error(`Order ${order._id}: confirmation email could not be sent:`, error),
 	);
 };
 
-/** Oznacza nieopłacone na czas zamówienia offline jako wygasłe i zwalnia ich miejsca. */
+/** Marks offline orders not paid in time as expired and frees their seats. */
 export const expireOverdueOfflineOrders = async (): Promise<number> => {
 	const overdueOrders = await OrderModel.find({
 		paymentMethod: 'offline',
@@ -119,8 +119,11 @@ export const expireOverdueOfflineOrders = async (): Promise<number> => {
 
 	const expiredFlags: boolean[] = await Promise.all(
 		overdueOrders.map(async ({ _id: orderId }): Promise<boolean> => {
-			// Warunek na status chroni przed wygaszeniem zamówienia, które admin właśnie zatwierdził.
-			const expiredOrder = await OrderModel.findOneAndUpdate({ _id: orderId, status: 'pending' }, { status: 'expired' });
+			// The status condition prevents expiring an order the admin has just approved.
+			const expiredOrder = await OrderModel.findOneAndUpdate(
+				{ _id: orderId, status: 'pending' },
+				{ status: 'expired' },
+			);
 
 			if (!expiredOrder) return false;
 
@@ -132,7 +135,7 @@ export const expireOverdueOfflineOrders = async (): Promise<number> => {
 	return expiredFlags.filter(Boolean).length;
 };
 
-/** Zatwierdza albo odrzuca wpłatę offline. Odrzucenie zwalnia zarezerwowane miejsca. */
+/** Approves or rejects an offline payment. Rejecting frees the reserved seats. */
 export const resolveOfflineOrder = async (
 	orderId: string,
 	decision: UpdateOrderStatusRequest['status'],

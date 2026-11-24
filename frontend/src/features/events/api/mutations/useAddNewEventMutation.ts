@@ -1,10 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import instance from '@/shared/api/apiConfig';
-import type { EventResponse, Event } from '@beatriz/shared/events';
+import type { EventResponse } from '@beatriz/shared/events';
 
 const useAddNewEventMutation = () => {
-	const addNewEvent = async (newEvent: Event): Promise<EventResponse> => {
+	/** Multipart form data: the event fields plus an optional image file. */
+	const addNewEvent = async (newEvent: FormData): Promise<EventResponse> => {
 		const uri = '/events';
 		const response = await instance.post<EventResponse>(uri, newEvent);
 		return response.data;

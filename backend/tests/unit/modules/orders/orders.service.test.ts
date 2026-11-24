@@ -2,7 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import OrderModel from '../../../../modules/orders/orders.model.ts';
 import TicketModel from '../../../../modules/tickets/tickets.model.ts';
 import UserModel from '../../../../modules/users/users.model.ts';
-import { buildOrderTickets, buildTickets, calcTotalAmount, prepareCheckout, sendOrderConfirmation } from '../../../../modules/payments/payments.service.ts';
+import {
+	buildOrderTickets,
+	buildTickets,
+	calcTotalAmount,
+	prepareCheckout,
+	sendOrderConfirmation,
+} from '../../../../modules/payments/payments.service.ts';
 import { mockQuery } from '../../../helpers/mockQuery.ts';
 import { catchAsyncError, catchError } from '../../../helpers/catchError.ts';
 import {
@@ -18,7 +24,9 @@ import {
 vi.mock('../../../../modules/orders/orders.model.ts', () => ({
 	default: { find: vi.fn(), create: vi.fn(), findOneAndUpdate: vi.fn(), exists: vi.fn() },
 }));
-vi.mock('../../../../modules/tickets/tickets.model.ts', () => ({ default: { insertMany: vi.fn(), deleteMany: vi.fn(), updateMany: vi.fn() } }));
+vi.mock('../../../../modules/tickets/tickets.model.ts', () => ({
+	default: { insertMany: vi.fn(), deleteMany: vi.fn(), updateMany: vi.fn() },
+}));
 vi.mock('../../../../modules/users/users.model.ts', () => ({ default: { findById: vi.fn() } }));
 vi.mock('../../../../modules/payments/payments.service.ts', () => ({
 	prepareCheckout: vi.fn(),
@@ -239,7 +247,12 @@ describe('resolveOfflineOrder', () => {
 		currency: 'PLN',
 		discountCode: 'PROMO',
 		tickets: [
-			{ event: { name: 'Koncert', date: new Date('2026-02-01') }, seating: [{ sector: 'A', block: 'blue', seat: 3 }], price: 90, type: 'normal' },
+			{
+				event: { name: 'Koncert', date: new Date('2026-02-01') },
+				seating: [{ sector: 'A', block: 'blue', seat: 3 }],
+				price: 90,
+				type: 'normal',
+			},
 		],
 	});
 
@@ -270,7 +283,12 @@ describe('resolveOfflineOrder', () => {
 		User.findById.mockResolvedValue(buyer() as never);
 
 		await resolveOfflineOrder('order-1', 'paid');
-		const expectedFilter = { _id: 'order-1', paymentMethod: 'offline', status: 'pending', date: { $gt: OVERDUE_DATE } };
+		const expectedFilter = {
+			_id: 'order-1',
+			paymentMethod: 'offline',
+			status: 'pending',
+			date: { $gt: OVERDUE_DATE },
+		};
 
 		expect(Order.findOneAndUpdate).toHaveBeenCalledWith(expectedFilter, { status: 'paid' }, { new: true });
 	});
@@ -299,7 +317,17 @@ describe('resolveOfflineOrder', () => {
 			'jan@example.com',
 			90,
 			'PLN',
-			[{ name: 'Koncert', date: new Date('2026-02-01'), sector: 'A', block: 'blue', seating: 3, price: 90, type: 'normal' }],
+			[
+				{
+					name: 'Koncert',
+					date: new Date('2026-02-01'),
+					sector: 'A',
+					block: 'blue',
+					seating: 3,
+					price: 90,
+					type: 'normal',
+				},
+			],
 		];
 
 		expect(result).toEqual(expected);
@@ -343,7 +371,11 @@ describe('resolveOfflineOrder', () => {
 	});
 
 	it.each([
-		['exists but is not waiting for an offline payment', { _id: 'order-1' }, { statusCode: 409, message: 'This order is not waiting for an offline payment.' }],
+		[
+			'exists but is not waiting for an offline payment',
+			{ _id: 'order-1' },
+			{ statusCode: 409, message: 'This order is not waiting for an offline payment.' },
+		],
 		['does not exist', null, { statusCode: 404, message: 'No order found with that ID' }],
 	])('throws when the order %s', async (_label, existing, expected) => {
 		Order.findOneAndUpdate.mockReturnValue(mockQuery(null) as never);

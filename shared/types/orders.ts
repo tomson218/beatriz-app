@@ -37,7 +37,8 @@ export interface OrderTicket {
 }
 
 export interface CartTicket {
-	eventId: Event["_id"];
+	/** Sent as JSON, so the id is a string (the server validates it as an ObjectId). */
+	eventId: string;
 	sector: string;
 	block: BlockType;
 	seating?: string;
@@ -55,15 +56,15 @@ export interface OrderDto extends Omit<Order, '_id'> {
 }
 
 export interface OrderIdParams {
-	orderId: Order["_id"];
+	orderId: Order['_id'];
 }
 
 export type GetAllOrdersResponse = ListResponse<'orders', OrderDto>;
 
 export type OrderRequest = Pick<Order, 'totalAmount' | 'currency'> & {
-	userId: User["_id"];
+	userId: User['_id'];
 	tickets: OrderTicket[];
-	eventId: Event["_id"];
+	eventId: Event['_id'];
 	countOfTickets: number;
 };
 

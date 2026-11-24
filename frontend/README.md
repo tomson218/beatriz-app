@@ -6,8 +6,8 @@ A client application built with React + TypeScript for booking event tickets.
 
 ### Requirements
 
-- **Node.js** 18+
-- **Backend** — a running API server (see `backend/README.md`)
+-   **Node.js** 18+
+-   **Backend** — a running API server (see `backend/README.md`)
 
 ### Installation
 
@@ -47,22 +47,51 @@ npm run build
 ### Tests
 
 ```bash
-npm test
+npm test             # watch mode
+npx vitest run       # single run
+npm run test:coverage # single run with a coverage report (HTML in coverage/index.html)
 ```
 
-Tests are written with Vitest and Testing Library.
+Unit tests are written with [Vitest](https://vitest.dev), [Testing Library](https://testing-library.com) and [MSW](https://mswjs.io), and live in `tests/unit/`, mirroring the `src/` layout:
+
+-   `tests/unit/**/utils/*.test.ts` — pure functions: event filters, seats, sectors, dates, localStorage, etc.
+-   `tests/unit/shared/api/apiConfig.test.ts` — the HTTP client: Bearer token and refreshing the access token after a 401.
+-   `tests/unit/features/**/*.test.tsx` — components and pages rendered like in the app (React Query, contexts, router). Users are simulated with `user-event`, and the API is mocked with MSW, so no backend is needed.
+
+Helpers live in `tests/helpers/`: `renderWithProviders` (renders a page with all app providers and shows the current URL) and the MSW `server` (each test registers its own handlers; an unhandled request fails the test).
+
+Environment variables for tests (`VITE_API_URL`, `VITE_GOOGLE_CLIENT_ID`) live in `.env.test` (fake values, committed to the repo); Vite loads it automatically in test mode.
+
+Each test computes a `result` and compares it with an `expected` value.
+
+#### Coverage
+
+Results of `npm run test:coverage` (November 2026, 134 tests). `main.tsx` and the generated shadcn components in `shared/components/ui` are excluded.
+
+| Area                                    |     Lines | Notes                                                                                  |
+| --------------------------------------- | --------: | -------------------------------------------------------------------------------------- |
+| **Total**                               | **28.7%** | Branches 77.8%, functions 57.7%                                                        |
+| `shared/utils`, `shared/lib`            |      100% |                                                                                        |
+| `shared/api`                            |       96% | HTTP client, token refresh, query keys                                                 |
+| `features/discountCodes`                |       50% | `DiscountCodeForm` 100%                                                                |
+| `features/tickets`                      |       29% | `Hall`, `Seats` ~100%; `Blocks`, `TicketChoice`, `Tickets` not tested yet              |
+| `features/orders`                       |       27% | `OrderSummary` 100%; `UserOrders`, `OrderWithoutSeats`, `PendingOrders` not tested yet |
+| `features/auth`                         |       24% | `Login`, `ProtectedRoutes` 100%; `Register`, social login not tested yet               |
+| `features/events`                       |       11% | Utils 100%; `Home`, `EventDetails`, `AddEvent` not tested yet                          |
+| `features/users`, `features/posts`      |      6–7% | Utils only                                                                             |
+| `app/` (Router, Navbar), `faq`, `admin` |        0% |                                                                                        |
 
 ## Architecture
 
 The app is built with **React + TypeScript** and the following key technologies:
 
-- **React Router DOM** — page routing
-- **React Query (TanStack Query)** — API queries and mutations
-- **React Context API** — global state (user, order)
-- **localStorage** — state persistence across page reloads
-- **Mantine + Shadcn/ui** — UI components
-- **TailwindCSS** — styling
-- **React Hot Toast** — notifications
+-   **React Router DOM** — page routing
+-   **React Query (TanStack Query)** — API queries and mutations
+-   **React Context API** — global state (user, order)
+-   **localStorage** — state persistence across page reloads
+-   **Mantine + Shadcn/ui** — UI components
+-   **TailwindCSS** — styling
+-   **React Hot Toast** — notifications
 
 ## Structure
 
@@ -89,9 +118,12 @@ frontend/src/
 │   ├── lib/            # The cn function
 │   ├── types/          # Shared types
 │   └── utils/          # localStorage, dates, API responses
-├── assets/             # Images and icons
-├── test/               # Test setup
-└── __tests__/          # Tests
+└── assets/             # Images and icons
+
+frontend/tests/
+├── setup.ts            # Test setup (jest-dom, MSW, browser API stubs)
+├── helpers/            # renderWithProviders, MSW server
+└── unit/               # Unit tests, mirroring src/
 
 Each feature in features/ may contain the folders:
 api/mutations/, api/queries/ (React Query hooks), components/, pages/, context/ and utils/.
@@ -105,8 +137,8 @@ api/mutations/, api/queries/ (React Query hooks), components/, pages/, context/ 
 
 Manages user data:
 
-- `userId` — ID of the logged-in user (from localStorage)
-- `userProgress` — progress in the purchase process
+-   `userId` — ID of the logged-in user (from localStorage)
+-   `userProgress` — progress in the purchase process
 
 ### OrderContext
 
@@ -114,9 +146,9 @@ Manages user data:
 
 Manages the cart and the order:
 
-- `order: CartTicket[]` — array of tickets in the cart (persisted in localStorage as `ORDERS`)
-- `totalPrice: number` — total price (persisted in localStorage as `totalPrice`)
-- `discountCode: string | number` — the applied discount code
+-   `order: CartTicket[]` — array of tickets in the cart (persisted in localStorage as `ORDERS`)
+-   `totalPrice: number` — total price (persisted in localStorage as `totalPrice`)
+-   `discountCode: string | number` — the applied discount code
 
 ## Routing
 
@@ -149,16 +181,16 @@ Manages the cart and the order:
 
 The home page shows the events as `EventCard` cards. Each card contains:
 
-- The event image
-- Name, genres (stars), date and time
-- A "Szczegóły" (Details) button → navigates to `/event-details/:eventId`
-- A "Forum" button → navigates to `/forum/:eventId`
-- A "Ulubione" (Favourites) button → adds to / removes from favourites
+-   The event image
+-   Name, genres (stars), date and time
+-   A "Szczegóły" (Details) button → navigates to `/event-details/:eventId`
+-   A "Forum" button → navigates to `/forum/:eventId`
+-   A "Ulubione" (Favourites) button → adds to / removes from favourites
 
 **Filtering:** the user can filter events by:
 
-- Date, name, category (concert, workshop, conference, festival)
-- Event star, price range, whether numbered seats are required
+-   Date, name, category (concert, theater, opera, musical, festival, other)
+-   Event star, price range, whether numbered seats are required
 
 Filtering happens on the client, based on the fetched data.
 
@@ -172,11 +204,11 @@ Filtering happens on the client, based on the fetched data.
 
 The page shows:
 
-- The event image, name, genres, date, time and description
-- The ticket price ("Bilety już od: X PLN" — tickets from X PLN)
-- An "Add to / Remove from favourites" button
-- A "Przejdź na forum" (Go to the forum) button
-- **A "Wybierz sektor hali" (Choose a hall sector) button** → navigates to `/hall?eventId=${eventId}`
+-   The event image, name, genres, date, time and description
+-   The ticket price ("Bilety już od: X PLN" — tickets from X PLN)
+-   An "Add to / Remove from favourites" button
+-   A "Przejdź na forum" (Go to the forum) button
+-   **A "Wybierz sektor hali" (Choose a hall sector) button** → navigates to `/hall?eventId=${eventId}`
 
 The `eventId` is saved in localStorage as `eventDetails`.
 
@@ -190,9 +222,9 @@ The `eventId` is saved in localStorage as `eventDetails`.
 
 The page shows a visualization of the hall with its sectors (from the `SECTORS` enum). Each sector:
 
-- Is clickable if it is available for the event
-- When clicked, is saved in the URL (`?eventId=...&sector=...`) and in localStorage
-- Is disabled (grey) if it is not available
+-   Is clickable if it is available for the event
+-   When clicked, is saved in the URL (`?eventId=...&sector=...`) and in localStorage
+-   Is disabled (grey) if it is not available
 
 **The "Wybierz strefę" (Choose a zone) button** navigates to `/blocks?eventId=...&sector=...`.
 If no sector has been selected, a warning dialog is shown.
@@ -210,8 +242,8 @@ When clicked, the block is saved in the URL (`?eventId=...&sector=...&block=...`
 
 **Key logic:**
 
-- If `eventDetails.seatRequired === true` → the "Wybierz konkretne miejsce" (Choose a specific seat) button → `/seats`
-- If `eventDetails.seatRequired === false` → the "Przejdź do wyboru biletów" (Go to ticket selection) button → `/ticket-choice`
+-   If `eventDetails.seatRequired === true` → the "Wybierz konkretne miejsce" (Choose a specific seat) button → `/seats`
+-   If `eventDetails.seatRequired === false` → the "Przejdź do wyboru biletów" (Go to ticket selection) button → `/ticket-choice`
 
 ---
 
@@ -223,14 +255,14 @@ When clicked, the block is saved in the URL (`?eventId=...&sector=...&block=...`
 
 The page shows a grid of 100 seats with a legend:
 
-- 🟢 **Free** — can be selected
-- 🔵 **Selected** — chosen by the user
-- 🔴 **Occupied** — already purchased (from the API)
+-   🟢 **Free** — can be selected
+-   🔵 **Selected** — chosen by the user
+-   🔴 **Occupied** — already purchased (from the API)
 
 The user clicks free seats, which are:
 
-- Saved in the URL (`?seats=1,5,12`)
-- Saved in localStorage as `selected-seats`
+-   Saved in the URL (`?seats=1,5,12`)
+-   Saved in localStorage as `selected-seats`
 
 **The "Przejdź do wyboru biletów" (Go to ticket selection) button** navigates to `/ticket-choice?eventId=...&sector=...&block=...&seats=...`.
 If no seat has been selected, a warning dialog is shown.
@@ -248,23 +280,23 @@ The page has **two modes**, depending on whether the event requires seats:
 
 For each selected seat an `Order` component is shown with:
 
-- Event information (name, date, image)
-- Seat information (sector, zone, seat number)
-- **A ticket type selector** — the user chooses Normal, Child or VIP
-- The ticket price is updated in `OrderContext` when the type changes
+-   Event information (name, date, image)
+-   Seat information (sector, zone, seat number)
+-   **A ticket type selector** — the user chooses Normal, Child or VIP
+-   The ticket price is updated in `OrderContext` when the type changes
 
 #### Mode B: Without seats (`seats` is not defined)
 
 An `OrderWithOutSeats` component is shown with:
 
-- **A counter for the total number of tickets** — "Increase" / "Decrease" buttons
-- **Ticket allocation by type** — for each type (normal, child, VIP) the user sets a count
-- Validation: the sum of tickets by type must equal the total number of tickets
+-   **A counter for the total number of tickets** — "Increase" / "Decrease" buttons
+-   **Ticket allocation by type** — for each type (normal, child, VIP) the user sets a count
+-   Validation: the sum of tickets by type must equal the total number of tickets
 
 **State persistence:**
 
-- `order` (an array of `CartTicket`) → localStorage as `ORDERS`
-- `totalPrice` → localStorage as `totalPrice`
+-   `order` (an array of `CartTicket`) → localStorage as `ORDERS`
+-   `totalPrice` → localStorage as `totalPrice`
 
 **The "Przejdź do podsumowania" (Go to summary) button** navigates to `/summary?eventId=...`.
 
@@ -277,10 +309,10 @@ An `OrderWithOutSeats` component is shown with:
 
 The page shows:
 
-- **The list of tickets** — each as an `Order` component (read-only, the type cannot be changed)
-- **The discount code form** — the `DiscountCodeForm` component
-- **The total amount** — the `TotalAmount` component (reads from `OrderContext`)
-- **A "Zapłać teraz" (Pay now) button** — creates a Stripe checkout session
+-   **The list of tickets** — each as an `Order` component (read-only, the type cannot be changed)
+-   **The discount code form** — the `DiscountCodeForm` component
+-   **The total amount** — the `TotalAmount` component (reads from `OrderContext`)
+-   **A "Zapłać teraz" (Pay now) button** — creates a Stripe checkout session
 
 #### Discount Code
 
@@ -295,9 +327,9 @@ The user enters a code and clicks "Użyj kodu" (Use code). The backend returns t
 
 **Error handling:**
 
-- `400` — the code has expired or the order value is too low
-- `409` — the code has already been used
-- `404` — the code is invalid
+-   `400` — the code has expired or the order value is too low
+-   `409` — the code has already been used
+-   `404` — the code is invalid
 
 ---
 
@@ -359,13 +391,13 @@ After a successful payment, Stripe sends the `checkout.session.completed` event 
 
 The page shows the purchased tickets as `Ticket` components with:
 
-- Event information, ticket type and price
-- Sector, zone and seat (if applicable)
+-   Event information, ticket type and price
+-   Sector, zone and seat (if applicable)
 
 **Filters:**
 
-- **"Nadchodzące" (Upcoming)** — only tickets for future events
-- **"Wszystkie" (All)** — all purchased tickets
+-   **"Nadchodzące" (Upcoming)** — only tickets for future events
+-   **"Wszystkie" (All)** — all purchased tickets
 
 ---
 
@@ -386,24 +418,24 @@ The page shows the purchased tickets as `Ticket` components with:
 
 ### Key Mechanisms
 
-- **OrderContext** — carries the cart through the whole purchase process
-- **localStorage** — persists state across reloads (`ORDERS`, `totalPrice`, `sector`, `selected-seats`)
-- **URL params** — carry `eventId`, `sector`, `block` and `seats` between steps
-- **Stripe Checkout** — external payment with a webhook for finalization
-- **Webhook** — creates the order and tickets, sends an email with a PDF
+-   **OrderContext** — carries the cart through the whole purchase process
+-   **localStorage** — persists state across reloads (`ORDERS`, `totalPrice`, `sector`, `selected-seats`)
+-   **URL params** — carry `eventId`, `sector`, `block` and `seats` between steps
+-   **Stripe Checkout** — external payment with a webhook for finalization
+-   **Webhook** — creates the order and tickets, sends an email with a PDF
 
 ## Dependencies
 
-- **react** + **react-dom** — UI framework
-- **react-router-dom** — routing
-- **@tanstack/react-query** — API query management
-- **react-hook-form** — forms
-- **@mantine/core** + **@mantine/hooks** — UI components
-- **@radix-ui/** — Shadcn/ui components
-- **tailwindcss** — styling
-- **react-hot-toast** — notifications
-- **@react-oauth/google** — Google login
-- **@fortawesome/** — icons
-- **react-qr-code** — QR codes on tickets
-- **vitest** + **@testing-library/** — tests
-- **@beatriz/shared** — shared types and schemas
+-   **react** + **react-dom** — UI framework
+-   **react-router-dom** — routing
+-   **@tanstack/react-query** — API query management
+-   **react-hook-form** — forms
+-   **@mantine/core** + **@mantine/hooks** — UI components
+-   **@radix-ui/** — Shadcn/ui components
+-   **tailwindcss** — styling
+-   **react-hot-toast** — notifications
+-   **@react-oauth/google** — Google login
+-   **@fortawesome/** — icons
+-   **react-qr-code** — QR codes on tickets
+-   **vitest** + **@testing-library/** — tests
+-   **@beatriz/shared** — shared types and schemas

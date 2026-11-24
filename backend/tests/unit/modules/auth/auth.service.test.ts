@@ -80,7 +80,11 @@ describe('sendWelcomeEmail', () => {
 	it('sends a welcome email addressed to the user by first name', async () => {
 		await sendWelcomeEmail(fakeUser() as never);
 		const result = vi.mocked(sendEmail).mock.calls[0][0];
-		const expected = { email: 'jan@example.com', subject: 'Witamy w Beatriz App', message: expect.stringMatching(/^Cześć Jan!/) };
+		const expected = {
+			email: 'jan@example.com',
+			subject: 'Witamy w Beatriz App',
+			message: expect.stringMatching(/^Cześć Jan!/),
+		};
 
 		expect(result).toEqual(expected);
 	});

@@ -20,6 +20,7 @@ import webhookRoutes from './modules/webhooks/webhooks.routes.ts';
 import orderRoutes from './modules/orders/orders.routes.ts';
 import authRouter from './modules/auth/auth.routes.ts';
 import swaggerDocs from './swagger.ts';
+import { errorHandler, notFoundHandler } from './shared/middleware/errorHandler.ts';
 
 const app: Express = express();
 
@@ -46,7 +47,7 @@ app.use(
 				return;
 			}
 
-			callback(new Error('Not allowed by CORS'));
+			callback(Object.assign(new Error('Not allowed by CORS'), { statusCode: 403 }));
 		},
 		credentials: true,
 	}),
@@ -99,6 +100,8 @@ app.use('/api/v2/posts', postRoutes);
 
 swaggerDocs(app);
 
-//app.use(globalErrorHandler);
+// Must stay last: unknown paths get a JSON 404, and every error passed to next(error) becomes a JSON response.
+app.all('*', notFoundHandler);
+app.use(errorHandler);
 
 export default app;

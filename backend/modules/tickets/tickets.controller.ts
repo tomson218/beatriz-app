@@ -18,7 +18,11 @@ export const getAllTickets = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const getUserTickets = async (req: Request<UserTicketsParams>, res: Response, next: NextFunction): Promise<void> => {
+export const getUserTickets = async (
+	req: Request<UserTicketsParams>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const tickets: TicketDocument[] = await findTicketsOfUser(req.params.id);
 		const ticketsDto: TicketDto[] = tickets.map(toTicketDto);
@@ -63,7 +67,11 @@ export const groupAvailableSectors = async (
 	}
 };
 
-export const getOccupiedSeats = async (req: Request<EventTicketsParams>, res: Response, next: NextFunction): Promise<void> => {
+export const getOccupiedSeats = async (
+	req: Request<EventTicketsParams>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const sector: string = String(req.query.sector ?? '');
 		const block: string = String(req.query.block ?? '');

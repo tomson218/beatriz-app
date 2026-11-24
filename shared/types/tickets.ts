@@ -16,16 +16,16 @@ export interface TicketDto extends Omit<Ticket, '_id'> {
 }
 
 export interface TicketIdParams {
-	ticketId: Ticket["_id"];
+	ticketId: Ticket['_id'];
 }
 
 export type TicketRequest = Pick<Ticket, 'eventId' | 'type' | 'date' | 'price'> & {
-	userId: User["_id"];
+	userId: User['_id'];
 	seating: { sector: string; block: BlockType; seat: number };
 };
 
 export interface OccupiedSeatsParams {
-	eventId: Event["_id"];
+	eventId: Event['_id'];
 	sector: string;
 	block: BlockType;
 }
@@ -39,7 +39,7 @@ export type GroupAvailableSectorsResponse = ApiResponse<{
 }>;
 
 export interface GetOccupiedSeatsRequest {
-	eventId: Event["_id"];
+	eventId: Event['_id'];
 	sector: string;
 	block: BlockType;
 }

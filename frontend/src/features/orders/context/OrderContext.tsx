@@ -1,5 +1,6 @@
 import { createContext, useState, type Dispatch, type SetStateAction, type ReactNode } from 'react';
 import type { CartTicket } from '@beatriz/shared/orders';
+import { getItemLocalStorage } from '@/shared/utils/localStorage';
 
 export interface OrderContextType {
 	order: CartTicket[];
@@ -24,9 +25,9 @@ interface OrderContextProviderProps {
 }
 
 export const OrderContextProvider = ({ children }: OrderContextProviderProps) => {
-	const [order, setOrder] = useState(JSON.parse(localStorage.getItem('ORDERS')) || []);
-	const [totalPrice, setTotalPrice] = useState(JSON.parse(localStorage.getItem('totalPrice')) || 0);
-	const [discountCode, setDiscountCode] = useState(0);
+	const [order, setOrder] = useState<CartTicket[]>(getItemLocalStorage<CartTicket[]>('ORDERS') ?? []);
+	const [totalPrice, setTotalPrice] = useState<number>(getItemLocalStorage<number>('totalPrice') ?? 0);
+	const [discountCode, setDiscountCode] = useState<string | number>(0);
 
 	const orderCtx = {
 		order,

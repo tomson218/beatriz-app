@@ -43,7 +43,9 @@ const isOneOf = <T extends readonly string[]>(list: T, value: unknown): value is
 
 export const parseRequestedTickets = (products: unknown): RequestedTicket[] => {
 	if (!Array.isArray(products) || products.length === 0 || products.length > MAX_TICKETS_PER_ORDER) {
-		throw Object.assign(new Error(`Zamówienie musi zawierać od 1 do ${MAX_TICKETS_PER_ORDER} biletów`), { statusCode: 400 });
+		throw Object.assign(new Error(`Zamówienie musi zawierać od 1 do ${MAX_TICKETS_PER_ORDER} biletów`), {
+			statusCode: 400,
+		});
 	}
 
 	const seenSeats = new Set<string>();
@@ -80,7 +82,9 @@ export const parseRequestedTickets = (products: unknown): RequestedTicket[] => {
 
 			const seatKey = `${product.eventId}|${product.sector}|${product.block}|${seat}`;
 			if (seenSeats.has(seatKey)) {
-				throw Object.assign(new Error(`${position}: to samo miejsce zostało wybrane dwa razy`), { statusCode: 400 });
+				throw Object.assign(new Error(`${position}: to samo miejsce zostało wybrane dwa razy`), {
+					statusCode: 400,
+				});
 			}
 			seenSeats.add(seatKey);
 		}
@@ -115,7 +119,10 @@ export const priceTickets = (tickets: RequestedTicket[], events: Map<string, Che
 			throw Object.assign(new Error(`${position}: wydarzenie już się odbyło`), { statusCode: 400 });
 		}
 		if (!event.sectors.includes(ticket.sector)) {
-			throw Object.assign(new Error(`${position}: sektor ${ticket.sector} nie jest dostępny dla tego wydarzenia`), { statusCode: 400 });
+			throw Object.assign(
+				new Error(`${position}: sektor ${ticket.sector} nie jest dostępny dla tego wydarzenia`),
+				{ statusCode: 400 },
+			);
 		}
 		if (event.seatRequired && ticket.seating === '') {
 			throw Object.assign(new Error(`${position}: to wydarzenie wymaga wyboru miejsca`), { statusCode: 400 });

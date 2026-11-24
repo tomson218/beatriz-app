@@ -18,7 +18,7 @@ export const calcDiscountPrice = (eventDate: Date): number => {
 	return 0;
 };
 
-/** Najpierw zaokrąglamy do groszy (usuwa błędy typu 110.00000000000001), potem w górę do pełnych złotych. */
+/** Rounds to grosze first (removes float errors like 110.00000000000001), then up to whole PLN. */
 const ceilToWholePln = (amount: number): number => Math.ceil(Math.round(amount * 100) / 100);
 
 export const calcPricesAfterDiscount = (discount: number, prices: Record<string, number>): Record<string, number> => {

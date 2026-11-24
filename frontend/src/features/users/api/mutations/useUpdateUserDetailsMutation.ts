@@ -15,7 +15,7 @@ const useUpdateUserDetailsMutation = () => {
 
 		onSuccess: (data: UserResponse) => {
 			console.log(data);
- 		toast.success('Pomyślnie zaktualizowano dane użytkownika');
+			toast.success('Pomyślnie zaktualizowano dane użytkownika');
 		},
 
 		onError: (error: unknown) => {

@@ -28,10 +28,7 @@ router
 	.patch(protect, restrictTo('admin', 'worker'), updateEvent)
 	.delete(protect, restrictTo('admin', 'worker'), deleteEvent);
 
-router
-	.route('/:eventId/posts')
-	.get(protect, getPostsByEventId)
-	.post(protect, addNewPostToForum);
+router.route('/:eventId/posts').get(protect, getPostsByEventId).post(protect, addNewPostToForum);
 
 router.route('/:eventId/availability').get(protect, groupAvailableSectors);
 router.route('/:eventId/occupied-seats').get(protect, getOccupiedSeats);

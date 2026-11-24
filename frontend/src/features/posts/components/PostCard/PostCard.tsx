@@ -1,17 +1,12 @@
 import { Divider } from '@nextui-org/divider';
 import { formattedDate, formattedTime } from '@/shared/utils/formatting-date';
-import type { ForumPostDto } from '@beatriz/shared/forums';
-import type { UserDto } from '@beatriz/shared/users';
+import type { PostWithAuthor } from '@/features/posts/api/queries/useGetPostsByEventIdQuery';
 import { ASSET_BASE_URL } from '@/shared/api/apiConfig';
 import { Card, CardContent, CardHeader } from '@/shared/components/ui/Card/Card';
 import classes from './PostCard.module.css';
 
-type PostUser = Pick<UserDto, '_id' | 'email' | 'photo' | 'username'>;
-
-type PostWithUser = Omit<ForumPostDto, 'user'> & { user: PostUser };
-
 interface PostProps {
-	post: PostWithUser;
+	post: PostWithAuthor;
 	isAuthorPost?: boolean;
 }
 
@@ -27,11 +22,7 @@ const PostCard = ({ post, isAuthorPost }: PostProps) => {
 			key={post._id}
 			className={`${classes.card} ${isAuthorPost ? classes['card--my'] : classes['card--other']}`}>
 			<CardHeader className='flex items-center gap-4 pb-3'>
-				<img
-					src={userAvatar}
-					alt={avatarAlt}
-					className={classes.avatar}
-				/>
+				<img src={userAvatar} alt={avatarAlt} className={classes.avatar} />
 
 				<div className={classes.author}>
 					<h2 className={classes['author-email']}>{post.user.email}</h2>

@@ -28,9 +28,10 @@ export type LoginUserRequest = Pick<User, 'email' | 'password'>;
 export type LoginRequest = LoginUserRequest;
 
 export interface GoogleLoginRequest {
+	/** Google ID token (JWT credential); the only field the backend reads. */
 	authCode: string;
-	clientId: string;
-	selectBy: string;
+	clientId?: string;
+	selectBy?: string;
 }
 
 // `type` zamiast `interface`: tylko aliasy typów mają niejawną sygnaturę indeksu, więc pasują do `Record<string, unknown>`

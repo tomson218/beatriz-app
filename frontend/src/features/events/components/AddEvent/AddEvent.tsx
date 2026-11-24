@@ -15,7 +15,7 @@ const AddEvent = () => {
 	const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
 	const [selectedType, setSelectedType] = useState<string>('concert');
 
-	const descriptionRef = useRef<HTMLInputElement>(null);
+	const descriptionRef = useRef<HTMLTextAreaElement>(null);
 	const dateRef = useRef<HTMLInputElement>(null);
 	const starsRef = useRef<HTMLInputElement>(null);
 	const imageRef = useRef<HTMLInputElement>(null);
@@ -29,9 +29,7 @@ const AddEvent = () => {
 
 	const handleSelectSector = (sector: string) => {
 		if (isSectorSelected(sector)) {
-			setSelectedSectors(prev =>
-				prev.filter(selectedSector => selectedSector !== sector).sort(),
-			);
+			setSelectedSectors(prev => prev.filter(selectedSector => selectedSector !== sector).sort());
 		} else {
 			setSelectedSectors(prev => [...prev, sector].sort());
 		}
@@ -49,12 +47,13 @@ const AddEvent = () => {
 		if (selectedImage) {
 			formData.append('image', selectedImage);
 		}
-		formData.append('seatRequired', seatRequiredRef.current?.checked ?? false);
+		formData.append('seatRequired', String(seatRequiredRef.current?.checked ?? false));
 		formData.append('normal', String(normalRef.current?.value ?? '0'));
 		formData.append('vip', String(vipRef.current?.value ?? '0'));
 		formData.append('child', String(childRef.current?.value ?? '0'));
 		formData.append('name', nameRef.current?.value ?? '');
-		formData.append('sectors', selectedSectors);
+		// The backend expects a comma-separated list, e.g. "A,B,C".
+		formData.append('sectors', selectedSectors.join(','));
 		formData.append('type', selectedType);
 
 		newEvent(formData);
@@ -62,152 +61,115 @@ const AddEvent = () => {
 
 	return (
 		<>
-			<h1 className={classes.heading}>
-				Dodawanie nowego wydarzenia
-			</h1>
+			<h1 className={classes.heading}>Dodawanie nowego wydarzenia</h1>
 			<form
 				action='/api/events'
 				method='post'
 				className={`${classes.form} ${classes['form-container']}`}
 				encType='multipart/form-data'
 				onSubmit={handleAddEvent}>
- 			<fieldset className={classes['grid-container']}>
- 				<section className={classes['input-group']}>
- 					<article>
- 						<Label htmlFor='description'>
- 							Opis
- 						</Label>
+				<fieldset className={classes['grid-container']}>
+					<section className={classes['input-group']}>
+						<article>
+							<Label htmlFor='description'>Opis</Label>
 
- 						<textarea id='description' name='description' className={classes.input} ref={descriptionRef} required></textarea>
- 					</article>
+							<textarea
+								id='description'
+								name='description'
+								className={classes.input}
+								ref={descriptionRef}
+								required></textarea>
+						</article>
 
- 					<article>
- 						<Label htmlFor='date'>
- 							Data
- 						</Label>
- 						<Input type='datetime-local' id='date' name='date' ref={dateRef} required />
- 					</article>
- 				</section>
+						<article>
+							<Label htmlFor='date'>Data</Label>
+							<Input type='datetime-local' id='date' name='date' ref={dateRef} required />
+						</article>
+					</section>
 
- 				<section className={classes['input-group']}>
- 					<article className={classes.block}>
- 						<Label htmlFor='stars'>
- 							Gwiazdy
- 						</Label>
- 						<Input type='text' id='stars' name='stars' ref={starsRef} required />
- 					</article>
+					<section className={classes['input-group']}>
+						<article className={classes.block}>
+							<Label htmlFor='stars'>Gwiazdy</Label>
+							<Input type='text' id='stars' name='stars' ref={starsRef} required />
+						</article>
 
- 					<article className={classes.block}>
- 						<Label htmlFor='name'>
- 							Nazwa
- 						</Label>
- 						<Input type='text' id='name' name='name' ref={nameRef} required />
- 					</article>
- 				</section>
+						<article className={classes.block}>
+							<Label htmlFor='name'>Nazwa</Label>
+							<Input type='text' id='name' name='name' ref={nameRef} required />
+						</article>
+					</section>
 
- 				<section className={classes['input-group']}>
- 					<article className={classes.block}>
- 						<Label htmlFor='type'>Typ</Label>
- 						<Select value={selectedType} onValueChange={setSelectedType}>
- 							<SelectTrigger id='type'>
- 								<SelectValue />
- 							</SelectTrigger>
- 							<SelectContent>
- 								{EVENT_TYPE_OPTIONS.map(({ value, label }) => (
- 									<SelectItem key={value} value={value}>
- 										{label}
- 									</SelectItem>
- 								))}
- 							</SelectContent>
- 						</Select>
- 					</article>
+					<section className={classes['input-group']}>
+						<article className={classes.block}>
+							<Label htmlFor='type'>Typ</Label>
+							<Select value={selectedType} onValueChange={setSelectedType}>
+								<SelectTrigger id='type'>
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									{EVENT_TYPE_OPTIONS.map(({ value, label }) => (
+										<SelectItem key={value} value={value}>
+											{label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</article>
 
- 					<article className={classes.block}>
- 						<Label htmlFor='image'>
- 							Zdjęcie
- 						</Label>
- 						<Input type='file' id='image' name='image' ref={imageRef} required />
- 					</article>
- 				</section>
+						<article className={classes.block}>
+							<Label htmlFor='image'>Zdjęcie</Label>
+							<Input type='file' id='image' name='image' ref={imageRef} required />
+						</article>
+					</section>
 
- 			<p className={classes['image-section']}>
- 				Wybierz sektory
- 			</p>
+					<p className={classes['image-section']}>Wybierz sektory</p>
 
- 				<section className={classes.container}>
- 					<figure className={classes['hala-container']}>
- 						<div className={classes['hala-grid']}>
-  						{SECTORS.map((sectorName, index) => (
- 								<Sector
- 									key={sectorName}
- 									sectorName={sectorName}
- 									isSelected={isSectorSelected(sectorName)}
- 									isDisabled={false}
- 									index={index}
- 									onClick={handleSelectSector}
- 								/>
- 							))}
- 							<div className={classes.hala}></div>
- 						</div>
- 					</figure>
- 				</section>
+					<section className={classes.container}>
+						<figure className={classes['hala-container']}>
+							<div className={classes['hala-grid']}>
+								{SECTORS.map((sectorName, index) => (
+									<Sector
+										key={sectorName}
+										sectorName={sectorName}
+										isSelected={isSectorSelected(sectorName)}
+										isDisabled={false}
+										index={index}
+										onClick={handleSelectSector}
+									/>
+								))}
+								<div className={classes.hala}></div>
+							</div>
+						</figure>
+					</section>
 
- 			<aside className={classes.block}>
- 				<Label htmlFor='seatRequired'>
- 					Miejsce siedzące wymagane:
- 				</Label>
- 				<Input type='checkbox' id='seatRequired' name='seatRequired' ref={seatRequiredRef} />
- 			</aside>
+					<aside className={classes.block}>
+						<Label htmlFor='seatRequired'>Miejsce siedzące wymagane:</Label>
+						<Input type='checkbox' id='seatRequired' name='seatRequired' ref={seatRequiredRef} />
+					</aside>
 
- 			<h1 className={classes['prices-heading']}>
- 				Ceny biletów
- 			</h1>
+					<h1 className={classes['prices-heading']}>Ceny biletów</h1>
 
- 			<section className={classes['tickets-prices']}>
- 				<article>
- 					<Label htmlFor='normal'>
- 						Normalny
- 					</Label>
- 						<Input
- 							type='number'
- 							id='normal'
- 							name='normal'
- 							ref={normalRef}
- 							required
- 						/>
- 				</article>
+					<section className={classes['tickets-prices']}>
+						<article>
+							<Label htmlFor='normal'>Normalny</Label>
+							<Input type='number' id='normal' name='normal' ref={normalRef} required />
+						</article>
 
- 				<article>
- 					<Label htmlFor='vip'>
- 						VIP
- 					</Label>
- 						<Input
- 							type='number'
- 							id='vip'
- 							name='vip'
- 							ref={vipRef}
- 							required
- 						/>
- 				</article>
+						<article>
+							<Label htmlFor='vip'>VIP</Label>
+							<Input type='number' id='vip' name='vip' ref={vipRef} required />
+						</article>
 
- 				<article>
- 					<Label htmlFor='child'>
- 						Dziecięcy
- 					</Label>
- 						<Input
- 							type='number'
- 							id='child'
- 							name='child'
- 							ref={childRef}
- 							required
- 						/>
- 				</article>
- 			</section>
- 			</fieldset>
+						<article>
+							<Label htmlFor='child'>Dziecięcy</Label>
+							<Input type='number' id='child' name='child' ref={childRef} required />
+						</article>
+					</section>
+				</fieldset>
 
- 			<footer className={classes['submit-button-container']}>
- 				<Button>Dodaj</Button>
- 			</footer>
+				<footer className={classes['submit-button-container']}>
+					<Button>Dodaj</Button>
+				</footer>
 			</form>
 		</>
 	);

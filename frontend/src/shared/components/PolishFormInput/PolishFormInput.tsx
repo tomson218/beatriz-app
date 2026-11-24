@@ -1,10 +1,19 @@
 import FormInput from '@/shared/components/FormInput/FormInput';
-import type { FieldValues, RegisterOptions, Path, ValidationValueMessage } from 'react-hook-form';
+import type { FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import type { ValidationMessages, ValidationRuleName } from '@/shared/types/forms';
+
+/** A length rule whose message is optional: the component fills in a Polish message when it is missing. */
+type LengthRule = number | { value: number; message?: string };
+
+/** Validation rules like `RegisterOptions`, but `minLength` / `maxLength` may skip the message. */
+type PolishValidation<T extends FieldValues> = Omit<RegisterOptions<T, Path<T>>, 'minLength' | 'maxLength'> & {
+	minLength?: LengthRule;
+	maxLength?: LengthRule;
+};
 
 interface PolishFormInputProps<T extends FieldValues = FieldValues>
 	extends Omit<Parameters<typeof FormInput<T>>[0], 'validation' | 'error'> {
-	validation?: RegisterOptions<T>;
+	validation?: PolishValidation<T>;
 	fieldName?: string;
 }
 
@@ -28,7 +37,7 @@ const getFieldMessage = (fieldName: string, type: ValidationRuleName) => {
 };
 
 /** Sprawdza czy reguła walidacji ma postać obiektu z wartością i komunikatem (np. { value: 8, message: '...' }). */
-const isRuleWithValue = (rule: unknown): rule is ValidationValueMessage<number> => {
+const isRuleWithValue = (rule: unknown): rule is { value: number; message?: string } => {
 	const isRuleMissing = !rule;
 
 	if (isRuleMissing) return false;
@@ -55,13 +64,13 @@ const PolishFormInput = <T extends FieldValues>({
 }: PolishFormInputProps<T>) => {
 	const field = fieldName || labelText;
 
-	const buildValidation = (v?: RegisterOptions<T>): RegisterOptions<T> | undefined => {
+	const buildValidation = (v?: PolishValidation<T>): RegisterOptions<T, Path<T>> | undefined => {
 		const hasNoValidation = !v;
 
 		if (hasNoValidation) return undefined;
 
-		const result: RegisterOptions<T> = { ...v };
-		const { minLength, maxLength } = result;
+		const { minLength, maxLength } = v;
+		const result = { ...v } as RegisterOptions<T, Path<T>>;
 
 		const isRequiredFlag = result.required === true;
 		const hasMinLengthWithValue = isRuleWithValue(minLength);

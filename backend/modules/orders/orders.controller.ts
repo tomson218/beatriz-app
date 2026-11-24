@@ -8,7 +8,12 @@ import {
 	parseOrderStatus,
 	resolveOfflineOrder,
 } from './orders.service.ts';
-import type { CreateOfflineOrderRequest, OrderDto, OrderStatus, UpdateOrderStatusRequest } from '@beatriz/shared/orders';
+import type {
+	CreateOfflineOrderRequest,
+	OrderDto,
+	OrderStatus,
+	UpdateOrderStatusRequest,
+} from '@beatriz/shared/orders';
 import type { OrderDocument, OrderRouteParams } from './orders.type.ts';
 
 export const getAllOrders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -26,7 +31,11 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
 	}
 };
 
-export const getUserOrders = async (req: Request<OrderRouteParams>, res: Response, next: NextFunction): Promise<void> => {
+export const getUserOrders = async (
+	req: Request<OrderRouteParams>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		const orders: OrderDocument[] = await findOrdersOfUser(req.params.id);
 		const ordersDto: OrderDto[] = orders.map(toOrderDto);

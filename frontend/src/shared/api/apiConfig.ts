@@ -1,5 +1,8 @@
 import { getItemLocalStorage, setItemLocalStorage } from '@/shared/utils/localStorage';
-import axios, { type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
+import axios, { type AxiosResponse, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+
+/** Request config with a flag that marks a request already retried after refreshing the token. */
+type RetriableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api/v2';
 export const ASSET_BASE_URL = import.meta.env.VITE_ASSET_URL ?? 'http://localhost:3000';
@@ -26,14 +29,13 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 };
 
 instance.interceptors.request.use(
-	function (config: AxiosRequestConfig) {
+	function (config: InternalAxiosRequestConfig) {
 		if (isRefreshTokenRequest(config.url)) {
 			return config;
 		}
 
-		const token = getItemLocalStorage('token');
+		const token = getItemLocalStorage<string>('token');
 		if (token) {
-			config.headers = config.headers ?? {};
 			config.headers.Authorization = `Bearer ${token}`;
 		}
 		return config;
@@ -48,13 +50,13 @@ instance.interceptors.response.use(
 		return response;
 	},
 	async function (error: AxiosError) {
-		const originalRequest = error.config;
+		const originalRequest = error.config as RetriableRequestConfig | undefined;
 
 		const isUnauthorized = error.response?.status === 401;
 		const isNotRetriedYet = !originalRequest?._retry;
 		const isNotRefreshTokenRequest = !isRefreshTokenRequest(originalRequest?.url);
 
-		if (isUnauthorized && isNotRetriedYet && isNotRefreshTokenRequest) {
+		if (originalRequest && isUnauthorized && isNotRetriedYet && isNotRefreshTokenRequest) {
 			originalRequest._retry = true;
 
 			const newAccessToken = await refreshAccessToken();

@@ -21,14 +21,18 @@ import {
 	sendOrderConfirmation,
 } from '../../../../modules/payments/payments.service.ts';
 
-vi.mock('../../../../modules/users/users.model.ts', () => ({ default: { findById: vi.fn(), findByIdAndUpdate: vi.fn() } }));
+vi.mock('../../../../modules/users/users.model.ts', () => ({
+	default: { findById: vi.fn(), findByIdAndUpdate: vi.fn() },
+}));
 vi.mock('../../../../modules/events/events.model.ts', () => ({ default: { find: vi.fn() } }));
 vi.mock('../../../../modules/orders/orders.model.ts', () => ({ default: { create: vi.fn() } }));
 vi.mock('../../../../modules/tickets/tickets.model.ts', () => ({ default: { exists: vi.fn(), insertMany: vi.fn() } }));
 vi.mock('../../../../utils/email.ts', () => ({ sendEmail: vi.fn() }));
 vi.mock('../../../../utils/pdfGenerator.ts', () => ({ generatePDF: vi.fn() }));
 vi.mock('../../../../modules/discountCodes/discountCodes.service.ts', () => ({ getUsableDiscountCode: vi.fn() }));
-vi.mock('../../../../modules/payments/payments.stripe.ts', () => ({ stripe: { checkout: { sessions: { create: vi.fn() } } } }));
+vi.mock('../../../../modules/payments/payments.stripe.ts', () => ({
+	stripe: { checkout: { sessions: { create: vi.fn() } } },
+}));
 
 const User = vi.mocked(UserModel);
 const Event = vi.mocked(EventModel);
@@ -41,7 +45,7 @@ const NOW = new Date('2026-01-01T12:00:00Z');
 const DAY_MS = 24 * 60 * 60 * 1000;
 const EVENT_ID = 'a'.repeat(24);
 const USER_ID = { toString: () => 'user-1' } as never;
-const EVENT_DATE = new Date(NOW.getTime() + 40 * DAY_MS); // rabat 10%
+const EVENT_DATE = new Date(NOW.getTime() + 40 * DAY_MS); // 10% discount
 
 const dbEvent = {
 	_id: { toString: () => EVENT_ID },
@@ -120,7 +124,15 @@ describe('buildOrderTickets / buildTickets', () => {
 	it('maps checkout items to ticket documents for the user', () => {
 		const result = buildTickets([item()], USER_ID);
 		const expected = [
-			{ eventId: EVENT_ID, type: 'normal', price: 90, quantity: 1, seating: { sector: 'A', block: 'blue', seat: 1 }, userId: USER_ID, date: NOW },
+			{
+				eventId: EVENT_ID,
+				type: 'normal',
+				price: 90,
+				quantity: 1,
+				seating: { sector: 'A', block: 'blue', seat: 1 },
+				userId: USER_ID,
+				date: NOW,
+			},
 		];
 
 		expect(result).toEqual(expected);
@@ -152,9 +164,16 @@ describe('prepareCheckout', () => {
 	it('rejects the order with 409 when a seat is already taken', async () => {
 		Ticket.exists.mockResolvedValue({ _id: 'ticket-1' } as never);
 
-		const result = await catchAsyncError(prepareCheckout(user() as never, { products: [product({ seating: '7' })] }));
+		const result = await catchAsyncError(
+			prepareCheckout(user() as never, { products: [product({ seating: '7' })] }),
+		);
 		const expected = { statusCode: 409, message: 'Miejsce 7 w sektorze A jest już zajęte' };
-		const expectedSeatQuery = { eventId: EVENT_ID, 'seating.sector': 'A', 'seating.block': 'blue', 'seating.seat': 7 };
+		const expectedSeatQuery = {
+			eventId: EVENT_ID,
+			'seating.sector': 'A',
+			'seating.block': 'blue',
+			'seating.seat': 7,
+		};
 
 		expect(result).toMatchObject(expected);
 		expect(Ticket.exists).toHaveBeenCalledWith(expectedSeatQuery);
@@ -184,7 +203,10 @@ describe('prepareCheckout', () => {
 			products: [product(), product({ seating: '2', type: 'VIP' })],
 			discountCode: '  PROMO50 ',
 		});
-		const expected = { items: [item({ price: 45 }), item({ seating: '2', type: 'VIP', price: 135 })], discountCode: 'PROMO50' };
+		const expected = {
+			items: [item({ price: 45 }), item({ seating: '2', type: 'VIP', price: 135 })],
+			discountCode: 'PROMO50',
+		};
 		const expectedCodeCheck = ['PROMO50', 360, buyer];
 
 		expect(result).toEqual(expected);
@@ -200,9 +222,13 @@ describe('prepareCheckout', () => {
 	});
 
 	it('propagates errors from an unusable discount code', async () => {
-		vi.mocked(getUsableDiscountCode).mockRejectedValue(Object.assign(new Error('Discount code has expired.'), { statusCode: 400 }));
+		vi.mocked(getUsableDiscountCode).mockRejectedValue(
+			Object.assign(new Error('Discount code has expired.'), { statusCode: 400 }),
+		);
 
-		const result = await catchAsyncError(prepareCheckout(user() as never, { products: [product()], discountCode: 'OLD' }));
+		const result = await catchAsyncError(
+			prepareCheckout(user() as never, { products: [product()], discountCode: 'OLD' }),
+		);
 		const expected = { statusCode: 400, message: 'Discount code has expired.' };
 
 		expect(result).toMatchObject(expected);
@@ -299,7 +325,10 @@ describe('sendOrderConfirmation', () => {
 
 describe('fulfillCheckoutSession', () => {
 	const session = (discountCode: string | null = null) =>
-		({ id: 'cs_1', metadata: { userId: JSON.stringify('user-1'), discountCode: JSON.stringify(discountCode) } }) as never;
+		({
+			id: 'cs_1',
+			metadata: { userId: JSON.stringify('user-1'), discountCode: JSON.stringify(discountCode) },
+		}) as never;
 
 	beforeEach(() => {
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -311,7 +340,14 @@ describe('fulfillCheckoutSession', () => {
 		User.findById.mockReturnValue(mockQuery(user({ myCart: cart })) as never);
 
 		await fulfillCheckoutSession(session());
-		const expected = { totalAmount: 360, date: NOW, userId: USER_ID, currency: 'PLN', tickets: buildOrderTickets(cart), countOfTickets: 2 };
+		const expected = {
+			totalAmount: 360,
+			date: NOW,
+			userId: USER_ID,
+			currency: 'PLN',
+			tickets: buildOrderTickets(cart),
+			countOfTickets: 2,
+		};
 
 		expect(Order.create).toHaveBeenCalledWith(expected);
 	});

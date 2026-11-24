@@ -14,6 +14,7 @@ import {
 } from '@/shared/components/ui/Dialog/Dialog';
 import { getBlockLabel } from '@/features/tickets/utils/blockLabels';
 import Seat from '@/features/tickets/components/Seat/Seat';
+import type { BlockType } from '@beatriz/shared/tickets';
 import {
 	parseInitialSelectedSeats,
 	isSeatOccupied,
@@ -36,7 +37,11 @@ const Seats = () => {
 	const location = useLocation();
 	const getCurrentUrl = (): string => `${location.pathname}${location.search}`;
 
-	const { data: occupiedSeats, isLoading: isOccupiedSeatsLoading } = useGetOccupiedSeatsQuery(eventId, sector, block);
+	const { data: occupiedSeats, isLoading: isOccupiedSeatsLoading } = useGetOccupiedSeatsQuery(
+		eventId,
+		sector,
+		block as BlockType,
+	);
 
 	const handleAddSeats = (seat: number) => {
 		if (isSeatOccupied(seat, occupiedSeats)) {

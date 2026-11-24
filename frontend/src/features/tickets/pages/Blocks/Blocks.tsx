@@ -2,7 +2,7 @@ import { Button } from '@/shared/components/ui/Button/Button';
 import classes from './Blocks.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Event } from '@beatriz/shared/events';
+import type { EventDto } from '@beatriz/shared/events';
 import type { BlockType } from '@beatriz/shared/tickets';
 import useGetEventByIdQuery from '@/features/events/api/queries/useGetEventByIdQuery';
 import { getBlockLabel } from '@/features/tickets/utils/blockLabels';
@@ -17,18 +17,18 @@ import {
 } from '@/shared/components/ui/Dialog/Dialog';
 
 interface Params {
-	eventId: Event["_id"];
+	eventId: EventDto['_id'];
 	sector?: string;
 	block?: BlockType;
 }
 const Blocks = () => {
 	const navigate = useNavigate();
 
-	const params = Object.fromEntries(new URLSearchParams(window.location.search)) as Params;
+	const params = Object.fromEntries(new URLSearchParams(window.location.search)) as unknown as Params;
 
 	const { eventId, sector, block } = params;
 
-	const [selectedBlock, setSelectedBlock] = useState<BlockType>(block ?? '');
+	const [selectedBlock, setSelectedBlock] = useState<BlockType | ''>(block ?? '');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	const { data: eventDetails, isLoading: isEventDetailsLoading } = useGetEventByIdQuery(eventId);
@@ -37,7 +37,7 @@ const Blocks = () => {
 
 	const isBlockNotSelected = !selectedBlock;
 	const hasSelection = !isBlockNotSelected;
-	const isSeatRequired = eventDetails.seatRequired;
+	const isSeatRequired = eventDetails?.seatRequired;
 	const needsSeatSelection = selectedBlock && isSeatRequired;
 
 	const buildNextPageUrl = () => {
@@ -66,10 +66,30 @@ const Blocks = () => {
 			<h1 className={classes.heading}>Wybierz strefę</h1>
 
 			<section className={classes.blocks}>
-				<Block block='blue' onSelect={handleSelectBlock} isSelected={selectedBlock === 'blue'} isDimmed={hasSelection && selectedBlock !== 'blue'} />
-				<Block block='green' onSelect={handleSelectBlock} isSelected={selectedBlock === 'green'} isDimmed={hasSelection && selectedBlock !== 'green'} />
-				<Block block='yellow' onSelect={handleSelectBlock} isSelected={selectedBlock === 'yellow'} isDimmed={hasSelection && selectedBlock !== 'yellow'} />
-				<Block block='black' onSelect={handleSelectBlock} isSelected={selectedBlock === 'black'} isDimmed={hasSelection && selectedBlock !== 'black'} />
+				<Block
+					block='blue'
+					onSelect={handleSelectBlock}
+					isSelected={selectedBlock === 'blue'}
+					isDimmed={hasSelection && selectedBlock !== 'blue'}
+				/>
+				<Block
+					block='green'
+					onSelect={handleSelectBlock}
+					isSelected={selectedBlock === 'green'}
+					isDimmed={hasSelection && selectedBlock !== 'green'}
+				/>
+				<Block
+					block='yellow'
+					onSelect={handleSelectBlock}
+					isSelected={selectedBlock === 'yellow'}
+					isDimmed={hasSelection && selectedBlock !== 'yellow'}
+				/>
+				<Block
+					block='black'
+					onSelect={handleSelectBlock}
+					isSelected={selectedBlock === 'black'}
+					isDimmed={hasSelection && selectedBlock !== 'black'}
+				/>
 			</section>
 
 			<footer className={classes.footer}>
@@ -92,7 +112,9 @@ const Blocks = () => {
 				<DialogContent className='sm:max-w-md border-red-700 bg-red-600 text-white'>
 					<DialogHeader>
 						<DialogTitle className='text-white'>Brak wybranej strefy!!!</DialogTitle>
-						<DialogDescription className='text-red-50'>Żeby przejść dalej, musisz najpierw wybrać daną strefę.</DialogDescription>
+						<DialogDescription className='text-red-50'>
+							Żeby przejść dalej, musisz najpierw wybrać daną strefę.
+						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
 						<Button

@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { toDiscountCodeDto } from '../../../modules/discountCodes/discountCodes.mapper.ts';
 import { toEventDto } from '../../../modules/events/events.mapper.ts';
 import { toOrderDto } from '../../../modules/orders/orders.mapper.ts';
-import { toForumDto } from '../../../modules/posts/posts.mapper.ts';
+import { toPostDto } from '../../../modules/posts/posts.mapper.ts';
 import { toTicketDto } from '../../../modules/tickets/tickets.mapper.ts';
 import { toUserDto } from '../../../modules/users/users.mapper.ts';
 
 const objectId = (value: string) => ({ toString: () => value });
 
-/** Imituje dokument Mongoose: pola populate (wirtualne) są dostępne tylko przez `get()`. */
+/** Imitates a Mongoose document: populated (virtual) fields are only available through `get()`. */
 const doc = <T extends object>(fields: T, virtuals: Record<string, unknown> = {}) => ({
 	...fields,
 	get: (key: string) => virtuals[key],
@@ -91,7 +91,15 @@ describe('toEventDto', () => {
 describe('toDiscountCodeDto', () => {
 	it('maps the discount code fields', () => {
 		const expiration = new Date('2026-06-01');
-		const code = { _id: objectId('d1'), code: 'PROMO', value: 0.2, expiration, usageLimit: 5, usageConditions: 100, __v: 0 };
+		const code = {
+			_id: objectId('d1'),
+			code: 'PROMO',
+			value: 0.2,
+			expiration,
+			usageLimit: 5,
+			usageConditions: 100,
+			__v: 0,
+		};
 
 		const result = toDiscountCodeDto(code as never);
 		const expected = { _id: 'd1', code: 'PROMO', value: 0.2, expiration, usageLimit: 5, usageConditions: 100 };
@@ -101,7 +109,15 @@ describe('toDiscountCodeDto', () => {
 });
 
 describe('toOrderDto', () => {
-	const ticket = { _id: 't1', eventId: 'e1', event: { name: 'Koncert' }, seating: [], price: 90, type: 'normal', extra: 'x' };
+	const ticket = {
+		_id: 't1',
+		eventId: 'e1',
+		event: { name: 'Koncert' },
+		seating: [],
+		price: 90,
+		type: 'normal',
+		extra: 'x',
+	};
 	const orderDate = new Date('2026-11-19T10:00:00Z');
 
 	const order = (status?: string) =>
@@ -146,13 +162,24 @@ describe('toOrderDto', () => {
 	});
 });
 
-describe('toForumDto', () => {
+describe('toPostDto', () => {
 	it('includes populated user and event', () => {
 		const date = new Date('2026-06-01');
-		const post = doc({ _id: objectId('p1'), date, userId: 'u1', eventId: 'e1', message: 'Hej' }, { user: { username: 'jan' }, event: { name: 'Koncert' } });
+		const post = doc(
+			{ _id: objectId('p1'), date, userId: 'u1', eventId: 'e1', message: 'Hej' },
+			{ user: { username: 'jan' }, event: { name: 'Koncert' } },
+		);
 
-		const result = toForumDto(post as never);
-		const expected = { _id: 'p1', date, userId: 'u1', user: { username: 'jan' }, eventId: 'e1', event: { name: 'Koncert' }, message: 'Hej' };
+		const result = toPostDto(post as never);
+		const expected = {
+			_id: 'p1',
+			date,
+			userId: 'u1',
+			user: { username: 'jan' },
+			eventId: 'e1',
+			event: { name: 'Koncert' },
+			message: 'Hej',
+		};
 
 		expect(result).toStrictEqual(expected);
 	});
@@ -162,7 +189,17 @@ describe('toTicketDto', () => {
 	it('includes populated event and user', () => {
 		const date = new Date('2026-06-01');
 		const ticket = doc(
-			{ _id: objectId('t1'), eventId: 'e1', seating: { sector: 'A' }, userId: 'u1', quantity: 1, price: 90, type: 'normal', date, status: 'active' },
+			{
+				_id: objectId('t1'),
+				eventId: 'e1',
+				seating: { sector: 'A' },
+				userId: 'u1',
+				quantity: 1,
+				price: 90,
+				type: 'normal',
+				date,
+				status: 'active',
+			},
 			{ event: { name: 'Koncert' }, user: { username: 'jan' } },
 		);
 

@@ -1,0 +1,4 @@
+src/features/events/components/AddEvent/AddEvent.tsx(52,35): error TS2769: No overload matches this call.
+src/features/events/components/AddEvent/AddEvent.tsx(57,30): error TS2769: No overload matches this call.
+src/features/events/components/AddEvent/AddEvent.tsx(60,12): error TS2345: Argument of type 'FormData' is not assignable to parameter of type 'Event'.
+src/features/events/components/AddEvent/AddEvent.tsx(81,80): error TS2322: Type 'RefObject<HTMLInputElement>' is not assignable to type 'LegacyRef<HTMLTextAreaElement> | undefined'.

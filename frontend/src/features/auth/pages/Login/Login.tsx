@@ -58,21 +58,21 @@ const Login = () => {
 							},
 						}}
 					/>
- 				<Form.Button content='Zaloguj się' className='w-full mt-6' />
- 			</Form>
- 			<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
- 				<span className={classes['divider-span']}>LUB</span>
- 			</Divider>
+					<Form.Button content='Zaloguj się' className='w-full mt-6' />
+				</Form>
+				<Divider sx={{ width: '400px', textAlign: 'center', borderBottom: '1px solid #ccc', margin: '2rem 0' }}>
+					<span className={classes['divider-span']}>LUB</span>
+				</Divider>
 
- 			<SocialMediaLogin />
+				<SocialMediaLogin />
 
- 			<footer className={classes['no-account']}>
- 				<p>Nie masz jeszcze konta?</p>
+				<footer className={classes['no-account']}>
+					<p>Nie masz jeszcze konta?</p>
 
- 				<Button variant='link' asChild>
- 					<Link to='/register'>Utwórz swoje konto</Link>
- 				</Button>
- 			</footer>
+					<Button variant='link' asChild>
+						<Link to='/register'>Utwórz swoje konto</Link>
+					</Button>
+				</footer>
 			</section>
 			<Toaster position='bottom-right' reverseOrder={false} />
 		</main>

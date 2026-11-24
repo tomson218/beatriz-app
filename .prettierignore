@@ -1,0 +1,13 @@
+# Dependencies, build output and generated reports
+node_modules
+dist
+coverage
+package-lock.json
+
+# Static assets and screenshots
+backend/public
+frontend/public
+screenshots
+
+# Environment files
+.env*

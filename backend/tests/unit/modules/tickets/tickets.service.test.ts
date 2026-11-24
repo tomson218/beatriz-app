@@ -3,7 +3,12 @@ import TicketModel from '../../../../modules/tickets/tickets.model.ts';
 import EventModel from '../../../../modules/events/events.model.ts';
 import { mockQuery } from '../../../helpers/mockQuery.ts';
 import { catchAsyncError } from '../../../helpers/catchError.ts';
-import { findAllTickets, findOccupiedSeats, findTicketsOfUser, getFreeSectorsSummary } from '../../../../modules/tickets/tickets.service.ts';
+import {
+	findAllTickets,
+	findOccupiedSeats,
+	findTicketsOfUser,
+	getFreeSectorsSummary,
+} from '../../../../modules/tickets/tickets.service.ts';
 
 vi.mock('../../../../modules/tickets/tickets.model.ts', () => ({ default: { find: vi.fn() } }));
 vi.mock('../../../../modules/events/events.model.ts', () => ({ default: { findOne: vi.fn() } }));
@@ -49,7 +54,12 @@ describe('findTicketsOfUser', () => {
 
 describe('getFreeSectorsSummary', () => {
 	it('subtracts sold and reserved tickets from each sector capacity', async () => {
-		const tickets = [{ seating: { sector: 'A' } }, { seating: { sector: 'A' } }, { seating: { sector: 'B' } }, { seating: { sector: 'Z' } }];
+		const tickets = [
+			{ seating: { sector: 'A' } },
+			{ seating: { sector: 'A' } },
+			{ seating: { sector: 'B' } },
+			{ seating: { sector: 'Z' } },
+		];
 		Ticket.find.mockReturnValue(mockQuery(tickets) as never);
 		Event.findOne.mockReturnValue(mockQuery({ sectors: ['A', 'B', 'C'] }) as never);
 
@@ -87,7 +97,9 @@ describe('getFreeSectorsSummary', () => {
 
 describe('findOccupiedSeats', () => {
 	it('returns sorted seat numbers', async () => {
-		Ticket.find.mockReturnValue(mockQuery([{ seating: { seat: 12 } }, { seating: { seat: 3 } }, { seating: { seat: 100 } }]) as never);
+		Ticket.find.mockReturnValue(
+			mockQuery([{ seating: { seat: 12 } }, { seating: { seat: 3 } }, { seating: { seat: 100 } }]) as never,
+		);
 
 		const result = await findOccupiedSeats('event-1', 'A', 'blue');
 		const expected = [3, 12, 100];
@@ -99,7 +111,12 @@ describe('findOccupiedSeats', () => {
 		Ticket.find.mockReturnValue(mockQuery([]) as never);
 
 		await findOccupiedSeats('event-1', 'A', 'blue');
-		const expected = { eventId: 'event-1', 'seating.sector': 'A', 'seating.block': 'blue', 'seating.seat': { $ne: null } };
+		const expected = {
+			eventId: 'event-1',
+			'seating.sector': 'A',
+			'seating.block': 'blue',
+			'seating.seat': { $ne: null },
+		};
 
 		expect(Ticket.find).toHaveBeenCalledWith(expected);
 	});

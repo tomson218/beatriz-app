@@ -7,10 +7,10 @@ import useRemoveEventFromFavouriteMutation from '@/features/events/api/mutations
 import { Input } from '@/shared/components/ui/Input/Input';
 import { Label } from '@/shared/components/ui/Label/Label';
 import { useState } from 'react';
-import { calcDatePost } from '@/features/events/utils/calcDatePost';
 import { parseEventDate } from '@/features/events/utils/eventDate';
 import { matchesEventFilter } from '@/features/events/utils/eventFilter';
-import type { EventFilter } from '@beatriz/shared/events';
+import type { EventFilter, EventType } from '@beatriz/shared/events';
+import type { ChangeEvent } from 'react';
 import { EVENT_TYPE_OPTIONS } from '@beatriz/shared/constants/eventTypes';
 
 const Home = () => {
@@ -37,7 +37,7 @@ const Home = () => {
 		return <div>Ładowanie...</div>;
 	}
 
-	const handleFilterChange = e => {
+	const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 
 		const isMinPriceField = name === 'minPrice';
@@ -50,8 +50,9 @@ const Home = () => {
 		}));
 	};
 
-	const handleCategoryChange = e => {
-		const { value, checked } = e.target;
+	const handleCategoryChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const { checked } = e.target;
+		const value = e.target.value as EventType;
 
 		setFilter(prevFilter => {
 			if (checked) {
@@ -68,7 +69,7 @@ const Home = () => {
 		});
 	};
 
-	const handleSeatRequiredChange = e => {
+	const handleSeatRequiredChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value, checked } = e.target;
 		const seatRequiredValue = value === 'true';
 
@@ -87,7 +88,7 @@ const Home = () => {
 		});
 	};
 
-	const filteredEvents = events
+	const filteredEvents = (events ?? [])
 		.filter(event => matchesEventFilter(event, filter))
 		.toSorted((a, b) => parseEventDate(a.date).getTime() - parseEventDate(b.date).getTime());
 
@@ -118,9 +119,7 @@ const Home = () => {
 				</fieldset>
 
 				<fieldset className={classes['filter-group']}>
-					<Label htmlFor='star'>
-						Gwiazda wydarzenia
-					</Label>
+					<Label htmlFor='star'>Gwiazda wydarzenia</Label>
 					<Input
 						type='text'
 						name='star'
@@ -197,7 +196,7 @@ const Home = () => {
 						<EventCard
 							event={event}
 							key={event._id}
-							isFavourite={favouriteEvents.some(favourite => favourite._id === event._id)}
+							isFavourite={(favouriteEvents ?? []).some(favourite => favourite._id === event._id)}
 							onAddToFavourite={addEventToFavourites}
 							onRemoveFromFavourite={removeEventFromFavourites}
 						/>

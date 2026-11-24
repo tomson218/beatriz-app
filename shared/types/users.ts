@@ -18,7 +18,18 @@ export interface AppliedDiscountCode {
 	code?: string;
 }
 
-export type UserDto = Pick<User, 'username' | 'email' | 'firstName' | 'lastName' | 'photo' | 'favouriteEventIds' | 'cart' | 'appliedDiscountCodes' | 'role'> & {
+export type UserDto = Pick<
+	User,
+	| 'username'
+	| 'email'
+	| 'firstName'
+	| 'lastName'
+	| 'photo'
+	| 'favouriteEventIds'
+	| 'cart'
+	| 'appliedDiscountCodes'
+	| 'role'
+> & {
 	_id: string;
 };
 

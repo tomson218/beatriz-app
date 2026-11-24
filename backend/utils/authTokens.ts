@@ -28,9 +28,11 @@ export const createAuthTokens = (userId: string): AuthTokens => {
 	return { accessToken, refreshToken };
 };
 
-export const verifyAccessToken = (token: string): TokenPayload => jwt.verify(token, getAccessTokenSecret()) as TokenPayload;
+export const verifyAccessToken = (token: string): TokenPayload =>
+	jwt.verify(token, getAccessTokenSecret()) as TokenPayload;
 
-export const verifyRefreshToken = (token: string): TokenPayload => jwt.verify(token, getRefreshTokenSecret()) as TokenPayload;
+export const verifyRefreshToken = (token: string): TokenPayload =>
+	jwt.verify(token, getRefreshTokenSecret()) as TokenPayload;
 
 /** Zwraca token z nagłówka `Authorization: Bearer <token>` albo `undefined`, gdy nagłówka brak. */
 export const getBearerToken = (req: Request): string | undefined => {

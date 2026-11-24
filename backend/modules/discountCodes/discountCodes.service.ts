@@ -27,7 +27,11 @@ export const createDiscountCode = async (input: DiscountCodeRequest): Promise<Di
  * Zwraca kod rabatowy, jeśli można go użyć dla zamówienia o danej wartości.
  * W przeciwnym razie rzuca błąd z powodem: brak kodu (404), kod wygasł lub zbyt niska wartość zamówienia (400), kod już użyty (409).
  */
-export const getUsableDiscountCode = async (code: string, orderTotal: number, user: UserDocument): Promise<DiscountCodeDocument> => {
+export const getUsableDiscountCode = async (
+	code: string,
+	orderTotal: number,
+	user: UserDocument,
+): Promise<DiscountCodeDocument> => {
 	const discountCode: DiscountCodeDocument | null = await DiscountCodeModel.findOne({ code });
 
 	if (!discountCode) {
@@ -42,7 +46,9 @@ export const getUsableDiscountCode = async (code: string, orderTotal: number, us
 		throw Object.assign(new Error('Total amount does not meet the usage conditions.'), { statusCode: 400 });
 	}
 
-	const isAlreadyUsed: boolean = user.appliedDiscountCodes.some(applied => applied.code === code && applied.isUsed === true);
+	const isAlreadyUsed: boolean = user.appliedDiscountCodes.some(
+		applied => applied.code === code && applied.isUsed === true,
+	);
 
 	if (isAlreadyUsed) {
 		throw Object.assign(new Error('Discount code already applied.'), { statusCode: 409 });

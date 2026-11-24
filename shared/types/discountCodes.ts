@@ -10,7 +10,10 @@ export interface DiscountCodeDto extends Omit<DiscountCode, '_id'> {
 
 export type GetAllDiscountCodesResponse = ListResponse<'discountCodes', DiscountCodeDto>;
 
-export type DiscountCodeRequest = Pick<DiscountCode, 'code' | 'value' | 'usageLimit' | 'usageConditions' | 'expiration'>;
+export type DiscountCodeRequest = Pick<
+	DiscountCode,
+	'code' | 'value' | 'usageLimit' | 'usageConditions' | 'expiration'
+>;
 
 export type AddDiscountCodeResponse = ItemResponse<'newDiscountCode', DiscountCodeDto>;
 

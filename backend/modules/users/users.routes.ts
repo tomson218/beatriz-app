@@ -30,18 +30,11 @@ router.param('eventId', validateObjectId);
 
 router.get('/', protect, restrictTo('admin'), getAllUsers);
 
-router
-	.route('/me')
-	.get(protect, getMe)
-	.patch(protect, updateMe)
-	.delete(protect, deleteMe);
+router.route('/me').get(protect, getMe).patch(protect, updateMe).delete(protect, deleteMe);
 
 router.put('/me/cart', protect, replaceCart);
 
-router
-	.route('/me/favourites')
-	.get(protect, getUserFavoriteEvents)
-	.post(protect, addEventToFavourite);
+router.route('/me/favourites').get(protect, getUserFavoriteEvents).post(protect, addEventToFavourite);
 
 router.route('/me/favourites/:eventId').delete(protect, removeEventFromFavourite);
 

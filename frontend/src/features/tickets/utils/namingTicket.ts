@@ -1,7 +1,7 @@
 import type { BlockType } from '@beatriz/shared/tickets';
 import type { CssModuleClasses } from '@/shared/types/css';
 
-export const getNameBlock = (name: BlockType) => {
+export const getNameBlock = (name?: BlockType | null) => {
 	const isBlue = name === 'blue';
 	const isGreen = name === 'green';
 	const isYellow = name === 'yellow';
@@ -29,9 +29,7 @@ export const getNameTypeTicket = (type: string) => {
 /**
  * Buduje klasę CSS dla odznaki strefy (block badge).
  */
-export function getBlockBadgeClass(block: BlockType, classes: CssModuleClasses): string {
+export function getBlockBadgeClass(block: BlockType | null | undefined, classes: CssModuleClasses): string {
 	const blockClass = `block-badge--${block}`;
 	return `${classes['block-badge']} ${classes[blockClass]}`;
 }
-
-

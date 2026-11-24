@@ -12,7 +12,7 @@ const ProtectedRoutes = ({ children, isRequiredAdmin = false }: ProtectedRoutesP
 	const token = localStorage.getItem('token');
 	const isLoggedIn = !!token;
 
-	const userId = getItemLocalStorage('user-id');
+	const userId = getItemLocalStorage<string>('user-id');
 	const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserByIdQuery(userId);
 
 	const isNotLoggedIn = !isLoggedIn;

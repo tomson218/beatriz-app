@@ -1,13 +1,7 @@
 import { Input } from '@/shared/components/ui/Input/Input';
 import { Label } from '@/shared/components/ui/Label/Label';
 import classes from './FormInput.module.css';
-import type {
-	UseFormRegisterReturn,
-	FieldValues,
-	Path,
-	RegisterOptions,
-	FieldError,
-} from 'react-hook-form';
+import type { FieldValues, Path, RegisterOptions, FieldError, UseFormRegister } from 'react-hook-form';
 import type { InputHTMLAttributes } from 'react';
 
 interface FormInputProps<T extends FieldValues = FieldValues>
@@ -18,8 +12,9 @@ interface FormInputProps<T extends FieldValues = FieldValues>
 	type?: string;
 	errorMessage?: string;
 	error?: FieldError | undefined;
-	register: (name: Path<T>, validation?: RegisterOptions<T>) => UseFormRegisterReturn;
-	validation?: RegisterOptions<T>;
+	/** `register` from `useForm<T>()`; the form type is inferred from it. */
+	register: UseFormRegister<T>;
+	validation?: RegisterOptions<T, Path<T>>;
 	className?: string;
 }
 

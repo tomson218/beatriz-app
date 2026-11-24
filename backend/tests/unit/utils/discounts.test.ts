@@ -69,7 +69,7 @@ describe('calcPricesAfterDiscount', () => {
 		expect(result).toEqual(expected);
 	});
 
-	// 100 * 1.1 = 110.00000000000001 w arytmetyce zmiennoprzecinkowej; bez zaokrąglenia do groszy Math.ceil dałby 111.
+	// 100 * 1.1 = 110.00000000000001 in floating-point arithmetic; without rounding to grosze first, Math.ceil would give 111.
 	it.each([
 		[50, 55],
 		[90, 99],

@@ -1,7 +1,7 @@
 import { formattedDate, formattedTime } from '@/shared/utils/formatting-date';
 import { parseEventDate } from '@/features/events/utils/eventDate';
 import { getNameTypeTicket, getNameBlock } from '@/features/tickets/utils/namingTicket';
-import type { Event } from '@beatriz/shared/events';
+import type { EventDto } from '@beatriz/shared/events';
 import type { CartTicket } from '@beatriz/shared/orders';
 import type { TicketType } from '@beatriz/shared/tickets';
 import { Label } from '@/shared/components/ui/Label/Label';
@@ -9,9 +9,12 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import classes from './Order.module.css';
 import { ASSET_BASE_URL } from '@/shared/api/apiConfig';
 
+/** What the card shows about a ticket: where the seat is (the price and type come as separate props). */
+export type OrderTicketView = Pick<CartTicket, 'eventId' | 'sector' | 'block'> & { seat?: string };
+
 interface OrderProps {
-	ticket: CartTicket;
-	eventDetails: Event;
+	ticket: OrderTicketView;
+	eventDetails: EventDto | undefined;
 	onChangePrice?: (price: number) => void;
 	price: number;
 	isChoice?: boolean;
@@ -67,11 +70,13 @@ const Order = ({ ticket, eventDetails, onChangePrice, price, isChoice, isSummary
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
-							{Object.entries(eventDetails.prices).map(([k, v]) => (
-								<SelectItem key={k} value={v.toString()}>
-									{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
-								</SelectItem>
-							))}
+							{Object.entries(eventDetails.prices ?? {})
+								.filter((entry): entry is [string, number] => typeof entry[1] === 'number')
+								.map(([k, v]) => (
+									<SelectItem key={k} value={v.toString()}>
+										{getNameTypeTicket(k as TicketType)}: {v.toFixed(2)} PLN
+									</SelectItem>
+								))}
 						</SelectContent>
 					</Select>
 				</>

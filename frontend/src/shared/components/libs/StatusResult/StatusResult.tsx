@@ -1,27 +1,13 @@
-import { Result } from 'antd';
-import { Button } from '@/shared/components/ui/Button/Button';
+import { Result, type ResultProps } from 'antd';
 
 interface StatusResultProps {
-	status: string;
+	status: ResultProps['status'];
 	title: string;
 	subTitle: string;
 }
 
 const StatusResult = ({ status, title, subTitle }: StatusResultProps) => {
-	return (
-		<Result
-			status={status}
-			title={title}
-			subTitle={subTitle}
-			colorTextHeading='red'
-			colorWarning='red'
-			colorTextDescription='red'
-			colorSuccess='yellow'
-			colorInfo='yellow'
-			colorFillAlter='yellow'
-			colorError='yellow'
-		/>
-	);
+	return <Result status={status} title={title} subTitle={subTitle} />;
 };
 
 export default StatusResult;

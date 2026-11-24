@@ -25,4 +25,3 @@ export const forumSchema = new Schema({
 
 forumSchema.virtual('user', { ref: 'User', localField: 'userId', foreignField: '_id', justOne: true });
 forumSchema.virtual('event', { ref: 'Event', localField: 'eventId', foreignField: '_id', justOne: true });
-

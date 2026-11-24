@@ -115,7 +115,11 @@ export const addEventToFavourite = async (
 	}
 };
 
-export const removeEventFromFavourite = async (req: Request<EventIdParams>, res: Response, next: NextFunction): Promise<void> => {
+export const removeEventFromFavourite = async (
+	req: Request<EventIdParams>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
 	try {
 		await removeFavouriteEvent(String(req.user._id), req.params.eventId);
 

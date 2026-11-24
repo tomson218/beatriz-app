@@ -14,7 +14,6 @@ import Error404 from './pages/Error404/Error404.tsx';
 import Tickets from '@/features/tickets/pages/Tickets/Tickets.tsx';
 import UpdateUserDetails from '@/features/users/pages/UpdateUserDetails/UpdateUserDetails.tsx';
 
-import Sectors from '@/features/tickets/components/Sector/Sector.tsx';
 import Seats from '@/features/tickets/pages/Seats/Seats.tsx';
 import ProtectedRoutes from '@/features/auth/components/ProtectedRoutes/ProtectedRoutes.tsx';
 import Hall from '@/features/tickets/pages/Hall/Hall.tsx';
@@ -140,17 +139,6 @@ const router = createBrowserRouter([
 			<ProtectedRoutes>
 				<LayoutWrapper>
 					<Cancel />
-				</LayoutWrapper>
-			</ProtectedRoutes>
-		),
-	},
-
-	{
-		path: '/sectors',
-		element: (
-			<ProtectedRoutes>
-				<LayoutWrapper>
-					<Sectors />
 				</LayoutWrapper>
 			</ProtectedRoutes>
 		),

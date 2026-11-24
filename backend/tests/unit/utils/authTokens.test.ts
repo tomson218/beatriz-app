@@ -12,7 +12,8 @@ import {
 	verifyRefreshToken,
 } from '../../../utils/authTokens.ts';
 
-const requestWithHeaders = (headers: Record<string, string | undefined>): Request => ({ headers }) as unknown as Request;
+const requestWithHeaders = (headers: Record<string, string | undefined>): Request =>
+	({ headers }) as unknown as Request;
 
 const lifetimeInSeconds = (token: string): number => {
 	const { exp, iat } = jwt.decode(token) as jwt.JwtPayload;
@@ -61,7 +62,11 @@ describe('createAuthTokens / verify*', () => {
 			refreshAsAccess: catchError(() => verifyAccessToken(refreshToken)).message,
 			accessAsRefresh: catchError(() => verifyRefreshToken(accessToken)).message,
 		};
-		const expected = { refreshTokenUser: 'user-1', refreshAsAccess: 'invalid signature', accessAsRefresh: 'invalid signature' };
+		const expected = {
+			refreshTokenUser: 'user-1',
+			refreshAsAccess: 'invalid signature',
+			accessAsRefresh: 'invalid signature',
+		};
 
 		expect(result).toEqual(expected);
 	});
@@ -102,7 +107,9 @@ describe('getBearerToken', () => {
 
 describe('getRefreshTokenFromRequest', () => {
 	it('reads the refreshToken cookie among other cookies', () => {
-		const result = getRefreshTokenFromRequest(requestWithHeaders({ cookie: 'theme=dark; refreshToken=abc.def; lang=pl' }));
+		const result = getRefreshTokenFromRequest(
+			requestWithHeaders({ cookie: 'theme=dark; refreshToken=abc.def; lang=pl' }),
+		);
 		const expected = 'abc.def';
 
 		expect(result).toBe(expected);
@@ -165,7 +172,10 @@ describe('refresh token cookie', () => {
 
 		clearRefreshTokenCookie(response);
 		const result = res.clearCookie.mock.calls[0];
-		const expected = ['refreshToken', { httpOnly: true, secure: true, sameSite: 'none', path: '/', maxAge: 7 * 24 * 60 * 60 * 1000 }];
+		const expected = [
+			'refreshToken',
+			{ httpOnly: true, secure: true, sameSite: 'none', path: '/', maxAge: 7 * 24 * 60 * 60 * 1000 },
+		];
 
 		expect(result).toEqual(expected);
 	});

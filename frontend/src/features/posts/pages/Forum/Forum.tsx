@@ -10,7 +10,7 @@ import { isEmptyMessage } from '@/features/tickets/utils/sector';
 import { hasAnyForumPosts, hasNoForumPosts, isPostAuthor } from '@/features/posts/utils/forum';
 
 const Forum = () => {
-	const { eventId } = useParams();
+	const { eventId = '' } = useParams();
 
 	const { data: forumPosts, isLoading: isForumPostsLoading, refetch } = useGetPostsByEventIdQuery(eventId);
 	const { data: eventDetails, isLoading: isEventDetailsLoading } = useGetEventByIdQuery(eventId);
@@ -21,10 +21,10 @@ const Forum = () => {
 
 	const { mutate: addPost } = useAddPostToForumMutation(refetch);
 
- 	const postRef = useRef<HTMLTextAreaElement>(null);
+	const postRef = useRef<HTMLTextAreaElement>(null);
 
 	const handleClickNewPost = () => {
-		const message = postRef.current?.value;
+		const message = postRef.current?.value ?? '';
 
 		if (isEmptyMessage(message)) {
 			setError(true);
@@ -47,59 +47,45 @@ const Forum = () => {
 	}
 
 	const isFormHidden = !isShown;
+	const posts = forumPosts ?? [];
 
 	return (
 		<main>
-			<h2 className={classes['forum-title']}>
-				Opinie dla {eventDetails.name}
-			</h2>
+			<h2 className={classes['forum-title']}>Opinie dla {eventDetails?.name}</h2>
 
-			{hasNoForumPosts(forumPosts) && <p>Brak postów dla tego wydarzenia!</p>}
+			{hasNoForumPosts(posts) && <p>Brak postów dla tego wydarzenia!</p>}
 
-			{hasAnyForumPosts(forumPosts) && (
+			{hasAnyForumPosts(posts) && (
 				<section className={classes['forum-posts']}>
-					{forumPosts.map(forumPost => (
-						<Post
-							post={forumPost}
-							key={forumPost._id}
-							isAuthorPost={isPostAuthor(forumPost.user._id)}
-						/>
+					{posts.map(forumPost => (
+						<Post post={forumPost} key={forumPost._id} isAuthorPost={isPostAuthor(forumPost.user._id)} />
 					))}
 				</section>
 			)}
 
- 			<aside className={classes.toggle}>
- 			{isFormHidden && (
- 				<Button onClick={handleShowForm}>
- 					Dodaj nowy post
- 				</Button>
- 			)}
+			<aside className={classes.toggle}>
+				{isFormHidden && <Button onClick={handleShowForm}>Dodaj nowy post</Button>}
 
- 			{isShown && (
- 				<section className={classes.wrapper}>
- 					<textarea
- 						ref={postRef}
- 						rows='4'
- 						cols='30'
- 						placeholder='Wpisz swoją wiadomość...'
- 						className={classes['textarea-box']}
- 					/>
+				{isShown && (
+					<section className={classes.wrapper}>
+						<textarea
+							ref={postRef}
+							rows={4}
+							cols={30}
+							placeholder='Wpisz swoją wiadomość...'
+							className={classes['textarea-box']}
+						/>
 
- 					<section className={classes.buttons}>
- 						<Button
- 							onClick={handleClickNewPost}>
- 							Dodaj
- 						</Button>
- 						<Button
- 							variant='secondary'
- 							onClick={() => setIsShown(false)}>
- 							Anuluj
- 						</Button>
- 					</section>
- 					{error && <p className={classes['error-info']}>Twoja wiadomość jest pusta!!!</p>}
- 				</section>
- 			)}
- 		</aside>
+						<section className={classes.buttons}>
+							<Button onClick={handleClickNewPost}>Dodaj</Button>
+							<Button variant='secondary' onClick={() => setIsShown(false)}>
+								Anuluj
+							</Button>
+						</section>
+						{error && <p className={classes['error-info']}>Twoja wiadomość jest pusta!!!</p>}
+					</section>
+				)}
+			</aside>
 		</main>
 	);
 };

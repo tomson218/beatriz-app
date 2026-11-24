@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import instance from '@/shared/api/apiConfig';
 import { queryKeys } from '@/shared/api/queryKeys';
-import type { Event } from '@beatriz/shared/events';
+import type { EventDto } from '@beatriz/shared/events';
 
-const useGetEventByIdQuery = (id: Event['_id']) => {
-	const getEventById = async () => {
+const useGetEventByIdQuery = (id: EventDto['_id']) => {
+	const getEventById = async (): Promise<EventDto> => {
 		const response = await instance.get(`/events/${id}`);
 		return response.data.data.event;
 	};
